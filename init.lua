@@ -17,6 +17,10 @@ for i=1, 2 do
     local zone_index = math.random(3)
     local zone = ZONE:New("NorthSA10Zone" .. zone_index)
     RussianTheaterSA10Spawn:SpawnInZone(zone, true)
+
+    local zone_index = math.random(3)
+    local zone = ZONE:New("NorthSA10Zone" .. zone_index)
+    RussianTheaterEWRSpawn:SpawnInZone(zone, true)
 end
 
 for i=1, 2 do

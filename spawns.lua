@@ -13,6 +13,7 @@ AirfieldDefense = SPAWN:New("AirfieldDefense")
 -- Strategic REDFOR spawns
 RussianTheaterSA10Spawn = SPAWN:New("SA10")
 RussianTheaterSA6Spawn = SPAWN:New("SA6")
+RussianTheaterEWRSpawn = SPAWN:New("EWR")
 
 -- CAP Redfor spawns
 RussianTheaterMig212ShipSpawn = SPAWN:New("Mig212ship")
@@ -31,7 +32,11 @@ RussianTheaterSA10Spawn:OnSpawnGroup(function(SpawnedGroup)
 end)
 
 RussianHeavyArtySpawn:OnSpawnGroup(function(SpawnedGroup)
-    --AddRussianTheaterCAS(game_state, SpawnedGroup)
+    AddRussianTheaterCASTarget(game_state, SpawnedGroup)
+end)
+
+RussianTheaterEWRSpawn:OnSpawnGroup(function(SpawnedGroup)
+    AddRussianTheaterC2(game_state, SpawnedGroup)
 end)
 
 RussianTheaterMig212ShipSpawn:OnSpawnGroup(function(SpawnedGroup)
