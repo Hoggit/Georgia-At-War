@@ -4,7 +4,7 @@ local XportMenu = MENU_COALITION:New(coalition.side.BLUE, "Deploy Airfield Secur
 local russianTheaterMenu = MENU_COALITION:New(coalition.side.BLUE, "Russian Theater", XportMenu)
 
 local StateMenu = MENU_COALITION:New(coalition.side.BLUE, "Theater Targets")
-local ShowNumSames = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "SAMS", StateMenu, function() BASE:I(#game_state["Russian Theater"]["StrategicSAM"]) end)
+local ShowNumSames = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "SAMS", StateMenu, function() BASE:I(#game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) end)
 local ShowNumSames = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Dump State", StateMenu, function() BASE:I(dump(game_state)) end)
 
 for i=1, 4 do
@@ -19,6 +19,10 @@ for i=1, 2 do
     RussianTheaterSA10Spawn:SpawnInZone(zone, true)
 end
 
+for i=1, 2 do
+    RussianTheaterMig212ShipSpawn:SpawnAtAirbase(AIRBASE:FindByName(AIRBASE.Caucasus.Maykop_Khanskaya), SPAWN.Takeoff.Cold)
+end
+
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
     spawn:OnSpawnGroup(function(SpawnedGroup)
         SpawnedGroup:HandleEvent(EVENTS.Land)
@@ -31,9 +35,9 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
     end)
 
     local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name, russianTheaterMenu, function() 
-        local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, last_launched_time, spawn)
+        local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn)
         if new_spawn_time ~= nil then
-            last_launched_time = new_spawn_time
+            game_state["last_launched_time"] = new_spawn_time
         end
     end)
 end
