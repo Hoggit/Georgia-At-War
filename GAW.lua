@@ -1,10 +1,3 @@
-BASE:I(
-    mist.getLLString({
-        ['units'] = {'[g]jers'},
-        ['acc'] = 10
-    })
-)
-
 -- Setup logging
 logFile = io.open(lfs.writedir()..[[Logs\Hoggit-GAW.log]], "w")
 --JSON = (loadfile "JSON.lua")()

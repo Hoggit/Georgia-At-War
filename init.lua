@@ -21,6 +21,15 @@ for i=1, 3 do
     RussianTheaterC2Spawn:SpawnInZone(zone, true)
 end
 
+for i=1, 10 do
+    local zone_index = math.random(18)
+    local zone = ZONE:New("NorthStatic" .. zone_index)
+    local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
+    local spawn_index = math.random(3)
+    local static = StaticSpawns[spawn_index]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
+    AddRussianTheaterStrikeTarget(game_state, STATIC:FindByName(static:getName()))
+end
+
 -- Kick off the commanders
 SCHEDULER:New(nil, function()
     log("Starting Russian Commander, Comrade")

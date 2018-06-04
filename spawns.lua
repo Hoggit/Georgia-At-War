@@ -27,7 +27,9 @@ RussianTheaterMig292ShipSpawn = SPAWN:New("Mig292ship")
 
 -- Strike Target Spawns
 RussianHeavyArtySpawn = SPAWN:New("HeavyArty")
-
+AmmoDumpSpawn = SPAWNSTATIC:NewFromStatic("Ammo Dump", country.id.RUSSIA)
+CommsArraySpawn = SPAWNSTATIC:NewFromStatic("Comms Array", country.id.RUSSIA)
+PowerPlantSpawn = SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA)
 
 -- OnSpawn Callbacks.  Add ourselves to the game state
 RussianTheaterSA6Spawn:OnSpawnGroup(function(SpawnedGroup)
