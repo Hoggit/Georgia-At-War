@@ -23,7 +23,7 @@ buildMenu = function(Group)
     MENU_GROUP_COMMAND:New(Group, "Strike", MissionMenu, function()
         local strikes ="STRIKE TARGET LIST:\n"
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
-            strikes = strikes .. split(g.GroupName, "#")[1] .. ": " .. mist.getLLString({units = mist.makeUnitTable({'[g]' .. g.GroupName}), acc = 3}) .. "\n"
+            strikes = strikes .. split(g.StaticName, "#")[1] .. ": " .. g:GetCoordinate():ToStringLLDMS() .. "\n"
         end
         MESSAGE:New(strikes):ToGroup(Group)
     end)
