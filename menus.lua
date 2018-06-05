@@ -3,11 +3,29 @@ XportMenu = MENU_COALITION:New(coalition.side.BLUE, "Deploy Airfield Security Fo
 
 -- Per group menu, called on groupspawn
 buildMenu = function(Group)
+    local type
+
+    if string.match(Group.GroupName, "Hawg") then 
+        type = 2
+    elseif string.match(Group.GroupName, "Chevy") then
+        type = 1
+    elseif string.match(Group.GroupName, "Colt") then
+        type = 3
+    else
+        type = 1
+    end
+
     local MissionMenu = MENU_GROUP:New(Group, "Get Current Missions")
     MENU_GROUP_COMMAND:New(Group, "SEAD", MissionMenu, function()
         local sams ="ACTIVE SAM REPORT:\n"
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
-            sams = sams .. "TYPE " .. split(g.GroupName, "#")[1] ..": " .. mist.getLLString({units = mist.makeUnitTable({'[g]' .. g.GroupName}), acc = 3}) .. "\n"
+            local coords = {
+                g:GetCoordinate():ToStringLLDMS(), 
+                g:GetCoordinate():ToStringMGRS(),
+                g:GetCoordinate():ToStringLLDDM()
+                --g:GetCoordinate():ToStringBR(g:GetCoordinate(), Group:GetCoordinate())
+            }
+            sams = sams .. "TYPE " .. split(g.GroupName, "#")[1] ..": \t" .. coords[type] .. "\n"
         end
         MESSAGE:New(sams, 60):ToGroup(Group)
     end)
@@ -15,7 +33,13 @@ buildMenu = function(Group)
     MENU_GROUP_COMMAND:New(Group, "Air Interdiction", MissionMenu, function()
         local bais ="BAI TASK LIST:\n"
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["BAI"]) do
-            bais = bais .. split(g.GroupName, "#")[1] .. ": " .. mist.getLLString({units = mist.makeUnitTable({'[g]' .. g.GroupName}), acc = 3}) .. "\n"
+            local coords = {
+                g:GetCoordinate():ToStringLLDMS(), 
+                g:GetCoordinate():ToStringMGRS(),
+                g:GetCoordinate():ToStringLLDDM()
+                --g:GetCoordinate():ToStringBR(g:GetCoordinate(), Group:GetCoordinate())
+            }
+            bais = bais .. split(g.GroupName, "#")[1] .. ": \t" .. coords[type] .. "\n"
         end
         MESSAGE:New(bais, 60):ToGroup(Group)
     end)
@@ -23,11 +47,25 @@ buildMenu = function(Group)
     MENU_GROUP_COMMAND:New(Group, "Strike", MissionMenu, function()
         local strikes ="STRIKE TARGET LIST:\n"
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["C2"]) do
-            strikes = strikes .. "MOBILE CP:" .. g:GetCoordinate():ToStringLLDMS() .. "\n"
+            local coords = {
+                g:GetCoordinate():ToStringLLDMS(), 
+                g:GetCoordinate():ToStringMGRS(),
+                g:GetCoordinate():ToStringLLDDM()
+                --g:GetCoordinate():ToStringBR(g:GetCoordinate(), Group:GetCoordinate())
+            }
+            
+            strikes = strikes .. "MOBILE CP: \t" .. coords[type] .. "\n"
         end
         
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
-            strikes = strikes .. split(g.StaticName, "#")[1] .. ": " .. g:GetCoordinate():ToStringLLDMS() .. "\n"
+            local coords = {
+                g:GetCoordinate():ToStringLLDMS(), 
+                g:GetCoordinate():ToStringMGRS(),
+                g:GetCoordinate():ToStringLLDDM()
+                --g:GetCoordinate():ToStringBR(g:GetCoordinate(), Group:GetCoordinate())
+            }
+
+            strikes = strikes .. split(g.StaticName, "#")[1] .. ": \t" .. coords[type] .. "\n"
         end
 
         MESSAGE:New(strikes, 60):ToGroup(Group)
