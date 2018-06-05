@@ -33,7 +33,8 @@ end
 -- Kick off the commanders
 SCHEDULER:New(nil, function()
     log("Starting Russian Commander, Comrade")
-    pcall(russian_commander)
+    --pcall(russian_commander)
+    russian_commander()
 end, {}, 10, 300)
 
 BASE:I("HOGGIT GAW - INIT COMPLETE")

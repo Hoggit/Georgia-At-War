@@ -9,23 +9,28 @@ buildMenu = function(Group)
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
             sams = sams .. "TYPE " .. split(g.GroupName, "#")[1] ..": " .. mist.getLLString({units = mist.makeUnitTable({'[g]' .. g.GroupName}), acc = 3}) .. "\n"
         end
-        MESSAGE:New(sams):ToGroup(Group)
+        MESSAGE:New(sams, 60):ToGroup(Group)
     end)
 
     MENU_GROUP_COMMAND:New(Group, "Air Interdiction", MissionMenu, function()
         local bais ="BAI TASK LIST:\n"
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["BAI"]) do
-            bais = bais .. "ARTILLERY: " .. mist.getLLString({units = mist.makeUnitTable({'[g]' .. g.GroupName}), acc = 3}) .. "\n"
+            bais = bais .. split(g.GroupName, "#")[1] .. ": " .. mist.getLLString({units = mist.makeUnitTable({'[g]' .. g.GroupName}), acc = 3}) .. "\n"
         end
-        MESSAGE:New(bais):ToGroup(Group)
+        MESSAGE:New(bais, 60):ToGroup(Group)
     end)
 
     MENU_GROUP_COMMAND:New(Group, "Strike", MissionMenu, function()
         local strikes ="STRIKE TARGET LIST:\n"
+        for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["C2"]) do
+            strikes = strikes .. "MOBILE CP:" .. g:GetCoordinate():ToStringLLDMS() .. "\n"
+        end
+        
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
             strikes = strikes .. split(g.StaticName, "#")[1] .. ": " .. g:GetCoordinate():ToStringLLDMS() .. "\n"
         end
-        MESSAGE:New(strikes):ToGroup(Group)
+
+        MESSAGE:New(strikes, 60):ToGroup(Group)
     end)
 end
 
