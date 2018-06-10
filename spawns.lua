@@ -8,9 +8,10 @@ NorthGeorgiaTransportSpawns = {
 }
 
 -- Support Spawn
-TexacoSpawn = SPAWN:New("Texaco"):InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(120)
-ShellSpawn = SPAWN:New("Shell"):InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(140)
-OverlordSpawn = SPAWN:New("Overlord"):InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(160)
+TexacoSpawn = SPAWN:New("Texaco"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(120)
+ShellSpawn = SPAWN:New("Shell"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(140)
+OverlordSpawn = SPAWN:New("AWACS Overlord"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(160)
+AWACSPatrol = SPAWN:New("AWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
 
 -- Local defense spawns.  Usually used after a transport spawn lands somewhere.
 AirfieldDefense = SPAWN:New("AirfieldDefense")
@@ -20,11 +21,14 @@ RussianTheaterSA10Spawn = SPAWN:New("SA10")
 RussianTheaterSA6Spawn = SPAWN:New("SA6")
 RussianTheaterEWRSpawn = SPAWN:New("EWR")
 RussianTheaterC2Spawn = SPAWN:New("C2")
+RussianTheaterAWACSSpawn = SPAWN:New("A50"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
+RUSTankerSpawn = SPAWN:New("RUSTanker"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
 
 -- CAP Redfor spawns
 RussianTheaterMig212ShipSpawn = SPAWN:New("Mig212ship")
 RussianTheaterMig292ShipSpawn = SPAWN:New("Mig292ship")
 RussianTheaterSu272sShipSpawn = SPAWN:New("Su272ship")
+RussianTheaterAWACSPatrol = SPAWN:New("RUSAWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
 
 -- Strike Target Spawns
 RussianHeavyArtySpawn = SPAWN:New("ARTILLERY")
@@ -41,6 +45,14 @@ goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn}
 baispawns = {RussianHeavyArtySpawn, ArmorColumnSpawn, MechInfSpawn}
 
 -- OnSpawn Callbacks.  Add ourselves to the game state
+RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
+    RussianTheaterAWACSPatrol:Spawn()
+end)
+
+OverlordSpawn:OnSpawnGroup(function(SpawnedGroup)
+    AWACSPatrol:Spawn()
+end)
+
 RussianTheaterSA6Spawn:OnSpawnGroup(function(SpawnedGroup)
     AddRussianTheaterStrategicSAM(game_state, SpawnedGroup)
 end)
@@ -57,6 +69,14 @@ RussianTheaterC2Spawn:OnSpawnGroup(function(SpawnedGroup)
     AddRussianTheaterC2(game_state, SpawnedGroup)
 end)
 
+RUSTankerSpawn:OnSpawnGroup(function(SpawnedGroup)
+    AddRussianTheaterTankerTarget(game_state, SpawnedGroup)
+end)
+
+RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
+    AddRussianTheaterAWACSTarget(game_state, SpawnedGroup)
+end)
+
 for i,v in ipairs(baispawns) do
     v:OnSpawnGroup(function(SpawnedGroup)
         AddRussianTheaterBAITarget(game_state, SpawnedGroup)
@@ -66,12 +86,6 @@ end
 for i,v in ipairs(allcaps) do
     v:OnSpawnGroup(function(SpawnedGroup)
         AddRussianTheaterCAP(game_state, SpawnedGroup)
-        local PatrolZone = ZONE:New( "NorthAIPatrolZone" )
-        local AICapZone = AI_CAP_ZONE:New( PatrolZone, 1000, 7000, 400, 900 )
-        local EngageZone = ZONE:New("NorthAICAPZone")
-        AICapZone:SetControllable(SpawnedGroup)
-        AICapZone:SetEngageZone(EngageZone)
-        AICapZone:__Start(1)
     end)
 end
 
@@ -80,9 +94,10 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
         SpawnedGroup:HandleEvent(EVENTS.Land)
         function SpawnedGroup:OnEventLand(EventData)
             local apV3 = POINT_VEC3:NewFromVec3(EventData.place:getPosition().p)
-            apV3:SetX(apV3:GetX() + 400)
+            apV3:SetX(apV3:GetX() + math.random(400, 600))
+            apV3:SetY(apV3:GetY() + math.random(200))
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-            SpawnedGroup:Destroy()
+            SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
         end
     end)
 end

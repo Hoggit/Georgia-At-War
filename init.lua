@@ -35,7 +35,14 @@ SCHEDULER:New(nil, function()
     log("Starting Russian Commander, Comrade")
     --pcall(russian_commander)
     russian_commander()
-end, {}, 10, 300)
+end, {}, 60, 400)
+
+-- Kick off the supports
+RussianTheaterAWACSSpawn:Spawn()
+OverlordSpawn:Spawn()
+RUSTankerSpawn:Spawn()
+TexacoSpawn:Spawn()
+ShellSpawn:Spawn()
 
 BASE:I("HOGGIT GAW - INIT COMPLETE")
 log("init.lua complete")

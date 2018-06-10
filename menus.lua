@@ -7,11 +7,15 @@ buildMenu = function(Group)
 
     if string.match(Group.GroupName, "Hawg") then 
         type = 2
+        _SETTINGS:SetImperial()
     elseif string.match(Group.GroupName, "Chevy") then
-        type = 1
+        type = 4
+        _SETTINGS:SetMetric()
     elseif string.match(Group.GroupName, "Colt") then
         type = 3
+        _SETTINGS:SetImperial()
     else
+        _SETTINGS:SetImperial()
         type = 1
     end
 
@@ -22,8 +26,8 @@ buildMenu = function(Group)
             local coords = {
                 g:GetCoordinate():ToStringLLDMS(), 
                 g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringLLDDM()
-                --g:GetCoordinate():ToStringBR(g:GetCoordinate(), Group:GetCoordinate())
+                g:GetCoordinate():ToStringLLDDM(),
+                g:GetCoordinate():ToStringBR(Group:GetCoordinate()),
             }
             sams = sams .. "TYPE " .. split(g.GroupName, "#")[1] ..": \t" .. coords[type] .. "\n"
         end
@@ -36,8 +40,8 @@ buildMenu = function(Group)
             local coords = {
                 g:GetCoordinate():ToStringLLDMS(), 
                 g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringLLDDM()
-                --g:GetCoordinate():ToStringBR(g:GetCoordinate(), Group:GetCoordinate())
+                g:GetCoordinate():ToStringLLDDM(),
+                g:GetCoordinate():ToStringBR(Group:GetCoordinate()),
             }
             bais = bais .. split(g.GroupName, "#")[1] .. ": \t" .. coords[type] .. "\n"
         end
@@ -50,8 +54,8 @@ buildMenu = function(Group)
             local coords = {
                 g:GetCoordinate():ToStringLLDMS(), 
                 g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringLLDDM()
-                --g:GetCoordinate():ToStringBR(g:GetCoordinate(), Group:GetCoordinate())
+                g:GetCoordinate():ToStringLLDDM(),
+                g:GetCoordinate():ToStringBR(Group:GetCoordinate()),
             }
             
             strikes = strikes .. "MOBILE CP: \t" .. coords[type] .. "\n"
@@ -61,14 +65,38 @@ buildMenu = function(Group)
             local coords = {
                 g:GetCoordinate():ToStringLLDMS(), 
                 g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringLLDDM()
-                --g:GetCoordinate():ToStringBR(g:GetCoordinate(), Group:GetCoordinate())
+                g:GetCoordinate():ToStringLLDDM(),
+                g:GetCoordinate():ToStringBR(Group:GetCoordinate()),
             }
 
             strikes = strikes .. split(g.StaticName, "#")[1] .. ": \t" .. coords[type] .. "\n"
         end
 
         MESSAGE:New(strikes, 60):ToGroup(Group)
+    end)
+
+    MENU_GROUP_COMMAND:New(Group, "Interception", MissionMenu, function()
+        local intercepts ="INTERCEPTION TARGETS:\n"
+        for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
+            local coords = {
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringLLDMS(), 
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringMGRS(),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringLLDDM(),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()),
+            }
+            intercepts = intercepts .. "AWACS: \t" .. coords[type] .. "\n"
+        end
+
+        for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
+            local coords = {
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringLLDMS(), 
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringMGRS(),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringLLDDM(),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()),
+            }
+            intercepts = intercepts .. "TANKER: \t" .. coords[type] .. "\n"
+        end
+        MESSAGE:New(intercepts, 60):ToGroup(Group)
     end)
 end
 

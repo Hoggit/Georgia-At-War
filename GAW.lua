@@ -36,7 +36,9 @@ game_state = {
             ["StrikeTargets"] = {},
             ["InterceptTargets"] = {},
             ["CAP"] = {},
-            ["BAI"] = {}
+            ["BAI"] = {},
+            ["AWACS"] = {},
+            ["Tanker"] = {}
         }
     }
 }
@@ -81,6 +83,14 @@ end
 
 UpdateRussianBAIState = function(state, bais)
     UpdateTheaterState(state)("Russian Theater")("BAI")(bais)
+end
+
+UpdateRussianTankerState = function(state, tankers)
+    UpdateTheaterState(state)("Russian Theater")("Tanker")(tankers)
+end
+
+UpdateRussianAWACSState = function(state, awacs)
+    UpdateTheaterState(state)("Russian Theater")("AWACS")(awacs)
 end
 
 AddStrategicSAM = function(state)
@@ -186,6 +196,36 @@ end
 AddRussianTheaterBAITarget = function(state, group)
     local targets = AddBAITarget(state)("Russian Theater")(group)
     UpdateRussianBAIState(state, targets)
+end
+
+AddAWACSTarget = function(state)
+    return function(theater)
+        return function(group)
+            local AWACS = mist.utils.deepCopy(state["Theaters"][theater]["AWACS"])
+            table.insert(AWACS, group)
+            return AWACS
+        end
+    end
+end
+
+AddRussianTheaterAWACSTarget = function(state, group)
+    local targets = AddAWACSTarget(state)("Russian Theater")(group)
+    UpdateRussianAWACSState(state, targets)
+end
+
+AddTankerTarget = function(state)
+    return function(theater)
+        return function(group)
+            local Tankers = mist.utils.deepCopy(state["Theaters"][theater]["Tanker"])
+            table.insert(Tankers, group)
+            return Tankers
+        end
+    end
+end
+
+AddRussianTheaterTankerTarget = function(state, group)
+    local targets = AddTankerTarget(state)("Russian Theater")(group)
+    UpdateRussianTankerState(state, targets)
 end
 
 SpawnDefenseForces = function(time, last_launched_time, spawn)
