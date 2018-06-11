@@ -42,7 +42,10 @@ RussianTheaterAWACSSpawn:Spawn()
 OverlordSpawn:Spawn()
 RUSTankerSpawn:Spawn()
 TexacoSpawn:Spawn()
-ShellSpawn:Spawn()
+local shell = ShellSpawn:Spawn()
+log ("Spawned shell. GroupName is " .. shell.GroupName)
+
+
 
 BASE:I("HOGGIT GAW - INIT COMPLETE")
 log("init.lua complete")

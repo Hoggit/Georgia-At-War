@@ -35,6 +35,7 @@ game_state = {
             ["CASTargets"] = {},
             ["StrikeTargets"] = {},
             ["InterceptTargets"] = {},
+            ["OpforCAS"] = {},
             ["CAP"] = {},
             ["BAI"] = {},
             ["AWACS"] = {},
@@ -284,6 +285,33 @@ TheaterUpdate = function(state, theater)
     output = output .. "\n\nTHEATER OBJECTIVE:  Destroy all strike targets, all Command and Control (C2) units, and capture all primary airfields."
 
     return output
+-- AddRussianTheaterCASGroup = function(state, group)
+--     state["Theaters"]["RussianTheater"]["OpforCAS"]
+-- end
+    
+
+ScheduleCASMission = function(targetV3, spawn, zoneRadius)
+    log("===== CAS Mission Requested.")
+    --Create the zone
+    local v2Point = POINT_VEC2:NewFromVec3(targetV3)
+    local message = "---- ( " .. v2Point:ToStringLLDMS() .." ) ---"
+    log(message)
+    local zone = ZONE_RADIUS:New("CAS Zone", v2Point:GetVec2(), zoneRadius)
+    -- Debugging the zone.
+    -- zone:SmokeZone(SMOKECOLOR.White, 15, 50)
+    local seconds = math.random(120, 900) -- 2 minutes to 15 minutes
+    log("===== Scheduling CAS Group to spawn in " .. seconds .. " seconds")
+    SCHEDULER:New(nil, SpawnOPFORCas, {zone, spawn}, seconds) 
+end
+
+SpawnOPFORCas = function(zone, spawn)
+    log("===== CAS Spawn begin")
+    local casZone = AI_CAS_ZONE:New( zone, 100, 1500, 250, 600, zone )
+    local casGroup = spawn:Spawn()
+    casZone:SetControllable( casGroup )
+    casZone:__Start ( 1 )
+    casZone:__Engage( 5 )
+    log("===== CAS Spawn Done")
 end
 
 BASE:I("HOGGIT GAW - GAW COMPLETE")

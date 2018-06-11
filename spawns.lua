@@ -46,6 +46,10 @@ AmmoDumpSpawn = SPAWNSTATIC:NewFromStatic("Ammo Dump", country.id.RUSSIA)
 CommsArraySpawn = SPAWNSTATIC:NewFromStatic("Comms Array", country.id.RUSSIA)
 PowerPlantSpawn = SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA)
 
+-- Airfield CAS Spawns
+RussianTheaterCASSpawn = SPAWN:New("Su25TCASGroup")
+--RussianTheatreCASEscort = SPAWN:New("Su27CASEscort")
+
 -- Group spanws for easy randomization
 local allcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn}
 poopcaps = {RussianTheaterMig212ShipSpawn}
@@ -85,6 +89,10 @@ RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
     AddRussianTheaterAWACSTarget(game_state, SpawnedGroup)
 end)
 
+-- RussianTheaterCASSpawn:OnSpawnGroup(function(SpawnedGroup)
+--     AddRussianTheaterCASGroup(game_state, SpawnedGroup)
+-- end)
+
 for i,v in ipairs(baispawns) do
     v:OnSpawnGroup(function(SpawnedGroup)
         AddRussianTheaterBAITarget(game_state, SpawnedGroup)
@@ -106,6 +114,7 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
             apV3:SetY(apV3:GetY() + math.random(200))
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
+            ScheduleCASMission(apV3, RussianTheaterCASSpawn, 1000)
         end
     end)
 end
