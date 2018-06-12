@@ -28,6 +28,7 @@ RUSTankerSpawn = SPAWN:New("RUSTanker"):InitDelayOff():InitRepeatOnEngineShutDow
 RussianTheaterMig212ShipSpawn = SPAWN:New("Mig212ship")
 RussianTheaterMig292ShipSpawn = SPAWN:New("Mig292ship")
 RussianTheaterSu272sShipSpawn = SPAWN:New("Su272ship")
+RussianTheaterMig312ShipSpawn = SPAWN:New("Mig312ship"):InitLimit(2, 0)
 RussianTheaterAWACSPatrol = SPAWN:New("RUSAWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
 
 -- Strike Target Spawns

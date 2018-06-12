@@ -123,6 +123,17 @@ russian_commander = function()
             end, {}, command_delay)
         end
     end
+
+    if math.random() > 0.7 then
+        local g = RussianTheaterMig312ShipSpawn:GetFirstAliveGroup()
+        if g then
+            if g:AllOnGround() then
+                g:Destroy()
+            end
+        end
+        
+        RussianTheaterMig312ShipSpawn:Spawn()
+    end
 end
 
 log("commander.lua complete")

@@ -237,5 +237,53 @@ SpawnDefenseForces = function(time, last_launched_time, spawn)
     end
 end
 
+TheaterUpdate = function(state, theater)
+    local output = "OPFOR Strategic Report: " .. theater .. "\n--------------------------\n\nSAM COVERAGE: "
+    local numsams = #state["Theaters"][theater]['StrategicSAM']
+    if numsams > 5 then
+        output = output .. "Fully Operational"
+    elseif numsams > 3 then
+        output = output .. "Degraded"
+    elseif numsams > 0 then
+        output = output .. "Critical"
+    else
+        output = output .. "None"
+    end
+
+    local numc2 = #state["Theaters"][theater]['C2']
+    output = output .. "\n\nCOMMAND AND CONTROL: "
+    if numc2 == 3 then
+        output = output .. "Fully Operational"
+    elseif numc2 == 2 then
+        output = output .. "Degraded"
+    elseif numc2 == 1 then
+        output = output .. "Critical"
+    else
+        output = output .. "Destroyed"
+    end
+
+    local numewr = #state["Theaters"][theater]['EWR']
+    output = output .. "\n\nEW RADAR COVERAGE: "
+    if numewr == 3 then
+        output = output .. "Fully Operational"
+    elseif numewr == 2 then
+        output = output .. "Degraded"
+    elseif numewr == 1 then
+        output = output .. "Critical"
+    else
+        output = output .. "None"
+    end
+
+    output = output .. "\n\nPRIMARY AIRFIELDS: \n"
+    for name,capped in pairs(state['Theaters'][theater]["Primary"]) do
+        output = output .. "    " .. name .. ": "
+        if capped then output = output .. "Captured\n" else output = output .. "NOT CAPTURED\n" end
+    end
+
+    output = output .. "\n\nTHEATER OBJECTIVE:  Destroy all strike targets, all Command and Control (C2) units, and capture all primary airfields."
+
+    return output
+end
+
 BASE:I("HOGGIT GAW - GAW COMPLETE")
 log("GAW.lua complete")

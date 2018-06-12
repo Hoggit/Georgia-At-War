@@ -19,6 +19,11 @@ buildMenu = function(Group)
         type = 1
     end
 
+    local MissionMenu = MENU_GROUP_COMMAND:New(Group, "Get Mission Status", nil, function()
+        MESSAGE:New(TheaterUpdate(game_state, "Russian Theater"), 60):ToGroup(Group)
+    end)
+
+
     local MissionMenu = MENU_GROUP:New(Group, "Get Current Missions")
     MENU_GROUP_COMMAND:New(Group, "SEAD", MissionMenu, function()
         local sams ="ACTIVE SAM REPORT:\n"
@@ -116,7 +121,6 @@ function EventHandler:OnEventBirth( EventData )
     if EventData.IniGroup then
         for i,u in ipairs(EventData.IniGroup:GetUnits()) do
             if u:GetPlayerName() ~= "" then
-                log(u:GetPlayerName())
                 buildMenu(EventData.IniGroup)
             end
         end
