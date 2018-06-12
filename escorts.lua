@@ -10,7 +10,7 @@ local EscortSpawns = {
 }
 
 EscortSets = SET_GROUP:New():FilterPrefixes("Escort"):FilterStart()
-EscortDetection = DETECTION_AREAS:New( EscortSets, 5000 )
+EscortDetection = DETECTION_AREAS:New( EscortSets, 37040 )
 EscortDetection:SetRefreshTimeInterval(15)
 EscortDetection:FilterCategories(Unit.Category.AIRPLANE)
 
@@ -20,17 +20,17 @@ process_escorts = function()
     --log("Processing escorts")
     local escort_zone = ZONE:New("Escort Zone")
     for i,name in ipairs(EscortableUnits) do
-        log("Checking " .. name)
+        --log("Checking " .. name)
         local unit
         local status,client = pcall(function() return CLIENT:FindByName(name, "", false) end)
         if status then
-            log("Getting unit for client")
+            --log("Getting unit for client")
             unit = client:GetClientGroupUnit()
         end
 
         if unit then
             if not current_escorts[client] and unit:IsInZone(escort_zone) then
-                log("Found Unit " .. unit:GetName())
+                --log("Found Unit " .. unit:GetName())
                 local spawn = EscortSpawns[math.random(3)]
                 local escort = spawn:Spawn()
                 log("Spawned " .. escort.GroupName)
