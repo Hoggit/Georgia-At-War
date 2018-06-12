@@ -229,10 +229,11 @@ AddRussianTheaterTankerTarget = function(state, group)
 end
 
 SpawnDefenseForces = function(time, last_launched_time, spawn)
-    if time - last_launched_time > 300 then
+    if time > last_launched_time + 120 then
         spawn:Spawn()
         return time
     else
+        MESSAGE:New("Unable to send security forces, next mission available in " .. (120 + last_launched_time - time) .. " seconds"):ToAll()
         return nil
     end
 end
