@@ -112,9 +112,9 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
             local apV3 = POINT_VEC3:NewFromVec3(EventData.place:getPosition().p)
             apV3:SetX(apV3:GetX() + math.random(400, 600))
             apV3:SetY(apV3:GetY() + math.random(200))
-            AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+            local air_def_grp = AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
-            ScheduleCASMission(apV3, RussianTheaterCASSpawn, 1000)
+            ScheduleCASMission(apV3, RussianTheaterCASSpawn, 1000, air_def_grp)
         end
     end)
 end

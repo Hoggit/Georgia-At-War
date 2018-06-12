@@ -285,12 +285,13 @@ TheaterUpdate = function(state, theater)
     output = output .. "\n\nTHEATER OBJECTIVE:  Destroy all strike targets, all Command and Control (C2) units, and capture all primary airfields."
 
     return output
+end
 -- AddRussianTheaterCASGroup = function(state, group)
 --     state["Theaters"]["RussianTheater"]["OpforCAS"]
 -- end
     
 
-ScheduleCASMission = function(targetV3, spawn, zoneRadius)
+ScheduleCASMission = function(targetV3, spawn, zoneRadius, targetGrp)
     log("===== CAS Mission Requested.")
     --Create the zone
     local v2Point = POINT_VEC2:NewFromVec3(targetV3)
@@ -299,18 +300,33 @@ ScheduleCASMission = function(targetV3, spawn, zoneRadius)
     local zone = ZONE_RADIUS:New("CAS Zone", v2Point:GetVec2(), zoneRadius)
     -- Debugging the zone.
     -- zone:SmokeZone(SMOKECOLOR.White, 15, 50)
-    local seconds = math.random(120, 900) -- 2 minutes to 15 minutes
+    local seconds = math.random(1, 4) -- 2 minutes to 15 minutes
     log("===== Scheduling CAS Group to spawn in " .. seconds .. " seconds")
-    SCHEDULER:New(nil, SpawnOPFORCas, {zone, spawn}, seconds) 
+    SCHEDULER:New(nil, SpawnOPFORCas, {zone, spawn, targetGrp}, seconds) 
 end
 
-SpawnOPFORCas = function(zone, spawn)
+SpawnOPFORCas = function(zone, spawn, targetGrp)
     log("===== CAS Spawn begin")
     local casZone = AI_CAS_ZONE:New( zone, 100, 1500, 250, 600, zone )
     local casGroup = spawn:Spawn()
+    targetGrp:HandleEvent(EVENTS.Dead)
+    function targetGrp:OnEventDead(EventData)
+        --Spawn in the zone
+        local grp = EventData.IniGroup
+        local initGrpSize = grp:GetInitialSize()
+        local currentInZone = grp:CountInZone(zone)
+        log("===== Current alive in zone: " .. currentInZone .. " -- Initial Size: " .. initGrpSize .. " -- Ratio " .. currentInZone / initGrpSize .. " -- ")
+        if currentInZone / initGrpSize <= 0.3 then
+            grp:Destroy()
+            casZone:Accomplish()
+            casZone:__RTB(5)
+            -- Change this later to send in an il-76 or something.
+            RussianTheaterSA6Spawn:SpawnInZone(zone)
+        end
+    end
     casZone:SetControllable( casGroup )
     casZone:__Start ( 1 )
-    casZone:__Engage( 5 )
+    casZone:__Engage( 2 )
     log("===== CAS Spawn Done")
 end
 

@@ -25,6 +25,7 @@ process_escorts = function()
         local status,client = pcall(function() return CLIENT:FindByName(name, "", false) end)
         if status then
             --log("Getting unit for client")
+
             unit = client:GetClientGroupUnit()
         end
 
