@@ -29,14 +29,14 @@ RussianTheaterSA6Spawn = SPAWN:New("SA6")
 RussianTheaterEWRSpawn = SPAWN:New("EWR")
 RussianTheaterC2Spawn = SPAWN:New("C2")
 RussianTheaterAWACSSpawn = SPAWN:New("A50"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
-RUSTankerSpawn = SPAWN:New("RUSTanker"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
+RUSTankerSpawn = SPAWN:New("IL78-RUSTanker"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
 
 -- CAP Redfor spawns
-RussianTheaterMig212ShipSpawn = SPAWN:New("Mig212ship")
-RussianTheaterMig292ShipSpawn = SPAWN:New("Mig292ship")
-RussianTheaterSu272sShipSpawn = SPAWN:New("Su272ship")
-RussianTheaterMig312ShipSpawn = SPAWN:New("Mig312ship"):InitLimit(2, 0)
-RussianTheaterAWACSPatrol = SPAWN:New("RUSAWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
+RussianTheaterMig212ShipSpawn = SPAWN:New("Mig21-2ship")
+RussianTheaterMig292ShipSpawn = SPAWN:New("Mig29-2ship")
+RussianTheaterSu272sShipSpawn = SPAWN:New("Su27-2ship")
+RussianTheaterMig312ShipSpawn = SPAWN:New("Mig31-2ship"):InitLimit(2, 0)
+RussianTheaterAWACSPatrol = SPAWN:New("SU27-RUSAWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
 
 -- Strike Target Spawns
 RussianHeavyArtySpawn = SPAWN:New("ARTILLERY")
@@ -47,7 +47,12 @@ CommsArraySpawn = SPAWNSTATIC:NewFromStatic("Comms Array", country.id.RUSSIA)
 PowerPlantSpawn = SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA)
 
 -- Airfield CAS Spawns
-RussianTheaterCASSpawn = SPAWN:New("Su25TCASGroup")
+RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup")
+RussianTheaterCASSpawn:HandleEvent(EVENTS.EngineShutdown)
+function RussianTheaterCASSpawn:_OnEngineShutdown(EventData)
+    local grp = EventData.IniGroup
+    grp:Destroy()
+end
 --RussianTheatreCASEscort = SPAWN:New("Su27CASEscort")
 
 -- Group spanws for easy randomization
