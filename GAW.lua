@@ -318,7 +318,7 @@ SpawnOPFORCas = function(zone, spawn, targetGrp)
         log("===== Current alive in zone: " .. currentInZone .. " -- Initial Size: " .. initGrpSize .. " -- Ratio " .. currentInZone / initGrpSize .. " -- ")
         if currentInZone / initGrpSize <= 0.3 then
             grp:Destroy()
-            casZone:Accomplish()
+            -- casZone:Accomplish()
             casZone:__RTB(5)
             -- Change this later to send in an il-76 or something.
             RussianTheaterSA6Spawn:SpawnInZone(zone)
