@@ -52,9 +52,10 @@ russian_commander = function()
     --log("Iterating through " .. #baitargets .. " BAI targets")
     -- Get Alive BAI Targets and cleanup state
     for i=#baitargets, 1, -1 do
-        if baitargets[i] and baitargets[i]:IsAlive() then
+        local baitarget = baitargets[i][1]
+        if baitarget and baitarget:IsAlive() then
             local alive_units = 0
-            for UnitID, UnitData in pairs(baitargets[i]:GetUnits()) do
+            for UnitID, UnitData in pairs(baitarget:GetUnits()) do
                 if UnitData and UnitData:IsAlive() then
                     alive_units = alive_units + 1
                 end
@@ -62,9 +63,9 @@ russian_commander = function()
 
             --log("Percentage Alive:" .. baitargets[i]:GetInitialSize() / baitargets[i]:GetInitialSize() * 100)
 
-            if alive_units == 0 or alive_units / baitargets[i]:GetInitialSize() * 100 < 30 then
+            if alive_units == 0 or alive_units / baitarget:GetInitialSize() * 100 < 30 then
                 log("Not enough units, destroying")
-                baitargets[i]:Destroy()
+                baitarget:Destroy()
                 table.remove(baitargets, i)
             else
                 alive_bai_targets = alive_bai_targets + 1
