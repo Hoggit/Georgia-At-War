@@ -39,7 +39,13 @@ game_state = {
             ["CAP"] = {},
             ["BAI"] = {},
             ["AWACS"] = {},
-            ["Tanker"] = {}
+            ["Tanker"] = {},
+            ["FARPS"] = {
+                ["SW"] = AIRBASE:FindByName("SW Warehouse"),
+                ["NW"] = AIRBASE:FindByName("NW Warehouse"),
+                ["SE"] = AIRBASE:FindByName("SE Warehouse"),
+                ["NE"] = AIRBASE:FindByName("NE Warehouse"),
+            }
         }
     }
 }
