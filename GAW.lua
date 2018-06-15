@@ -102,16 +102,16 @@ end
 
 AddStrategicSAM = function(state)
     return function(theater)
-        return function(group)
+        return function(group, callsign)
             local sams = mist.utils.deepCopy(state["Theaters"][theater]['StrategicSAM'])
-            table.insert(sams, group)
+            table.insert(sams, {group, callsign})
             return sams
         end
     end
 end
 
-AddRussianTheaterStrategicSAM = function(state, group)
-    local sams = AddStrategicSAM(state)("Russian Theater")(group)
+AddRussianTheaterStrategicSAM = function(state, group, callsign)
+    local sams = AddStrategicSAM(state)("Russian Theater")(group, callsign)
     UpdateRussianSAMState(state, sams)
 end
 
@@ -140,68 +140,68 @@ AddCASTarget = function(state)
     end
 end
 
-AddRussianTheaterCASTarget = function(state, group)
+AddRussianTheaterCASTarget = function(state, group, callsign)
     local castargets = AddCASTarget(state)("Russian Theater")(group)
     UpdateRussianCASTargetsState(state, castargets)
 end
 
 AddC2 = function(state)
     return function(theater)
-        return function(group)
+        return function(group, callsign)
             local c2s = mist.utils.deepCopy(state["Theaters"][theater]["C2"])
-            table.insert(c2s, group)
+            table.insert(c2s, {group, callsign})
             return c2s
         end
     end
 end
 
-AddRussianTheaterC2 = function(state, group)
-    local c2s = AddC2(state)("Russian Theater")(group)
+AddRussianTheaterC2 = function(state, group, callsign)
+    local c2s = AddC2(state)("Russian Theater")(group, callsign)
     UpdateRussianC2State(state, c2s)
 end
 
 AddEWR = function(state)
     return function(theater)
-        return function(group)
+        return function(group, callsign)
             local EWRs = mist.utils.deepCopy(state["Theaters"][theater]["EWR"])
-            table.insert(EWRs, group)
+            table.insert(EWRs, {group, callsign})
             return EWRs
         end
     end
 end
 
-AddRussianTheaterEWR = function(state, group)
-    local ewrs = AddEWR(state)("Russian Theater")(group)
+AddRussianTheaterEWR = function(state, group, callsign)
+    local ewrs = AddEWR(state)("Russian Theater")(group, callsign)
     UpdateRussianEWRState(state, ewrs)
 end
 
 AddStrikeTarget = function(state)
     return function(theater)
-        return function(group)
+        return function(group, callsign)
             local StrikeTargets = mist.utils.deepCopy(state["Theaters"][theater]["StrikeTargets"])
-            table.insert(StrikeTargets, group)
+            table.insert(StrikeTargets, {group, callsign})
             return StrikeTargets
         end
     end
 end
 
-AddRussianTheaterStrikeTarget = function(state, group)
-    local targets = AddStrikeTarget(state)("Russian Theater")(group)
+AddRussianTheaterStrikeTarget = function(state, group, callsign)
+    local targets = AddStrikeTarget(state)("Russian Theater")(group, callsign)
     UpdateRussianStrikeTargetState(state, targets)
 end
 
 AddBAITarget = function(state)
     return function(theater)
-        return function(group)
+        return function(group, callsign)
             local BAITargets = mist.utils.deepCopy(state["Theaters"][theater]["BAI"])
-            table.insert(BAITargets, group)
+            table.insert(BAITargets, {group, callsign})
             return BAITargets
         end
     end
 end
 
-AddRussianTheaterBAITarget = function(state, group)
-    local targets = AddBAITarget(state)("Russian Theater")(group)
+AddRussianTheaterBAITarget = function(state, group, callsign)
+    local targets = AddBAITarget(state)("Russian Theater")(group, callsign)
     UpdateRussianBAIState(state, targets)
 end
 

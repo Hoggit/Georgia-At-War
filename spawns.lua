@@ -1,3 +1,20 @@
+-- Objective Names
+objective_names = {
+    "Blackjack", "Wildcard", "Crackpipe", "Bullhorn", "Outlaw", "Eclipse","Joker", "Anthill",
+    "Firefly", "Buzzard", "Eagle", "Rambo", "Rocky", "Dredd", "Smokey", "Vulture", "Parrot",
+    "Copper", "Ender", "Sanchez", "Freeman", "Bandito", "Atlanta", "Raleigh", "Charlotte", "Orlando",
+    "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Snowball"
+}
+
+objective_idx = 1
+
+getCallsign = function()
+    local callsign = objective_names[objective_idx]
+    objective_idx = objective_idx + 1
+    if objective_idx > #objective_names then objective_idx = 1 end
+    return callsign
+end
+
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
     ["Novorossiysk"] = SPAWN:New("NovoroTransport"),
@@ -71,19 +88,23 @@ OverlordSpawn:OnSpawnGroup(function(SpawnedGroup)
 end)
 
 RussianTheaterSA6Spawn:OnSpawnGroup(function(SpawnedGroup)
-    AddRussianTheaterStrategicSAM(game_state, SpawnedGroup)
+    local callsign = getCallsign()
+    AddRussianTheaterStrategicSAM(game_state, SpawnedGroup, callsign)
 end)
 
 RussianTheaterSA10Spawn:OnSpawnGroup(function(SpawnedGroup)
-    AddRussianTheaterStrategicSAM(game_state, SpawnedGroup)
+    local callsign = getCallsign()
+    AddRussianTheaterStrategicSAM(game_state, SpawnedGroup, callsign)
 end)
 
 RussianTheaterEWRSpawn:OnSpawnGroup(function(SpawnedGroup)
-    AddRussianTheaterEWR(game_state, SpawnedGroup)
+    local callsign = getCallsign()
+    AddRussianTheaterEWR(game_state, SpawnedGroup, callsign)
 end)
 
 RussianTheaterC2Spawn:OnSpawnGroup(function(SpawnedGroup)
-    AddRussianTheaterC2(game_state, SpawnedGroup)
+    local callsign = getCallsign()
+    AddRussianTheaterC2(game_state, SpawnedGroup, callsign)
 end)
 
 RUSTankerSpawn:OnSpawnGroup(function(SpawnedGroup)
@@ -100,7 +121,8 @@ end)
 
 for i,v in ipairs(baispawns) do
     v:OnSpawnGroup(function(SpawnedGroup)
-        AddRussianTheaterBAITarget(game_state, SpawnedGroup)
+        local callsign = getCallsign()
+        AddRussianTheaterBAITarget(game_state, SpawnedGroup, callsign)
     end)
 end
 
