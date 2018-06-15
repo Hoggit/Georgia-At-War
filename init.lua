@@ -27,7 +27,8 @@ for i=1, 10 do
     local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
     local spawn_index = math.random(3)
     local static = StaticSpawns[spawn_index]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
-    AddRussianTheaterStrikeTarget(game_state, STATIC:FindByName(static:getName()))
+    local callsign = getCallsign()
+    AddRussianTheaterStrikeTarget(game_state, STATIC:FindByName(static:getName()), callsign)
 end
 
 -- Kick off the commanders

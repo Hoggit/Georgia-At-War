@@ -19,7 +19,9 @@ russian_commander = function()
     -- Get the number of C2s in existance, and cleanup the state for dead ones.
     -- We'll make some further determiniation of what happens based on this
     for i=#c2s, 1, -1 do
-        if c2s[i] and c2s[i]:IsAlive() then
+        local c2 = c2s[i][1]
+        local callsign = c2s[i][2]
+        if c2 and c2:IsAlive() then
             alivec2s = alivec2s + 1
         else
             table.remove(c2s, i)
