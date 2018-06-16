@@ -51,5 +51,10 @@ SCHEDULER:New(nil, function()
     MESSAGE:New(state, 60):ToAll()
 end, {}, 120, 600)
 
+buildHitEvent(GROUP:FindByName("FARP DEFENSE #003"), "NE FARP")
+buildHitEvent(GROUP:FindByName("FARP DEFENSE"), "NW FARP")
+buildHitEvent(GROUP:FindByName("FARP DEFENSE #002"), "SE FARP")
+buildHitEvent(GROUP:FindByName("FARP DEFENSE #001"), "SW FARP")
+
 BASE:I("HOGGIT GAW - INIT COMPLETE")
 log("init.lua complete")
