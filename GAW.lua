@@ -330,7 +330,7 @@ SpawnOPFORCas = function(zone, spawn, targetGrp)
             grp:Destroy()
             casZone:__RTB(5)
             -- Change this later to send in an il-76 or something.
-            RussianTheaterSA6Spawn:SpawnInZone(zone)
+            RussianTheaterAirfieldDefSpawn:SpawnInZone(zone)
         end
     end
     casZone:SetControllable( casGroup )

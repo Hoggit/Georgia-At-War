@@ -45,6 +45,7 @@ RussianTheaterSA10Spawn = SPAWN:New("SA10")
 RussianTheaterSA6Spawn = SPAWN:New("SA6")
 RussianTheaterEWRSpawn = SPAWN:New("EWR")
 RussianTheaterC2Spawn = SPAWN:New("C2")
+RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
 RussianTheaterAWACSSpawn = SPAWN:New("A50"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
 RUSTankerSpawn = SPAWN:New("IL78-RUSTanker"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
 
