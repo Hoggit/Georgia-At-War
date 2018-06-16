@@ -46,7 +46,10 @@ TexacoSpawn:Spawn()
 local shell = ShellSpawn:Spawn()
 log ("Spawned shell. GroupName is " .. shell.GroupName)
 
-
+SCHEDULER:New(nil, function() 
+    local state = TheaterUpdate(game_state, "Russian Theater")
+    MESSAGE:New(state, 60):ToAll()
+end, {}, 120, 600)
 
 BASE:I("HOGGIT GAW - INIT COMPLETE")
 log("init.lua complete")

@@ -15,6 +15,96 @@ getCallsign = function()
     return callsign
 end
 
+local attack_message_lock = 0
+
+buildHitEvent = function(group, callsign)
+    for i,unit in ipairs(group:GetUnits()) do
+        unit:HandleEvent(EVENTS.Hit)
+        function unit:OnEventHit(EventData)
+            if EventData.IniPlayerName then
+                local etime = timer.getAbsTime() + env.mission.start_time
+                if etime > attack_message_lock + 5 then
+                    local output = EventData.IniGroupName 
+                    output = output .. " (" .. EventData.IniPlayerName .. ")"
+                    output = output .. " is attacking " .. EventData.TgtTypeName .. " at objective " .. callsign
+                    MESSAGE:New(output, 10):ToAll()
+                    attack_message_lock = etime
+                end
+            end
+        end
+    end
+end
+
+buildCheckSAMEvent = function(group)
+    for i,unit in ipairs(group:GetUnits()) do
+        unit:HandleEvent(EVENTS.Dead)
+        function unit:OnEventDead(EventData)
+            local radars = 0
+            local launchers = 0
+            for i,inner_unit in ipairs(group:GetUnits()) do
+                if inner_unit:GetTypeName() == "Kub 2P25 ln" then launchers = launchers + 1 end
+                if inner_unit:GetTypeName() == "Kub 1S91 str" then radars = radars + 1 end
+                if inner_unit:GetTypeName() == "S-300PS 64H6E sr" then radars = radars + 1 end
+                if inner_unit:GetTypeName() == "S-300PS 40B6MD sr" then radars = radars + 1 end
+                if inner_unit:GetTypeName() == "S-300PS 40B6M tr" then radars = radars + 1 end
+                if inner_unit:GetTypeName() == "S-300PS 5P85C ln" then launchers = launchers + 1 end
+                if inner_unit:GetTypeName() == "S-300PS 5P85D ln" then launchers = launchers + 1 end
+            end
+
+            if radars == 0 or launchers == 0 then
+                for i=#game_state['Theaters']['Russian Theater']['StrategicSAM'], 1, -1 do
+                    if game_state['Theaters']['Russian Theater']['StrategicSAM'][i][1].GroupName == group.GroupName then
+                        table.remove(game_state['Theaters']['Russian Theater']['StrategicSAM'], i)
+                        log("Removing SAM from target list")
+                    end
+                end
+            end
+        end
+    end
+end
+
+buildCheckEWREvent = function(group)
+    for i,unit in ipairs(group:GetUnits()) do
+        unit:HandleEvent(EVENTS.Dead)
+        function unit:OnEventDead(EventData)
+            local radars = 0
+            for i,inner_unit in ipairs(group:GetUnits()) do
+                if inner_unit:GetTypeName() == "1L13 EWR" then radars = radars + 1 end
+            end
+
+            if radars == 0 then
+                for i=#game_state['Theaters']['Russian Theater']['EWR'], 1, -1 do
+                    if game_state['Theaters']['Russian Theater']['EWR'][i][1].GroupName == group.GroupName then
+                        table.remove(game_state['Theaters']['Russian Theater']['EWR'], i)
+                        log("Removing EWR from target list")
+                    end
+                end
+            end
+        end
+    end
+end
+
+buildCheckC2Event = function(group)
+    for i,unit in ipairs(group:GetUnits()) do
+        unit:HandleEvent(EVENTS.Dead)
+        function unit:OnEventDead(EventData)
+            local cps = 0
+            for i,inner_unit in ipairs(group:GetUnits()) do
+                if inner_unit:GetTypeName() == "SKP-11" then cps = cps + 1 end
+            end
+
+            if cps == 0 then
+                for i=#game_state['Theaters']['Russian Theater']['C2'], 1, -1 do
+                    if game_state['Theaters']['Russian Theater']['C2'][i][1].GroupName == group.GroupName then
+                        table.remove(game_state['Theaters']['Russian Theater']['C2'], i)
+                        log("Removing C2 from target list")
+                    end
+                end
+            end
+        end
+    end
+end
+
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
     ["Novorossiysk"] = SPAWN:New("NovoroTransport"),
@@ -91,21 +181,30 @@ end)
 RussianTheaterSA6Spawn:OnSpawnGroup(function(SpawnedGroup)
     local callsign = getCallsign()
     AddRussianTheaterStrategicSAM(game_state, SpawnedGroup, callsign)
+    buildHitEvent(SpawnedGroup, callsign)
+    buildCheckSAMEvent(SpawnedGroup)
+   
 end)
 
 RussianTheaterSA10Spawn:OnSpawnGroup(function(SpawnedGroup)
     local callsign = getCallsign()
     AddRussianTheaterStrategicSAM(game_state, SpawnedGroup, callsign)
+    buildHitEvent(SpawnedGroup, callsign)
+    buildCheckSAMEvent(SpawnedGroup)
 end)
 
 RussianTheaterEWRSpawn:OnSpawnGroup(function(SpawnedGroup)
     local callsign = getCallsign()
     AddRussianTheaterEWR(game_state, SpawnedGroup, callsign)
+    buildHitEvent(SpawnedGroup, callsign)
+    buildCheckEWREvent(SpawnedGroup)
 end)
 
 RussianTheaterC2Spawn:OnSpawnGroup(function(SpawnedGroup)
     local callsign = getCallsign()
     AddRussianTheaterC2(game_state, SpawnedGroup, callsign)
+    buildHitEvent(SpawnedGroup, callsign)
+    buildCheckC2Event(SpawnedGroup)
 end)
 
 RUSTankerSpawn:OnSpawnGroup(function(SpawnedGroup)
