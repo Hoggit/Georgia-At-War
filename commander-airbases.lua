@@ -36,7 +36,6 @@ AirFieldIsDefended = function(baseName)
     return zone:GetScannedCoalition(BLUE) ~= nil
 end
 
-
 --Airbase -> Spawn Map.
 AirbaseSpawns = {
     [AIRBASE.Caucasus.Gelendzhik]=GelenTransportSpawn,
