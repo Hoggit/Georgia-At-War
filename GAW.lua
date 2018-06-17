@@ -132,16 +132,17 @@ end
 
 AddCASTarget = function(state)
     return function(theater)
-        return function(group)
+        return function(group, callsign)
             local castargets = mist.utils.deepCopy(state["Theaters"][theater]["CASTargets"])
             table.insert(castargets, group)
+            group:GetCoordinate():MarkToCoalitionBlue("CAS - " .. callsign)
             return castargets
         end
     end
 end
 
 AddRussianTheaterCASTarget = function(state, group, callsign)
-    local castargets = AddCASTarget(state)("Russian Theater")(group)
+    local castargets = AddCASTarget(state)("Russian Theater")(group, callsign)
     UpdateRussianCASTargetsState(state, castargets)
 end
 
@@ -150,6 +151,7 @@ AddC2 = function(state)
         return function(group, callsign)
             local c2s = mist.utils.deepCopy(state["Theaters"][theater]["C2"])
             table.insert(c2s, {group, callsign})
+            group:GetCoordinate():MarkToCoalitionBlue("C2 - "..callsign)
             return c2s
         end
     end
@@ -165,6 +167,7 @@ AddEWR = function(state)
         return function(group, callsign)
             local EWRs = mist.utils.deepCopy(state["Theaters"][theater]["EWR"])
             table.insert(EWRs, {group, callsign})
+            group:GetCoordinate():MarkToCoalitionBlue("EWR - "..callsign)
             return EWRs
         end
     end
@@ -180,6 +183,7 @@ AddStrikeTarget = function(state)
         return function(group, callsign)
             local StrikeTargets = mist.utils.deepCopy(state["Theaters"][theater]["StrikeTargets"])
             table.insert(StrikeTargets, {group, callsign})
+            group:GetCoordinate():MarkToCoalitionBlue("STRIKE - "..callsign)
             return StrikeTargets
         end
     end
@@ -195,6 +199,7 @@ AddBAITarget = function(state)
         return function(group, callsign)
             local BAITargets = mist.utils.deepCopy(state["Theaters"][theater]["BAI"])
             table.insert(BAITargets, {group, callsign})
+            group:GetCoordinate():MarkToCoalitionBlue("BAI - "..callsign)
             return BAITargets
         end
     end
