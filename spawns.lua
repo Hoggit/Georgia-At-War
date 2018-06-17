@@ -215,9 +215,19 @@ RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
     AddRussianTheaterAWACSTarget(game_state, SpawnedGroup)
 end)
 
--- RussianTheaterCASSpawn:OnSpawnGroup(function(SpawnedGroup)
---     AddRussianTheaterCASGroup(game_state, SpawnedGroup)
--- end)
+SpawnOPFORCas = function(zone, spawn)
+    log("===== CAS Spawn begin")
+    local casZone = AI_CAS_ZONE:New( zone, 100, 1500, 250, 600, zone )
+    local casGroup = spawn:Spawn()
+    casGroup:HandleEvent(EVENTS.EngineShutdown, function(EventData)
+        casGroup:Destroy()
+    end)
+    
+    casZone:SetControllable( casGroup )
+    casZone:__Start ( 1 )
+    casZone:__Engage( 2 )
+    log("===== CAS Spawn Done")
+end
 
 for i,v in ipairs(baispawns) do
     v:OnSpawnGroup(function(SpawnedGroup)
@@ -241,7 +251,6 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
             apV3:SetY(apV3:GetY() + math.random(200))
             local air_def_grp = AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
-            ScheduleCASMission(apV3, RussianTheaterCASSpawn, 1000, air_def_grp)
         end
     end)
 end

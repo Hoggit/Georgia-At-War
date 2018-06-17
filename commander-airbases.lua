@@ -19,21 +19,27 @@ KrasnodarCenterTransportSpawn = SPAWN:New("KrasCenterRussiaTransport")
 KrasnodarPashkovskyTransportSpawn = SPAWN:New("KrasPashRussiaTransport")
 RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
 
-AttackableAirfield = function()
+AttackableAirbases = function(airbaseList)
     local filtered = {}
-    for k,baseName in pairs(Airbases) do
+    for k,baseName in pairs(airbaseList) do
         local base = AIRBASE:FindByName(baseName)
         if base:GetCoalition() == NEUTRAL or base:GetCoalition() == BLUE then
-            table.insert(filtered,base)
+            table.insert(filtered,baseName)
         end
     end
     return filtered
 end
 
-AirFieldIsDefended = function(baseName)
+AirfieldIsDefended = function(baseName)
     local base = AIRBASE:FindByName(baseName)
     local zone = ZONE_RADIUS:New("airfield-defense-chk", base:GetVec2(), 1500)
-    return zone:GetScannedCoalition(BLUE) ~= nil
+    -- return zone:GetScannedCoalition(BLUE) ~= nil --BROKEN
+    local groupsInZone = SET_GROUP
+        :New()
+        :FilterCoalitions("blue")
+        :FilterCategoryGround()
+        :FilterStart()
+    return #groupsInZone > 0
 end
 
 --Airbase -> Spawn Map.
@@ -47,12 +53,12 @@ AirbaseSpawns = {
 
 for airbase,spawn in pairs(AirbaseSpawns) do
     spawn:OnSpawnGroup(function(SpawnedGroup)
-        SpawnedGroup:HandleEvvent(EVENTS.Land)
+        SpawnedGroup:HandleEvent(EVENTS.Land)
         function SpawnedGroup:OnEventLand(EventData)
             local apV3 = POINT_VEC3:NewFromVec3(EventData.place:getPosition().p)
             apV3:SetX(apV3:GetX() + math.random(400, 600))
             apV3:SetY(apV3:GetY() + math.random(200))
-            local air_def_grp = AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+            local air_def_grp = RussianTheaterAirfieldDefSpawn:SpawnFromVec2(apV3:GetVec2())
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
         end
     end)

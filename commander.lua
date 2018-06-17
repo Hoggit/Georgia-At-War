@@ -137,6 +137,26 @@ russian_commander = function()
         
         RussianTheaterMig312ShipSpawn:Spawn()
     end
+
+
+    if math.random() > 0 then
+        local targets = AttackableAirbases(Airbases)
+        local target = targets[ math.random (#targets) ]
+        log("The Russian commander has decided to strike " .. target .. " airbase")
+        if AirfieldIsDefended(target) then
+            log(target .. " is defended by Blue! Send in the hounds.")
+            local base = AIRBASE:FindByName(target)
+            local zone = ZONE_RADIUS:New("Airfield-attack-cas-zone", base:GetVec2(), 1500)
+            SpawnOPFORCas(zone, RussianTheaterCASSpawn)
+        else
+            log(target .. " appears undefended! Muahaha!")
+            local spawn = AirbaseSpawns[target]
+            spawn:Spawn()
+        end
+    end
+
+
+
 end
 
 log("commander.lua complete")
