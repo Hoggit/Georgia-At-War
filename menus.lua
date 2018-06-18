@@ -25,7 +25,7 @@ buildMenu = function(Group)
 SW FARP: 44 55'45"N 38 5'17" E
 NE FARP: 45 10'4" N 38 55'22"E
 SE FARP: 44 50'7" N 38 46'34"E]]
-        MESSAGE:New(output):ToGroup(Group)
+        MESSAGE:New(output, 60):ToGroup(Group)
     end)
 
     local MissionMenu = MENU_GROUP_COMMAND:New(Group, "Get Mission Status", nil, function()
