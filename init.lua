@@ -48,8 +48,8 @@ log ("Spawned shell. GroupName is " .. shell.GroupName)
 
 SCHEDULER:New(nil, function() 
     local state = TheaterUpdate(game_state, "Russian Theater")
-    MESSAGE:New(state, 60):ToAll()
-end, {}, 120, 600)
+    MESSAGE:New(state, 45):ToAll()
+end, {}, 120, 900)
 
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #003"), "NE FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE"), "NW FARP")

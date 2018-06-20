@@ -1,22 +1,27 @@
 -- Global Menu, available to everyone
 XportMenu = MENU_COALITION:New(coalition.side.BLUE, "Deploy Airfield Security Forces")
 FARPXportMenu = MENU_COALITION:New(coalition.side.BLUE, "Deploy FARP/Warehouse Security Forces")
+imperialSettings = SETTINGS:Set("IMPERIALDOGS")
+imperialSettings:SetImperial()
+metricSettings = SETTINGS:Set("COMMUNISTPIGS")
 
 -- Per group menu, called on groupspawn
 buildMenu = function(Group)
     local type
+    local useSettings
 
     if string.match(Group.GroupName, "Hawg") then 
         type = 2
-        _SETTINGS:SetImperial()
+        useSettings = imperialSettings
+
     elseif string.match(Group.GroupName, "Chevy") then
         type = 4
-        _SETTINGS:SetMetric()
+        useSettings = metricSettings
     elseif string.match(Group.GroupName, "Colt") then
         type = 3
-        _SETTINGS:SetImperial()
+        useSettings = imperialSettings
     else
-        _SETTINGS:SetImperial()
+        useSettings = imperialSettings
         type = 1
     end
 
@@ -43,9 +48,9 @@ SE FARP: 44 50'7" N 38 46'34"E]]
                 g:GetCoordinate():ToStringLLDMS(), 
                 g:GetCoordinate():ToStringMGRS(),
                 g:GetCoordinate():ToStringLLDDM(),
-                g:GetCoordinate():ToStringBR(Group:GetCoordinate()),
+                "",
             }
-            sams = sams .. "OBJ: ".. callsign .." -- TYPE: " .. split(g.GroupName, "#")[1] ..": \t" .. coords[type] .. "\n"
+            sams = sams .. "OBJ: ".. callsign .." -- TYPE: " .. split(g.GroupName, "#")[1] ..": \t" .. coords[type] .. " " .. g:GetCoordinate():ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         MESSAGE:New(sams, 60):ToGroup(Group)
     end)
@@ -59,9 +64,9 @@ SE FARP: 44 50'7" N 38 46'34"E]]
                 g:GetCoordinate():ToStringLLDMS(), 
                 g:GetCoordinate():ToStringMGRS(),
                 g:GetCoordinate():ToStringLLDDM(),
-                g:GetCoordinate():ToStringBR(Group:GetCoordinate()),
+                "",
             }
-            bais = bais .. "OBJ: " .. callsign .. " -- " .. split(g.GroupName, "#")[1] .. ": \t" .. coords[type] .. "\n"
+            bais = bais .. "OBJ: " .. callsign .. " -- " .. split(g.GroupName, "#")[1] .. ": \t" .. coords[type] .. " " .. g:GetCoordinate():ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         MESSAGE:New(bais, 60):ToGroup(Group)
     end)
@@ -75,10 +80,10 @@ SE FARP: 44 50'7" N 38 46'34"E]]
                 g:GetCoordinate():ToStringLLDMS(), 
                 g:GetCoordinate():ToStringMGRS(),
                 g:GetCoordinate():ToStringLLDDM(),
-                g:GetCoordinate():ToStringBR(Group:GetCoordinate()),
+                "",
             }
             
-            strikes = strikes .. "OBJ: " .. callsign .. " -- MOBILE CP: \t" .. coords[type] .. "\n"
+            strikes = strikes .. "OBJ: " .. callsign .. " -- MOBILE CP: \t" .. coords[type] .. " " .. g:GetCoordinate():ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         
         for i,group_table in ipairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
@@ -88,10 +93,10 @@ SE FARP: 44 50'7" N 38 46'34"E]]
                 g:GetCoordinate():ToStringLLDMS(), 
                 g:GetCoordinate():ToStringMGRS(),
                 g:GetCoordinate():ToStringLLDDM(),
-                g:GetCoordinate():ToStringBR(Group:GetCoordinate()),
+                "",
             }
 
-            strikes = strikes .. "OBJ: " .. callsign .. " -- " .. split(g.StaticName, "#")[1] .. ": \t" .. coords[type] .. "\n"
+            strikes = strikes .. "OBJ: " .. callsign .. " -- " .. split(g.StaticName, "#")[1] .. ": \t" .. coords[type] .. " " .. g:GetCoordinate():ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
 
         MESSAGE:New(strikes, 60):ToGroup(Group)
@@ -101,20 +106,20 @@ SE FARP: 44 50'7" N 38 46'34"E]]
         local intercepts ="INTERCEPTION TARGETS:\n"
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
             local coords = {
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringLLDMS(), 
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringLLDDM(),
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringLLDMS(), 
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringMGRS(),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringLLDDM(),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings),
             }
             intercepts = intercepts .. "AWACS: \t" .. coords[type] .. "\n"
         end
 
         for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
             local coords = {
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringLLDMS(), 
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()) .. " -- " .. g:GetCoordinate():ToStringLLDDM(),
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate()),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringLLDMS(), 
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringMGRS(),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringLLDDM(),
+                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings),
             }
             intercepts = intercepts .. "TANKER: \t" .. coords[type] .. "\n"
         end
