@@ -139,6 +139,13 @@ RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
 RussianTheaterAWACSSpawn = SPAWN:New("A50"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
 RUSTankerSpawn = SPAWN:New("IL78-RUSTanker"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
 
+-- REDFOR specific airfield defense spawns
+DefKrasPash = SPAWN:New("Red Airfield Defense Kras-Pash 1")
+DefKrasCenter = SPAWN:New("Red Airfield Defense Kras-Center 1")
+DefKrymsk = SPAWN:New("Red Airfield Defense Krymsk 1")
+DefNovo = SPAWN:New("Red Airfield Defense Novo 1")
+DefGlensPenis = SPAWN:New("Red Airfield Defense GlensDick 1")
+
 -- CAP Redfor spawns
 RussianTheaterMig212ShipSpawn = SPAWN:New("Mig21-2ship")
 RussianTheaterMig292ShipSpawn = SPAWN:New("Mig29-2ship")

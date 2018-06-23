@@ -44,21 +44,20 @@ end
 
 --Airbase -> Spawn Map.
 AirbaseSpawns = {
-    [AIRBASE.Caucasus.Gelendzhik]=GelenTransportSpawn,
-    [AIRBASE.Caucasus.Krasnodar_Pashkovsky]=KrasnodarPashkovskyTransportSpawn,
-    [AIRBASE.Caucasus.Krasnodar_Center]=KrasnodarCenterTransportSpawn,
-    [AIRBASE.Caucasus.Novorossiysk]=NovoroTransportSpawn,
-    [AIRBASE.Caucasus.Krymsk]=KrymskTransportSpawn
+    [AIRBASE.Caucasus.Gelendzhik]={GelenTransportSpawn, DefGlensPenis},
+    [AIRBASE.Caucasus.Krasnodar_Pashkovsky]={KrasnodarPashkovskyTransportSpawn, DefKrasPash},
+    [AIRBASE.Caucasus.Krasnodar_Center]={KrasnodarCenterTransportSpawn, DefKrasCenter},
+    [AIRBASE.Caucasus.Novorossiysk]={NovoroTransportSpawn, DefNovo},
+    [AIRBASE.Caucasus.Krymsk]={KrymskTransportSpawn, DefKrymsk}
 }
 
-for airbase,spawn in pairs(AirbaseSpawns) do
+for airbase,spawn_info in pairs(AirbaseSpawns) do
+    local spawn = spawn_info[1]
+    local defense_group = spawn_info[2]
     spawn:OnSpawnGroup(function(SpawnedGroup)
         SpawnedGroup:HandleEvent(EVENTS.Land)
         function SpawnedGroup:OnEventLand(EventData)
-            local apV3 = POINT_VEC3:NewFromVec3(EventData.place:getPosition().p)
-            apV3:SetX(apV3:GetX() + math.random(400, 600))
-            apV3:SetY(apV3:GetY() + math.random(200))
-            local air_def_grp = RussianTheaterAirfieldDefSpawn:SpawnFromVec2(apV3:GetVec2())
+            defense_group:Spawn()
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
         end
     end)

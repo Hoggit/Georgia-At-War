@@ -150,7 +150,7 @@ russian_commander = function()
             SpawnOPFORCas(zone, RussianTheaterCASSpawn)
         else
             log(target .. " appears undefended! Muahaha!")
-            local spawn = AirbaseSpawns[target]
+            local spawn = AirbaseSpawns[target][1]
             spawn:Spawn()
         end
     end

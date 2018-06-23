@@ -56,5 +56,7 @@ buildHitEvent(GROUP:FindByName("FARP DEFENSE"), "NW FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #002"), "SE FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #001"), "SW FARP")
 
+AirbaseSpawns[AIRBASE.Caucasus.Krasnodar_Pashkovsky][1]:Spawn()
+
 BASE:I("HOGGIT GAW - INIT COMPLETE")
 log("init.lua complete")
