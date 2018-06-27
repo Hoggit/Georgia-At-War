@@ -32,19 +32,28 @@ for i=1, 10 do
 end
 
 -- Kick off the commanders
-SCHEDULER:New(nil, function()
-    log("Starting Russian Commander, Comrade")
-    --pcall(russian_commander)
-    russian_commander()
-end, {}, 60, 400)
+local commander_coro = coroutine.create(russian_commander)
+local last_complete_time = 0
+function commander_loop()
+    mist.scheduleFunction(commander_loop, {}, timer.getTime() + 1)
+    if coroutine.status(commander_coro) == 'suspended' then
+        coroutine.resume(commander_coro)
+    end
+
+    if coroutine.status(commander_coro) == 'dead' and timer.getTime() > last_complete_time + 400 then
+        commander_coro = coroutine.create(russian_commander)
+        coroutine.resume(commander_coro)
+    end
+end
+
+commander_loop()
 
 -- Kick off the supports
 RussianTheaterAWACSSpawn:Spawn()
 OverlordSpawn:Spawn()
 RUSTankerSpawn:Spawn()
 TexacoSpawn:Spawn()
-local shell = ShellSpawn:Spawn()
-log ("Spawned shell. GroupName is " .. shell.GroupName)
+ShellSpawn:Spawn()
 
 SCHEDULER:New(nil, function() 
     local state = TheaterUpdate(game_state, "Russian Theater")
