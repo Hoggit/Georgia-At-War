@@ -1,7 +1,7 @@
 -- Main game loop, decision making about spawns happen here.
 russian_commander = function()
     -- Russian Theater Decision Making
-    log("Russian commander is thinking...", 2)
+    log("Russian commander is thinking...")
     local time = timer.getAbsTime() + env.mission.start_time
     local c2s = game_state["Theaters"]["Russian Theater"]["C2"]
     local caps = game_state["Theaters"]["Russian Theater"]["CAP"]
@@ -27,8 +27,8 @@ russian_commander = function()
             table.remove(c2s, i)
         end
     end
+
     log("Russian commander has " .. alivec2s .. " command posts available...")
-    coroutine.yield()
 
     -- Get alive caps and cleanup state
     for i=#caps, 1, -1 do
@@ -45,11 +45,10 @@ russian_commander = function()
             log("Found inactive cap, removing")
             table.remove(caps, i)
         end
-        coroutine.yield()
     end
 
 
-    log("The Russian commander has " .. alive_caps .. " flights alive", 2)
+    log("The Russian commander has " .. alive_caps .. " flights alive")
     --log("Iterating through " .. #baitargets .. " BAI targets")
     -- Get Alive BAI Targets and cleanup state
     for i=#baitargets, 1, -1 do
@@ -60,7 +59,6 @@ russian_commander = function()
                 if UnitData and UnitData:IsAlive() then
                     alive_units = alive_units + 1
                 end
-                coroutine.yield()
             end
 
             --log("Percentage Alive:" .. baitargets[i]:GetInitialSize() / baitargets[i]:GetInitialSize() * 100)
@@ -75,23 +73,21 @@ russian_commander = function()
         else
             table.remove(baitargets, i)
         end
-        coroutine.yield()
     end
 
 
     -- If there are no more alive C2s then nothign new can happen, the units out there are completely on their own
-    -- if alivec2s == 0 then log('Russian commander whispers "BLYAT!" and runs for the hills before he ends up in a gulag.'); return nil end
+    if alivec2s == 0 then log('Russian commander whispers "BLYAT!" and runs for the hills before he ends up in a gulag.'); return nil end
 
     -- Setup some decision parameters based on how many c2's are alive
     if alivec2s == 3 then random_cap = 30 end
     if alivec2s == 2 then random_cap = 60; adcap_chance = 0.4 end
     if alivec2s == 1 then random_cap = 120 adcap_chance = 0.8 end
-    if alivec2s == 0 then random_cap = 240 adcap_chance = 0.4 end
     local command_delay = math.random(10, random_cap)
-    log("The Russian commander has a command delay of " .. command_delay .. " and a " .. (adcap_chance * 100) .. "% chance of getting decent planes...", 2)
+    log("The Russian commander has a command delay of " .. command_delay .. " and a " .. (adcap_chance * 100) .. "% chance of getting decent planes...")
 
     if alive_caps < max_caps then
-        log("The Russian commander is going to request " .. (max_caps - alive_caps) .. " additional CAP units.", 2)
+        log("The Russian commander is going to request " .. (max_caps - alive_caps) .. " additional CAP units.")
         for i = alive_caps + 1, max_caps do
             SCHEDULER:New(nil, function()
                 if math.random() < adcap_chance then
@@ -116,12 +112,11 @@ russian_commander = function()
                     end
                 end
             end, {}, command_delay)
-            coroutine.yield()
         end
     end
 
     if alive_bai_targets < max_bai then
-        log("The Russian Commander is going to request " .. (max_bai - alive_bai_targets) .. " additional strategic ground units", 2)
+        log("The Russian Commander is going to request " .. (max_bai - alive_bai_targets) .. " additional strategic ground units")
         for i = alive_bai_targets + 1, max_bai do
             SCHEDULER:New(nil, function()
                 local baispawn = baispawns[math.random(#baispawns)]
@@ -129,7 +124,6 @@ russian_commander = function()
                 local zone = ZONE:New("NorthCAS" .. zone_index)
                 baispawn:SpawnInZone(zone, true)
             end, {}, command_delay)
-            coroutine.yield()
         end
     end
 
@@ -150,17 +144,19 @@ russian_commander = function()
         local target = targets[ math.random (#targets) ]
         log("The Russian commander has decided to strike " .. target .. " airbase")
         if AirfieldIsDefended(target) then
-            log(target .. " is defended by Blue! Send in the hounds.", 2)
+            log(target .. " is defended by Blue! Send in the hounds.")
             local base = AIRBASE:FindByName(target)
             local zone = ZONE_RADIUS:New("Airfield-attack-cas-zone", base:GetVec2(), 1500)
             SpawnOPFORCas(zone, RussianTheaterCASSpawn)
         else
-            log(target .. " appears undefended! Muahaha!", 2)
+            log(target .. " appears undefended! Muahaha!")
             local spawn = AirbaseSpawns[target][1]
             spawn:Spawn()
         end
     end
+
+
+
 end
 
-log("commander.lua complete", 2)
-last_complete_time = timer.getTime()
+log("commander.lua complete")

@@ -1,14 +1,12 @@
 -- Setup logging
-logLevel = 2 --0=quiet, 1=normal, 2=verbose
+logFile = io.open(lfs.writedir()..[[Logs\Hoggit-GAW.log]], "w")
+--JSON = (loadfile "JSON.lua")()
 
-function log(str, level)
-    local level = level or 1
-    if level <= logLevel then
-        local logFile = io.open(lfs.writedir()..[[Logs\Hoggit-GAW.log]], "a")
-        if str == nil then str = 'nil' end
-        if logFile then
-            logFile:write("HOGGIT GAW LOG - " .. str .."\r\n")
-        end
+function log(str)
+    if str == nil then str = 'nil' end
+    if logFile then
+       logFile:write("HOGGIT GAW LOG - " .. str .."\r\n")
+       logFile:flush()
     end
 end
 
@@ -53,7 +51,6 @@ game_state = {
 }
 
 log("Game State INIT")
-coros = {}
 
 UpdateTheaterState = function(old_state)
     local new_state = mist.utils.deepCopy(old_state)
