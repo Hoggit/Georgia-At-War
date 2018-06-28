@@ -1,3 +1,7 @@
+-- Setup JSON
+local jsonlib = lfs.writedir() .. "Scripts\\GAW\\json.lua"
+json = loadfile(jsonlib)()
+
 -- Setup logging
 logFile = io.open(lfs.writedir()..[[Logs\Hoggit-GAW.log]], "w")
 --JSON = (loadfile "JSON.lua")()
@@ -52,67 +56,19 @@ game_state = {
 
 log("Game State INIT")
 
-UpdateTheaterState = function(old_state)
-    local new_state = mist.utils.deepCopy(old_state)
-    return function(theater)
-        return function(key)
-            return function(value)
-                new_state["Theaters"][theater][key] = value
-                game_state = new_state
-            end
+AddStrategicSAM = function(theater)
+    return function(group, callsign)
+        local units = {}
+        for id,unit in pairs(group:GetUnits()) do
+
         end
+
+        --game_state["Theaters"][theater]['StrategicSAM'][group:ID], callsign})
     end
 end
 
-UpdateRussianSAMState = function(state, sams)
-    UpdateTheaterState(state)("Russian Theater")("StrategicSAM")(sams)
-end
-
-UpdateRussianStrikeTargetState = function(state, targets)
-    UpdateTheaterState(state)("Russian Theater")("StrikeTargets")(targets)
-end
-
-UpdateRussianCAPState = function(state, caps)
-    UpdateTheaterState(state)("Russian Theater")("CAP")(caps)
-end
-
-UpdateRussianCASTargetsState = function(state, castargets)
-    UpdateTheaterState(state)("Russian Theater")("CASTargets")(castargets)
-end
-
-UpdateRussianC2State = function(state, c2s)
-    UpdateTheaterState(state)("Russian Theater")("C2")(c2s)
-end
-
-UpdateRussianEWRState = function(state, ewrs)
-    UpdateTheaterState(state)("Russian Theater")("EWR")(ewrs)
-end
-
-UpdateRussianBAIState = function(state, bais)
-    UpdateTheaterState(state)("Russian Theater")("BAI")(bais)
-end
-
-UpdateRussianTankerState = function(state, tankers)
-    UpdateTheaterState(state)("Russian Theater")("Tanker")(tankers)
-end
-
-UpdateRussianAWACSState = function(state, awacs)
-    UpdateTheaterState(state)("Russian Theater")("AWACS")(awacs)
-end
-
-AddStrategicSAM = function(state)
-    return function(theater)
-        return function(group, callsign)
-            local sams = mist.utils.deepCopy(state["Theaters"][theater]['StrategicSAM'])
-            table.insert(sams, {group, callsign})
-            return sams
-        end
-    end
-end
-
-AddRussianTheaterStrategicSAM = function(state, group, callsign)
-    local sams = AddStrategicSAM(state)("Russian Theater")(group, callsign)
-    UpdateRussianSAMState(state, sams)
+AddRussianTheaterStrategicSAM = function(group, callsign)
+    AddStrategicSAM("Russian Theater")(group, callsign)
 end
 
 AddCAP = function(state)
@@ -178,36 +134,36 @@ AddRussianTheaterEWR = function(state, group, callsign)
     UpdateRussianEWRState(state, ewrs)
 end
 
-AddStrikeTarget = function(state)
-    return function(theater)
-        return function(group, callsign)
-            local StrikeTargets = mist.utils.deepCopy(state["Theaters"][theater]["StrikeTargets"])
-            table.insert(StrikeTargets, {group, callsign})
-            group:GetCoordinate():MarkToCoalitionBlue("STRIKE - "..callsign)
-            return StrikeTargets
-        end
+AddStrikeTarget = function(theater)
+    return function(group, spawn_name, callsign)
+        game_state["Theaters"][theater]["StrikeTargets"][tostring(group:GetID())] = {
+            ["callsign"] = callsign, 
+            ["spawn_name"] = spawn_name, 
+            ["position"] = {group:GetVec2().x, group:GetVec2().y}
+        }
+
+        group:GetCoordinate():MarkToCoalitionBlue("STRIKE - "..callsign)
     end
 end
 
-AddRussianTheaterStrikeTarget = function(state, group, callsign)
-    local targets = AddStrikeTarget(state)("Russian Theater")(group, callsign)
-    UpdateRussianStrikeTargetState(state, targets)
+AddRussianTheaterStrikeTarget = function(group, spawn_name, callsign)
+    AddStrikeTarget("Russian Theater")(group, spawn_name, callsign)
 end
 
-AddBAITarget = function(state)
-    return function(theater)
-        return function(group, callsign)
-            local BAITargets = mist.utils.deepCopy(state["Theaters"][theater]["BAI"])
-            table.insert(BAITargets, {group, callsign})
-            group:GetCoordinate():MarkToCoalitionBlue("BAI - "..callsign)
-            return BAITargets
-        end
+AddBAITarget = function(theater)
+    return function(group, spawn_name, callsign)
+        game_state["Theaters"][theater]["BAI"][tostring(group:GetID())] = {
+            ["callsign"] = callsign, 
+            ["spawn_name"] = spawn_name, 
+            ["position"] = {group:GetVec2().x, group:GetVec2().y}
+        }
+
+        group:GetCoordinate():MarkToCoalitionBlue("BAI - "..callsign)
     end
 end
 
-AddRussianTheaterBAITarget = function(state, group, callsign)
-    local targets = AddBAITarget(state)("Russian Theater")(group, callsign)
-    UpdateRussianBAIState(state, targets)
+AddRussianTheaterBAITarget = function(group, spawn_name, callsign)
+    AddBAITarget("Russian Theater")(group, spawn_name, callsign)
 end
 
 AddAWACSTarget = function(state)

@@ -18,7 +18,7 @@ russian_commander = function()
 
     -- Get the number of C2s in existance, and cleanup the state for dead ones.
     -- We'll make some further determiniation of what happens based on this
-    for i=#c2s, 1, -1 do
+    --[[for i=#c2s, 1, -1 do
         local c2 = c2s[i][1]
         local callsign = c2s[i][2]
         if c2 and c2:IsAlive() then
@@ -49,10 +49,9 @@ russian_commander = function()
 
 
     log("The Russian commander has " .. alive_caps .. " flights alive")
-    --log("Iterating through " .. #baitargets .. " BAI targets")
-    -- Get Alive BAI Targets and cleanup state
-    for i=#baitargets, 1, -1 do
-        local baitarget = baitargets[i][1]
+    -- log("Iterating through " .. #baitargets .. " BAI targets")
+    -- Get Alive BAI Targets and cleanup state]]
+    for id,baitarget in pairs(baitargets) do
         if baitarget and baitarget:IsAlive() then
             local alive_units = 0
             for UnitID, UnitData in pairs(baitarget:GetUnits()) do
@@ -61,23 +60,25 @@ russian_commander = function()
                 end
             end
 
-            --log("Percentage Alive:" .. baitargets[i]:GetInitialSize() / baitargets[i]:GetInitialSize() * 100)
-
             if alive_units == 0 or alive_units / baitarget:GetInitialSize() * 100 < 30 then
                 log("Not enough units, destroying")
                 baitarget:Destroy()
-                table.remove(baitargets, i)
+                baitargets[id] = nil
             else
                 alive_bai_targets = alive_bai_targets + 1
             end
         else
-            table.remove(baitargets, i)
+            baitargets[id] = nil
         end
     end
 
+    -- delete this after testing
+    local command_delay = 5
+    -- delete this after testing
+
 
     -- If there are no more alive C2s then nothign new can happen, the units out there are completely on their own
-    if alivec2s == 0 then log('Russian commander whispers "BLYAT!" and runs for the hills before he ends up in a gulag.'); return nil end
+    --[[if alivec2s == 0 then log('Russian commander whispers "BLYAT!" and runs for the hills before he ends up in a gulag.'); return nil end
 
     -- Setup some decision parameters based on how many c2's are alive
     if alivec2s == 3 then random_cap = 30 end
@@ -113,13 +114,13 @@ russian_commander = function()
                 end
             end, {}, command_delay)
         end
-    end
+    end]]
 
     if alive_bai_targets < max_bai then
         log("The Russian Commander is going to request " .. (max_bai - alive_bai_targets) .. " additional strategic ground units")
         for i = alive_bai_targets + 1, max_bai do
             SCHEDULER:New(nil, function()
-                local baispawn = baispawns[math.random(#baispawns)]
+                local baispawn = baispawns[math.random(#baispawns)][1]
                 local zone_index = math.random(13)
                 local zone = ZONE:New("NorthCAS" .. zone_index)
                 baispawn:SpawnInZone(zone, true)
@@ -127,7 +128,7 @@ russian_commander = function()
         end
     end
 
-    if math.random() > 0.7 then
+    --[[if math.random() > 0.7 then
         local g = RussianTheaterMig312ShipSpawn:GetFirstAliveGroup()
         if g then
             if g:AllOnGround() then
@@ -153,7 +154,7 @@ russian_commander = function()
             local spawn = AirbaseSpawns[target][1]
             spawn:Spawn()
         end
-    end
+    end]]
 
 
 

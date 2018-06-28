@@ -57,16 +57,18 @@ SE FARP: 44 50'7" N 38 46'34"E]]
 
     MENU_GROUP_COMMAND:New(Group, "Air Interdiction", MissionMenu, function()
         local bais ="BAI TASK LIST:\n"
-        for i,group_table in ipairs(game_state["Theaters"]["Russian Theater"]["BAI"]) do
-            local g = group_table[1]
-            local callsign = group_table[2]
+        for id,group_table in pairs(game_state["Theaters"]["Russian Theater"]["BAI"]) do
+            --local g = group_table[1]
+            local type_name = group_table["spawn_name"]
+            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+
             local coords = {
-                g:GetCoordinate():ToStringLLDMS(), 
-                g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringLLDDM(),
+                coord:ToStringLLDMS(), 
+                coord:ToStringMGRS(),
+                coord:ToStringLLDDM(),
                 "",
             }
-            bais = bais .. "OBJ: " .. callsign .. " -- " .. split(g.GroupName, "#")[1] .. ": \t" .. coords[type] .. " " .. g:GetCoordinate():ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            bais = bais .. "OBJ: " .. group_table["callsign"] .. " -- " .. type_name .. ": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         MESSAGE:New(bais, 60):ToGroup(Group)
     end)

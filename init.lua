@@ -1,5 +1,5 @@
 -- Populate the world and gameplay environment.
-for i=1, 4 do
+--[[for i=1, 4 do
     local zone_index = math.random(23)
     local zone = ZONE:New("NorthSA6Zone" .. zone_index)
     RussianTheaterSA6Spawn:SpawnInZone(zone, true)
@@ -26,10 +26,10 @@ for i=1, 10 do
     local zone = ZONE:New("NorthStatic" .. zone_index)
     local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
     local spawn_index = math.random(3)
-    local static = StaticSpawns[spawn_index]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
+    local static = StaticSpawns[spawn_index][1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
     local callsign = getCallsign()
-    AddRussianTheaterStrikeTarget(game_state, STATIC:FindByName(static:getName()), callsign)
-end
+    AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), StaticSpawns[spawn_index][2], callsign)
+end]]
 
 -- Kick off the commanders
 SCHEDULER:New(nil, function()
@@ -43,8 +43,7 @@ RussianTheaterAWACSSpawn:Spawn()
 OverlordSpawn:Spawn()
 RUSTankerSpawn:Spawn()
 TexacoSpawn:Spawn()
-local shell = ShellSpawn:Spawn()
-log ("Spawned shell. GroupName is " .. shell.GroupName)
+ShellSpawn:Spawn()
 
 SCHEDULER:New(nil, function() 
     local state = TheaterUpdate(game_state, "Russian Theater")
