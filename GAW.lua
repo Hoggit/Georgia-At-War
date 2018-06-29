@@ -152,7 +152,7 @@ end
 
 AddBAITarget = function(theater)
     return function(group, spawn_name, callsign)
-        game_state["Theaters"][theater]["BAI"][tostring(group:GetID())] = {
+        game_state["Theaters"][theater]["BAI"][group:GetName()] = {
             ["callsign"] = callsign, 
             ["spawn_name"] = spawn_name, 
             ["position"] = {group:GetVec2().x, group:GetVec2().y}

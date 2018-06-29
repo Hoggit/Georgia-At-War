@@ -236,9 +236,13 @@ SpawnOPFORCas = function(zone, spawn)
     log("===== CAS Spawn Done")
 end]]
 
+local baimenu = MENU_MISSION:New("DESTROY BAIS")
 for i,v in ipairs(baispawns) do
     v[1]:OnSpawnGroup(function(SpawnedGroup)
         local callsign = getCallsign()
+        MENU_MISSION_COMMAND:New("DESTROY " .. callsign, baimenu, function()
+            SpawnedGroup:Destroy()
+        end)
         AddRussianTheaterBAITarget(SpawnedGroup, v[2], callsign)
     end)
 end
@@ -248,6 +252,7 @@ end
         AddRussianTheaterCAP(game_state, SpawnedGroup)
     end)
 end]]
+
 
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
     spawn:OnSpawnGroup(function(SpawnedGroup)

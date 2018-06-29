@@ -48,28 +48,10 @@ russian_commander = function()
     end
 
 
-    log("The Russian commander has " .. alive_caps .. " flights alive")
-    -- log("Iterating through " .. #baitargets .. " BAI targets")
-    -- Get Alive BAI Targets and cleanup state]]
-    for id,baitarget in pairs(baitargets) do
-        if baitarget and baitarget:IsAlive() then
-            local alive_units = 0
-            for UnitID, UnitData in pairs(baitarget:GetUnits()) do
-                if UnitData and UnitData:IsAlive() then
-                    alive_units = alive_units + 1
-                end
-            end
-
-            if alive_units == 0 or alive_units / baitarget:GetInitialSize() * 100 < 30 then
-                log("Not enough units, destroying")
-                baitarget:Destroy()
-                baitargets[id] = nil
-            else
-                alive_bai_targets = alive_bai_targets + 1
-            end
-        else
-            baitargets[id] = nil
-        end
+    log("The Russian commander has " .. alive_caps .. " flights alive")]]
+    -- Get Alive BAI Targets
+    for group_name, baitarget_table in pairs(baitargets) do
+        alive_bai_targets = alive_bai_targets + 1
     end
 
     -- delete this after testing
