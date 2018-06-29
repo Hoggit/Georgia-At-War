@@ -1,3 +1,10 @@
-MENU_MISSION_COMMAND:New("DUMPSTATE", nil, function()
+--[[MENU_MISSION_COMMAND:New("DUMPSTATE", nil, function()
     log(json:encode(game_state["Theaters"]["Russian Theater"]["BAI"]))
-end)
+    log(json:encode(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]))
+    log(json:encode(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]))
+    log(json:encode(game_state["Theaters"]["Russian Theater"]["C2"]))
+    log(json:encode(game_state["Theaters"]["Russian Theater"]["EWR"]))
+    log(json:encode(game_state["Theaters"]["Russian Theater"]["CAP"]))
+    log(json:encode(game_state["Theaters"]["Russian Theater"]["AWACS"]))
+    log(json:encode(game_state["Theaters"]["Russian Theater"]["Tanker"]))
+end)]]

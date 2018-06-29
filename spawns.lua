@@ -35,35 +35,32 @@ buildHitEvent = function(group, callsign)
     end
 end
 
-buildCheckSAMEvent = function(group)
+buildCheckSAMEvent = function(group, callsign)
     for i,unit in ipairs(group:GetUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
             local radars = 0
             local launchers = 0
             for i,inner_unit in ipairs(group:GetUnits()) do
-                if inner_unit:GetTypeName() == "Kub 2P25 ln" then launchers = launchers + 1 end
-                if inner_unit:GetTypeName() == "Kub 1S91 str" then radars = radars + 1 end
-                if inner_unit:GetTypeName() == "S-300PS 64H6E sr" then radars = radars + 1 end
-                if inner_unit:GetTypeName() == "S-300PS 40B6MD sr" then radars = radars + 1 end
-                if inner_unit:GetTypeName() == "S-300PS 40B6M tr" then radars = radars + 1 end
-                if inner_unit:GetTypeName() == "S-300PS 5P85C ln" then launchers = launchers + 1 end
-                if inner_unit:GetTypeName() == "S-300PS 5P85D ln" then launchers = launchers + 1 end
+                local type_name = inner_unit:GetTypeName()
+                if type_name == "Kub 2P25 ln" then launchers = launchers + 1 end
+                if type_name == "Kub 1S91 str" then radars = radars + 1 end
+                if type_name == "S-300PS 64H6E sr" then radars = radars + 1 end
+                if type_name == "S-300PS 40B6MD sr" then radars = radars + 1 end
+                if type_name == "S-300PS 40B6M tr" then radars = radars + 1 end
+                if type_name == "S-300PS 5P85C ln" then launchers = launchers + 1 end
+                if type_name == "S-300PS 5P85D ln" then launchers = launchers + 1 end
             end
 
             if radars == 0 or launchers == 0 then
-                for i=#game_state['Theaters']['Russian Theater']['StrategicSAM'], 1, -1 do
-                    if game_state['Theaters']['Russian Theater']['StrategicSAM'][i][1].GroupName == group.GroupName then
-                        table.remove(game_state['Theaters']['Russian Theater']['StrategicSAM'], i)
-                        log("Removing SAM from target list")
-                    end
-                end
+                game_state['Theaters']['Russian Theater']['StrategicSAM'][group:GetName()] = nil
+                MESSAGE:New("SAM " .. callsign .. " has been destroyed!"):ToAll()
             end
         end
     end
 end
 
-buildCheckEWREvent = function(group)
+buildCheckEWREvent = function(group, callsign)
     for i,unit in ipairs(group:GetUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
@@ -73,18 +70,14 @@ buildCheckEWREvent = function(group)
             end
 
             if radars == 0 then
-                for i=#game_state['Theaters']['Russian Theater']['EWR'], 1, -1 do
-                    if game_state['Theaters']['Russian Theater']['EWR'][i][1].GroupName == group.GroupName then
-                        table.remove(game_state['Theaters']['Russian Theater']['EWR'], i)
-                        log("Removing EWR from target list")
-                    end
-                end
+                game_state['Theaters']['Russian Theater']['EWR'][group:GetName()] = nil
+                MESSAGE:New("EWR " .. callsign .. " has been destroyed!"):ToAll()
             end
         end
     end
 end
 
-buildCheckC2Event = function(group)
+buildCheckC2Event = function(group, callsign)
     for i,unit in ipairs(group:GetUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
@@ -94,12 +87,8 @@ buildCheckC2Event = function(group)
             end
 
             if cps == 0 then
-                for i=#game_state['Theaters']['Russian Theater']['C2'], 1, -1 do
-                    if game_state['Theaters']['Russian Theater']['C2'][i][1].GroupName == group.GroupName then
-                        table.remove(game_state['Theaters']['Russian Theater']['C2'], i)
-                        log("Removing C2 from target list")
-                    end
-                end
+                game_state['Theaters']['Russian Theater']['C2'][group:GetName()] = nil
+                MESSAGE:New("C2 " .. callsign .. " has been destroyed!"):ToAll()
             end
         end
     end
@@ -177,7 +166,7 @@ goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn}
 baispawns = {RussianHeavyArtySpawn, ArmorColumnSpawn, MechInfSpawn}
 
 -- OnSpawn Callbacks.  Add ourselves to the game state
---[[RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
+RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
     RussianTheaterAWACSPatrol:Spawn()
 end)
 
@@ -185,33 +174,47 @@ OverlordSpawn:OnSpawnGroup(function(SpawnedGroup)
     AWACSPatrol:Spawn()
 end)
 
-RussianTheaterSA6Spawn:OnSpawnGroup(function(SpawnedGroup)
+--local sammenu = MENU_MISSION:New("DESTROY SAMS")
+RussianTheaterSA6Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     local callsign = getCallsign()
+    --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, sammenu, function()
+    --    SpawnedGroup:Destroy()
+    --end)
     AddRussianTheaterStrategicSAM(SpawnedGroup, "SA6", callsign)
     buildHitEvent(SpawnedGroup, callsign)
-    buildCheckSAMEvent(SpawnedGroup)
-   
+    buildCheckSAMEvent(SpawnedGroup, callsign)
 end)
 
-RussianTheaterSA10Spawn:OnSpawnGroup(function(SpawnedGroup)
+RussianTheaterSA10Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     local callsign = getCallsign()
+    --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, sammenu, function()
+    --    SpawnedGroup:Destroy()
+    --end)
     AddRussianTheaterStrategicSAM(SpawnedGroup, "SA10", callsign)
     buildHitEvent(SpawnedGroup, callsign)
-    buildCheckSAMEvent(SpawnedGroup)
+    buildCheckSAMEvent(SpawnedGroup, callsign)
 end)
 
-RussianTheaterEWRSpawn:OnSpawnGroup(function(SpawnedGroup)
+--local ewrmenu = MENU_MISSION:New("DESTROY EWRS")
+RussianTheaterEWRSpawn[1]:OnSpawnGroup(function(SpawnedGroup)
     local callsign = getCallsign()
+    --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, ewrmenu, function()
+    --    SpawnedGroup:Destroy()
+    --end)
     AddRussianTheaterEWR(SpawnedGroup, "EWR", callsign)
     buildHitEvent(SpawnedGroup, callsign)
-    buildCheckEWREvent(SpawnedGroup)
+    buildCheckEWREvent(SpawnedGroup, callsign)
 end)
 
-RussianTheaterC2Spawn:OnSpawnGroup(function(SpawnedGroup)
+--local c2menu = MENU_MISSION:New("DESTROY C2S")
+RussianTheaterC2Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     local callsign = getCallsign()
+    --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, c2menu, function()
+    --    SpawnedGroup:Destroy()
+    --end)
     AddRussianTheaterC2(SpawnedGroup, "C2", callsign)
     buildHitEvent(SpawnedGroup, callsign)
-    buildCheckC2Event(SpawnedGroup)
+    buildCheckC2Event(SpawnedGroup, callsign)
 end)
 
 RUSTankerSpawn:OnSpawnGroup(function(SpawnedGroup)
@@ -234,25 +237,28 @@ SpawnOPFORCas = function(zone, spawn)
     casZone:__Start ( 1 )
     casZone:__Engage( 2 )
     log("===== CAS Spawn Done")
-end]]
+end
 
-local baimenu = MENU_MISSION:New("DESTROY BAIS")
+--local baimenu = MENU_MISSION:New("DESTROY BAIS")
 for i,v in ipairs(baispawns) do
     v[1]:OnSpawnGroup(function(SpawnedGroup)
         local callsign = getCallsign()
-        MENU_MISSION_COMMAND:New("DESTROY " .. callsign, baimenu, function()
-            SpawnedGroup:Destroy()
-        end)
+        --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, baimenu, function()
+        --    SpawnedGroup:Destroy()
+        --end)
         AddRussianTheaterBAITarget(SpawnedGroup, v[2], callsign)
     end)
 end
 
---[[for i,v in ipairs(allcaps) do
+--local capsmenu = MENU_MISSION:New("DESTROY CAPS")
+for i,v in ipairs(allcaps) do
     v:OnSpawnGroup(function(SpawnedGroup)
-        AddRussianTheaterCAP(game_state, SpawnedGroup)
+       -- MENU_MISSION_COMMAND:New("DESTROY " .. SpawnedGroup:GetName(), capsmenu, function()
+        --    SpawnedGroup:Destroy()
+        --end)
+        AddRussianTheaterCAP(SpawnedGroup)
     end)
-end]]
-
+end
 
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
     spawn:OnSpawnGroup(function(SpawnedGroup)

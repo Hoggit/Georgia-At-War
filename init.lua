@@ -1,24 +1,24 @@
 -- Populate the world and gameplay environment.
---[[for i=1, 4 do
+for i=1, 4 do
     local zone_index = math.random(23)
     local zone = ZONE:New("NorthSA6Zone" .. zone_index)
-    RussianTheaterSA6Spawn:SpawnInZone(zone, true)
+    RussianTheaterSA6Spawn[1]:SpawnInZone(zone, true)
 end
 
 for i=1, 3 do
     if i < 3 then
         local zone_index = math.random(8)
         local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-        RussianTheaterSA10Spawn:SpawnInZone(zone, true)
+        RussianTheaterSA10Spawn[1]:SpawnInZone(zone, true)
     end
 
     local zone_index = math.random(8)
     local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-    RussianTheaterEWRSpawn:SpawnInZone(zone, true)
+    RussianTheaterEWRSpawn[1]:SpawnInZone(zone, true)
 
     local zone_index = math.random(8)
     local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-    RussianTheaterC2Spawn:SpawnInZone(zone, true)
+    RussianTheaterC2Spawn[1]:SpawnInZone(zone, true)
 end
 
 for i=1, 10 do
@@ -29,14 +29,14 @@ for i=1, 10 do
     local static = StaticSpawns[spawn_index][1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
     local callsign = getCallsign()
     AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), StaticSpawns[spawn_index][2], callsign)
-end]]
+end
 
 -- Kick off the commanders
 SCHEDULER:New(nil, function()
     log("Starting Russian Commander, Comrade")
     --pcall(russian_commander)
     russian_commander()
-end, {}, 10, 20)
+end, {}, 10, 400)
 
 -- Kick off the supports
 RussianTheaterAWACSSpawn:Spawn()

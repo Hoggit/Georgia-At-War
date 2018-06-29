@@ -41,16 +41,17 @@ SE FARP: 44 50'7" N 38 46'34"E]]
     local MissionMenu = MENU_GROUP:New(Group, "Get Current Missions")
     MENU_GROUP_COMMAND:New(Group, "SEAD", MissionMenu, function()
         local sams ="ACTIVE SAM REPORT:\n"
-        for i,group_table in ipairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
-            local g = group_table[1]
-            local callsign = group_table[2]
+        for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
+            local type_name = group_table["spawn_name"]
+            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local callsign = group_table['callsign']
             local coords = {
-                g:GetCoordinate():ToStringLLDMS(), 
-                g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringLLDDM(),
+                coord:ToStringLLDMS(), 
+                coord:ToStringMGRS(),
+                coord:ToStringLLDDM(),
                 "",
             }
-            sams = sams .. "OBJ: ".. callsign .." -- TYPE: " .. split(g.GroupName, "#")[1] ..": \t" .. coords[type] .. " " .. g:GetCoordinate():ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            sams = sams .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         MESSAGE:New(sams, 60):ToGroup(Group)
     end)
@@ -75,30 +76,31 @@ SE FARP: 44 50'7" N 38 46'34"E]]
 
     MENU_GROUP_COMMAND:New(Group, "Strike", MissionMenu, function()
         local strikes ="STRIKE TARGET LIST:\n"
-        for i,group_table in ipairs(game_state["Theaters"]["Russian Theater"]["C2"]) do
-            local g = group_table[1]
-            local callsign = group_table[2]
+        for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["C2"]) do
+            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local callsign = group_table['callsign']
             local coords = {
-                g:GetCoordinate():ToStringLLDMS(), 
-                g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringLLDDM(),
+                coord:ToStringLLDMS(), 
+                coord:ToStringMGRS(),
+                coord:ToStringLLDDM(),
                 "",
             }
             
-            strikes = strikes .. "OBJ: " .. callsign .. " -- MOBILE CP: \t" .. coords[type] .. " " .. g:GetCoordinate():ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            strikes = strikes .. "OBJ: " .. callsign .. " -- MOBILE CP: \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         
-        for i,group_table in ipairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
-            local g = group_table[1]
-            local callsign = group_table[2]
+        for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
+            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local callsign = group_table['callsign']
+            local spawn_name = group_table['spawn_name']
             local coords = {
-                g:GetCoordinate():ToStringLLDMS(), 
-                g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringLLDDM(),
+                coord:ToStringLLDMS(), 
+                coord:ToStringMGRS(),
+                coord:ToStringLLDDM(),
                 "",
             }
 
-            strikes = strikes .. "OBJ: " .. callsign .. " -- " .. split(g.StaticName, "#")[1] .. ": \t" .. coords[type] .. " " .. g:GetCoordinate():ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            strikes = strikes .. "OBJ: " .. callsign .. " -- " .. spawn_name .. ": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
 
         MESSAGE:New(strikes, 60):ToGroup(Group)
@@ -106,22 +108,29 @@ SE FARP: 44 50'7" N 38 46'34"E]]
 
     MENU_GROUP_COMMAND:New(Group, "Interception", MissionMenu, function()
         local intercepts ="INTERCEPTION TARGETS:\n"
-        for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
+        for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
+            local g = GROUP:FindByName(group_name)
+            local coord = g:GetCoordinate()
+            local group_coord = Group:GetCoordinate()
             local coords = {
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringLLDMS(), 
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringLLDDM(),
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings),
+                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
+                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
+                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
+                coord:ToStringBRA(group_coord, useSettings),
             }
             intercepts = intercepts .. "AWACS: \t" .. coords[type] .. "\n"
         end
 
-        for i,g in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
+        for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
+            local g = GROUP:FindByName(group_name)
+            local coord = g:GetCoordinate()
+            local group_coord = Group:GetCoordinate()
+
             local coords = {
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringLLDMS(), 
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringMGRS(),
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings) .. " -- " .. g:GetCoordinate():ToStringLLDDM(),
-                g:GetCoordinate():ToStringBRA(Group:GetCoordinate(), useSettings),
+                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
+                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
+                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
+                coord:ToStringBRA(group_coord, useSettings),
             }
             intercepts = intercepts .. "TANKER: \t" .. coords[type] .. "\n"
         end
