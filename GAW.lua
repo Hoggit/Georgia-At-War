@@ -26,11 +26,11 @@ game_state = {
         ["Russian Theater"] ={
             ["last_cap_spawn"] = 0,
             ["Airfields"] = {
-                ["Novorossiysk"] = false,
-                ["Gelendzhik"] = false,
-                ["Krymsk"] = false,
-                ["Krasnodar-Center"] = false,
-                ["Krasnodar-Pashkovsky"] = false
+                [AIRBASE.Caucasus.Novorossiysk] = AIRBASE:FindByName(AIRBASE.Caucasus.Novorossiysk):GetCoalition(),
+                [AIRBASE.Caucasus.Gelendzhik] = AIRBASE:FindByName(AIRBASE.Caucasus.Gelendzhik):GetCoalition(),
+                [AIRBASE.Caucasus.Krymsk] = AIRBASE:FindByName(AIRBASE.Caucasus.Krymsk):GetCoalition(),
+                [AIRBASE.Caucasus.Krasnodar_Center] = AIRBASE:FindByName(AIRBASE.Caucasus.Krasnodar_Center):GetCoalition(),
+                [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = AIRBASE:FindByName(AIRBASE.Caucasus.Krasnodar_Pashkovsky):GetCoalition()
             },
             ["Primary"] = {
                 ["Maykop-Khanskaya"] = false
@@ -47,16 +47,34 @@ game_state = {
             ["AWACS"] = {},
             ["Tanker"] = {},
             ["FARPS"] = {
-                ["SW"] = AIRBASE:FindByName("SW Warehouse"),
-                ["NW"] = AIRBASE:FindByName("NW Warehouse"),
-                ["SE"] = AIRBASE:FindByName("SE Warehouse"),
-                ["NE"] = AIRBASE:FindByName("NE Warehouse"),
+                ["SW Warehouse"] = AIRBASE:FindByName("SW Warehouse"):GetCoalition(),
+                ["NW Warehouse"] = AIRBASE:FindByName("NW Warehouse"):GetCoalition(),
+                ["SE Warehouse"] = AIRBASE:FindByName("SE Warehouse"):GetCoalition(),
+                ["NE Warehouse"] = AIRBASE:FindByName("NE Warehouse"):GetCoalition(),
             }
         }
     }
 }
 
 log("Game State INIT")
+
+function baseCaptured(event)
+    if event.id == world.event.S_EVENT_BASE_CAPTURED then
+        local coalition = event.place:getCoalition()
+        local capString
+        if coalition == 1 then
+            capString = "Russian forces"
+        elseif coalition == 2 then
+            capString = "Coalition forces"
+        end
+
+        if capString then
+            MESSAGE:New(event.place:getName() .. " has been captured by " .. capString, 20):ToAll()
+        end
+    end
+end
+
+mist.addEventHandler(baseCaptured)
 
 AddStrategicSAM = function(theater)
     return function(group, spawn_name, callsign)
@@ -191,9 +209,13 @@ SpawnDefenseForces = function(time, last_launched_time, spawn)
     end
 end
 
-TheaterUpdate = function(state, theater)
+TheaterUpdate = function(theater)
     local output = "OPFOR Strategic Report: " .. theater .. "\n--------------------------\n\nSAM COVERAGE: "
-    local numsams = #state["Theaters"][theater]['StrategicSAM']
+    local numsams = 0
+    for i,sam in pairs(game_state["Theaters"][theater]['StrategicSAM']) do
+        numsams = numsams + 1
+    end
+
     if numsams > 5 then
         output = output .. "Fully Operational"
     elseif numsams > 3 then
@@ -204,7 +226,11 @@ TheaterUpdate = function(state, theater)
         output = output .. "None"
     end
 
-    local numc2 = #state["Theaters"][theater]['C2']
+    local numc2 = 0
+    for i,c2 in pairs(game_state["Theaters"][theater]['C2']) do
+        numc2 = numc2 + 1
+    end
+
     output = output .. "\n\nCOMMAND AND CONTROL: "
     if numc2 == 3 then
         output = output .. "Fully Operational"
@@ -216,7 +242,10 @@ TheaterUpdate = function(state, theater)
         output = output .. "Destroyed"
     end
 
-    local numewr = #state["Theaters"][theater]['EWR']
+    local numewr = 0
+    for i,ewr in pairs(game_state["Theaters"][theater]['EWR']) do
+        numewr = numewr + 1
+    end
     output = output .. "\n\nEW RADAR COVERAGE: "
     if numewr == 3 then
         output = output .. "Fully Operational"
@@ -229,7 +258,7 @@ TheaterUpdate = function(state, theater)
     end
 
     output = output .. "\n\nPRIMARY AIRFIELDS: \n"
-    for name,capped in pairs(state['Theaters'][theater]["Primary"]) do
+    for name,capped in pairs(game_state['Theaters'][theater]["Primary"]) do
         output = output .. "    " .. name .. ": "
         if capped then output = output .. "Captured\n" else output = output .. "NOT CAPTURED\n" end
     end

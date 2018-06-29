@@ -46,7 +46,7 @@ TexacoSpawn:Spawn()
 ShellSpawn:Spawn()
 
 SCHEDULER:New(nil, function() 
-    local state = TheaterUpdate(game_state, "Russian Theater")
+    local state = TheaterUpdate("Russian Theater")
     MESSAGE:New(state, 45):ToAll()
 end, {}, 120, 900)
 

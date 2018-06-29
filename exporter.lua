@@ -1,10 +1,6 @@
---[[MENU_MISSION_COMMAND:New("DUMPSTATE", nil, function()
-    log(json:encode(game_state["Theaters"]["Russian Theater"]["BAI"]))
-    log(json:encode(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]))
-    log(json:encode(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]))
-    log(json:encode(game_state["Theaters"]["Russian Theater"]["C2"]))
-    log(json:encode(game_state["Theaters"]["Russian Theater"]["EWR"]))
-    log(json:encode(game_state["Theaters"]["Russian Theater"]["CAP"]))
-    log(json:encode(game_state["Theaters"]["Russian Theater"]["AWACS"]))
-    log(json:encode(game_state["Theaters"]["Russian Theater"]["Tanker"]))
-end)]]
+SCHEDULER:New(nil,function()
+    local stateFile = fs.writedir()..[[Scripts\GAW\state.json]]
+    local fp = io.open(stateFile, 'w')
+    fp:write(json:encode(game_state))
+    fp:close()
+end, {}, 20, 613)

@@ -25,26 +25,13 @@ local gci_airbases = {
     AIRBASE.Caucasus.Maykop_Khanskaya
 }
 
-function getAirbaseOwners()
-    return {
-        ["anapa"] = AIRBASE:FindByName(gci_airbases[1]):GetCoalition(),
-        ["novo"] = AIRBASE:FindByName(gci_airbases[2]):GetCoalition(),
-        ["gele"] = AIRBASE:FindByName(gci_airbases[3]):GetCoalition(),
-        ["krymsk"] = AIRBASE:FindByName(gci_airbases[4]):GetCoalition(),
-        ["karcen"] = AIRBASE:FindByName(gci_airbases[5]):GetCoalition(),
-        ["karpash"] = AIRBASE:FindByName(gci_airbases[6]):GetCoalition(),
-        ["maykop"] = AIRBASE:FindByName(gci_airbases[7]):GetCoalition()
-    }
-end
-
 SCHEDULER:New(nil, function()
     pcall(
         function()
+            local output = ""
             local state = {}
             local blue_state = {}
             local file = io.open(stateFile, 'w')
-
-            local abs = getAirbaseOwners()
 
             for i,v in pairs(AWACSDetection:GetDetectedItems()) do
                 local lat, lon = coord.LOtoLL(v.Coordinate:GetVec3())
@@ -72,39 +59,40 @@ SCHEDULER:New(nil, function()
                     end
                 end
             end)
-            file:write('{"red":[')
+            output = output .. '{"red":['
             local idx = 1
             for j,unit in ipairs(state) do
-                if idx > 1 then file:write(',') end
-                file:write('{"id":' .. unit['id'] .. ', "height":' .. unit['height'] .. ', "type":"' .. unit['type'] .. '", "lat":' .. unit['lat'] ..  ', "long": ' .. unit['long']  ..  ', "heading": ' .. unit['heading'] .. ', "speed": ' .. unit['speed'] .. ', "name": "' .. split(unit['name'], '-')[1] ..'"}')
+                if idx > 1 then  output = output .. ',' end
+                output = output .. '{"id":' .. unit['id'] .. ', "height":' .. unit['height'] .. ', "type":"' .. unit['type'] .. '", "lat":' .. unit['lat'] ..  ', "long": ' .. unit['long']  ..  ', "heading": ' .. unit['heading'] .. ', "speed": ' .. unit['speed'] .. ', "name": "' .. split(unit['name'], '-')[1] ..'"}'
                 idx = idx + 1
             end
 
-            file:write('],"blue":[')
+            output = output .. '],"blue":['
             idx = 1
             for k,blue_unit in ipairs(blue_state) do
-                if idx > 1 then file:write(',') end
-                file:write('{"id":' .. blue_unit['id'] .. ', "height":' .. blue_unit['height'] ..', "type":"' .. blue_unit['type'] ..  '", "lat":' .. blue_unit['lat'] ..  ', "long": ' .. blue_unit['long']  ..  ', "heading": ' .. blue_unit['heading'] .. ', "speed": ' .. blue_unit['speed'] .. ', "name": "' .. blue_unit['name'] ..'", "playerName": "'.. blue_unit['playerName'] ..'"}')
+                if idx > 1 then  output = output .. ',' end
+                output = output .. '{"id":' .. blue_unit['id'] .. ', "height":' .. blue_unit['height'] ..', "type":"' .. blue_unit['type'] ..  '", "lat":' .. blue_unit['lat'] ..  ', "long": ' .. blue_unit['long']  ..  ', "heading": ' .. blue_unit['heading'] .. ', "speed": ' .. blue_unit['speed'] .. ', "name": "' .. blue_unit['name'] ..'", "playerName": "'.. blue_unit['playerName'] ..'"}'
                 idx = idx + 1
             end
 
-            file:write('], "FARPS":{')
+            output = output .. '], "FARPS":{'
             idx = 1
-            for name,object in pairs(game_state["Theaters"]["Russian Theater"]["FARPS"]) do
-                if idx > 1 then file:write(',') end
-                file:write('"'.. name ..'": '.. object:GetCoalition())
+            for name,coalition in pairs(game_state["Theaters"]["Russian Theater"]["FARPS"]) do
+                if idx > 1 then  output = output .. ',' end
+                output = output .. '"'.. name ..'": '.. coalition
                 idx = idx + 1
             end
 
-            file:write('}, "ABS":{')
+            output = output .. '}, "ABS":{'
             idx = 1
-            for name, owner in pairs(abs) do
-                if idx > 1 then file:write(',') end
-                file:write('"' .. name .. '": '.. owner)
+            for name, owner in pairs(game_state["Theaters"]["Russian Theater"]["Airfields"]) do
+                if idx > 1 then  output = output .. ',' end
+                output = output .. '"' .. name .. '": '.. owner
                 idx = idx + 1
             end
 
-            file:write('}}')
+            output = output .. '}}'
+            file:write(output)
             file:close()
         end)
 end, {}, 10, 10)

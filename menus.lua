@@ -34,7 +34,7 @@ SE FARP: 44 50'7" N 38 46'34"E]]
     end)
 
     local MissionMenu = MENU_GROUP_COMMAND:New(Group, "Get Mission Status", nil, function()
-        MESSAGE:New(TheaterUpdate(game_state, "Russian Theater"), 60):ToGroup(Group)
+        MESSAGE:New(TheaterUpdate("Russian Theater"), 60):ToGroup(Group)
     end)
 
 
