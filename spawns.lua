@@ -159,6 +159,12 @@ function RussianTheaterCASSpawn:_OnEngineShutdown(EventData)
 end
 --RussianTheatreCASEscort = SPAWN:New("Su27CASEscort")
 
+-- FARP defenses
+NWFARPDEF = SPAWN:New("FARP DEFENSE")
+SWFARPDEF = SPAWN:New("FARP DEFENSE #001")
+NEFARPDEF = SPAWN:New("FARP DEFENSE #003")
+SEFARPDEF = SPAWN:New("FARP DEFENSE #002")
+
 -- Group spanws for easy randomization
 local allcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn}
 poopcaps = {RussianTheaterMig212ShipSpawn}

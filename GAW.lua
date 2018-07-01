@@ -68,6 +68,14 @@ function baseCaptured(event)
             capString = "Coalition forces"
         end
 
+        local abname = event.place:getName()
+
+        if abname == 'SW Warehouse' or abname == 'NW Warehouse' or abname == 'SE Warehouse' or abname == 'NE Warehouse' then
+            game_state["Theaters"]["Russian Theater"]['FARPS'][abname] = coalition
+        else
+            game_state["Theaters"]["Russian Theater"]['Airfields'][abname] = coalition
+        end 
+
         if capString then
             MESSAGE:New(event.place:getName() .. " has been captured by " .. capString, 20):ToAll()
         end

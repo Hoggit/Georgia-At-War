@@ -1,34 +1,119 @@
--- Populate the world and gameplay environment.
-for i=1, 4 do
-    local zone_index = math.random(23)
-    local zone = ZONE:New("NorthSA6Zone" .. zone_index)
-    RussianTheaterSA6Spawn[1]:SpawnInZone(zone, true)
-end
+local statefile = io.open(lfs.writedir() .. "Scripts\\GAW\\state.json", 'r')
+if statefile then
+    MESSAGE:New("Found a statefile.  Processing it instead of starting a new game", 40):ToAll()
+    local state = statefile:read("*all")
+    statefile:close()
+    local saved_game_state = json:decode(state)
+    for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["Airfields"]) do
+        local ab = AIRBASE:FindByName(name)
+        local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
+        apV3:SetX(apV3:GetX() + math.random(-100, 200))
+        apV3:SetY(apV3:GetY() + math.random(-100, 200))
 
-for i=1, 3 do
-    if i < 3 then
-        local zone_index = math.random(8)
-        local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-        RussianTheaterSA10Spawn[1]:SpawnInZone(zone, true)
+        game_state["Theaters"]["Russian Theater"]["Airfields"][name] = coalition
+
+        if coalition == 1 then
+            RussianTheaterAirfieldDefSpawn:SpawnFromVec2(apV3:GetVec2())
+        elseif coalition == 2 then
+            AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+        end
     end
 
-    local zone_index = math.random(8)
-    local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-    RussianTheaterEWRSpawn[1]:SpawnInZone(zone, true)
+    for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["FARPS"]) do
+        local ab = AIRBASE:FindByName(name)
+        local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
+        apV3:SetX(apV3:GetX() + math.random(400, 800))
+        apV3:SetY(apV3:GetY() + math.random(400, 800))
+        local spawns = {NWFARPDEF, SWFARPDEF, NEFARPDEF, SEFARPDEF}
+        game_state["Theaters"]["Russian Theater"]["FARPS"][name] = coalition
 
-    local zone_index = math.random(8)
-    local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-    RussianTheaterC2Spawn[1]:SpawnInZone(zone, true)
-end
+        if coalition == 1 then
+            spawns[math.random(4)]:SpawnFromVec2(apV3:GetVec2())
+        elseif coalition == 2 then
+            AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+        end
+    end
 
-for i=1, 10 do
-    local zone_index = math.random(18)
-    local zone = ZONE:New("NorthStatic" .. zone_index)
-    local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
-    local spawn_index = math.random(3)
-    local static = StaticSpawns[spawn_index][1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
-    local callsign = getCallsign()
-    AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), StaticSpawns[spawn_index][2], callsign)
+    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
+        local spawn
+        log(data.spawn_name)
+        if data.spawn_name == "SA6" then spawn = RussianTheaterSA6Spawn[1] end
+        if data.spawn_name == "SA10" then spawn = RussianTheaterSA10Spawn[1] end
+        spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+    end
+
+    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["C2"]) do
+        log(data.callsign)
+        RussianTheaterC2Spawn[1]:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+    end
+
+    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["EWR"]) do
+        log(data.callsign)
+        RussianTheaterEWRSpawn[1]:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+    end
+
+    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
+        log(data.callsign)
+        local spawn
+        if data['spawn_name'] == 'Ammo Dump' then spawn = AmmoDumpSpawn[1] end
+        if data['spawn_name'] == 'Comms Array' then spawn = CommsArraySpawn[1] end
+        if data['spawn_name'] == 'Power Plant' then spawn = PowerPlantSpawn[1] end
+        local static = spawn:SpawnFromPointVec2(
+            POINT_VEC2:NewFromVec2({
+                ['x'] = data['position'][1],
+                ['y'] = data['position'][2]
+            }), 0)
+        AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), data['spawn_name'], data['callsign'])
+    end
+
+    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["BAI"]) do
+        log(data.callsign)
+        local spawn
+        if data['spawn_name'] == "ARTILLERY" then spawn = RussianHeavyArtySpawn[1] end
+        if data['spawn_name'] == "ARMOR COLUMN" then spawn = ArmorColumnSpawn[1] end
+        if data['spawn_name'] == "MECH INF" then spawn = MechInfSpawn[1] end
+        spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+    end
+
+else
+    -- Populate the world and gameplay environment.
+    for i=1, 4 do
+        local zone_index = math.random(23)
+        local zone = ZONE:New("NorthSA6Zone" .. zone_index)
+        RussianTheaterSA6Spawn[1]:SpawnInZone(zone, true)
+    end
+
+    for i=1, 3 do
+        if i < 3 then
+            local zone_index = math.random(8)
+            local zone = ZONE:New("NorthSA10Zone" .. zone_index)
+            RussianTheaterSA10Spawn[1]:SpawnInZone(zone, true)
+        end
+
+        local zone_index = math.random(8)
+        local zone = ZONE:New("NorthSA10Zone" .. zone_index)
+        RussianTheaterEWRSpawn[1]:SpawnInZone(zone, true)
+
+        local zone_index = math.random(8)
+        local zone = ZONE:New("NorthSA10Zone" .. zone_index)
+        RussianTheaterC2Spawn[1]:SpawnInZone(zone, true)
+    end
+
+    for i=1, 10 do
+        local zone_index = math.random(18)
+        local zone = ZONE:New("NorthStatic" .. zone_index)
+        local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
+        local spawn_index = math.random(3)
+        local static = StaticSpawns[spawn_index][1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
+        local callsign = getCallsign()
+        AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), StaticSpawns[spawn_index][2], callsign)
+    end
+
+    AirbaseSpawns[AIRBASE.Caucasus.Krasnodar_Pashkovsky][1]:Spawn()
+    NWFARPDEF:Spawn()
+    SWFARPDEF:Spawn()
+    NEFARPDEF:Spawn()
+    SEFARPDEF:Spawn()
 end
 
 -- Kick off the commanders
@@ -54,8 +139,6 @@ buildHitEvent(GROUP:FindByName("FARP DEFENSE #003"), "NE FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE"), "NW FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #002"), "SE FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #001"), "SW FARP")
-
-AirbaseSpawns[AIRBASE.Caucasus.Krasnodar_Pashkovsky][1]:Spawn()
 
 BASE:I("HOGGIT GAW - INIT COMPLETE")
 log("init.lua complete")
