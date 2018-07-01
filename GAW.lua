@@ -46,6 +46,7 @@ game_state = {
             ["BAI"] = {},
             ["AWACS"] = {},
             ["Tanker"] = {},
+            ["NavalStrike"] = {},
             ["FARPS"] = {
                 ["SW Warehouse"] = AIRBASE:FindByName("SW Warehouse"):GetCoalition(),
                 ["NW Warehouse"] = AIRBASE:FindByName("NW Warehouse"):GetCoalition(),
@@ -83,6 +84,18 @@ function baseCaptured(event)
 end
 
 mist.addEventHandler(baseCaptured)
+
+AddNavalStrike = function(theater)
+    return function(group, spawn_name, callsign)
+        game_state["Theaters"][theater]['NavalStrike'][group:GetName()] = {
+            ["callsign"] = callsign, 
+            ["spawn_name"] = spawn_name, 
+            ["position"] = {group:GetVec2().x, group:GetVec2().y}
+        }
+
+        group:GetCoordinate():MarkToCoalitionBlue("NAVAL - "..callsign)
+    end
+end
 
 AddStrategicSAM = function(theater)
     return function(group, spawn_name, callsign)

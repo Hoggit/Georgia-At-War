@@ -41,6 +41,25 @@ if statefile then
         spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
     end
 
+    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["NavalStrike"]) do
+        local spawn
+        if data.spawn_name == "Oil Platform" then
+            spawn = PlatformGroupSpawn[1]
+            local static = spawn:SpawnFromPointVec2(
+            POINT_VEC2:NewFromVec2({
+                ['x'] = data['position'][1],
+                ['y'] = data['position'][2]
+            }), 0)
+
+            AddNavalStrike("Russian Theater")(STATIC:FindByName(static:getName()), "Oil Platform", data['callsign'])
+        else
+            if data.spawn_name == 'Tanker' then spawn = TankerGroupSpawn[1] end
+            if data.spawn_name == 'Cargo' then spawn = CargoGroupSpawn[1] end
+            if data.spawn_name == 'Naval Strike Group' then spawn = RusNavySpawn[1] end
+            spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+        end
+    end
+
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["C2"]) do
         RussianTheaterC2Spawn[1]:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
     end
@@ -103,6 +122,21 @@ else
         local static = StaticSpawns[spawn_index][1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
         local callsign = getCallsign()
         AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), StaticSpawns[spawn_index][2], callsign)
+    end
+
+    -- Spawn the Sea of Azov navy
+    RusNavySpawn[1]:Spawn()
+    for i=1, 4 do
+        local zone_index = math.random(3)
+        local zone = ZONE:New("Naval" .. zone_index)
+        local spawn_index = math.random(2)
+        local spawn = navalstrikespawns[spawn_index]
+        spawn[1]:SpawnInZone(zone, true)
+
+        -- Spawn a oil platform as well
+        local static = PlatformGroupSpawn[1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
+        local callsign = getCallsign()
+        AddNavalStrike("Russian Theater")(STATIC:FindByName(static:getName()), "Oil Platform", callsign)
     end
 
     AirbaseSpawns[AIRBASE.Caucasus.Krasnodar_Pashkovsky][1]:Spawn()

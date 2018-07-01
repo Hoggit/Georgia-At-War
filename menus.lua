@@ -106,6 +106,23 @@ SE FARP: 44 50'7" N 38 46'34"E]]
         MESSAGE:New(strikes, 60):ToGroup(Group)
     end)
 
+    MENU_GROUP_COMMAND:New(Group, "Naval Strike", MissionMenu, function()
+        local output ="MARITIME REPORT:\n"
+        for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["NavalStrike"]) do
+            local type_name = group_table["spawn_name"]
+            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local callsign = group_table['callsign']
+            local coords = {
+                coord:ToStringLLDMS(), 
+                coord:ToStringMGRS(),
+                coord:ToStringLLDDM(),
+                "",
+            }
+            output = output .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+        end
+        MESSAGE:New(output, 60):ToGroup(Group)
+    end)
+
     MENU_GROUP_COMMAND:New(Group, "Interception", MissionMenu, function()
         local intercepts ="INTERCEPTION TARGETS:\n"
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do

@@ -57,7 +57,10 @@ for airbase,spawn_info in pairs(AirbaseSpawns) do
     spawn:OnSpawnGroup(function(SpawnedGroup)
         SpawnedGroup:HandleEvent(EVENTS.Land)
         function SpawnedGroup:OnEventLand(EventData)
-            defense_group:Spawn()
+            if EventData.place:getName() == airbase then
+                defense_group:Spawn()
+            end
+
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
         end
     end)
