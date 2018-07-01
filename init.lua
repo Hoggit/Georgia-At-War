@@ -13,7 +13,7 @@ if statefile then
         game_state["Theaters"]["Russian Theater"]["Airfields"][name] = coalition
 
         if coalition == 1 then
-            RussianTheaterAirfieldDefSpawn:SpawnFromVec2(apV3:GetVec2())
+            AirbaseSpawns[name][2]:Spawn()
         elseif coalition == 2 then
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
         end
@@ -36,24 +36,20 @@ if statefile then
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
         local spawn
-        log(data.spawn_name)
         if data.spawn_name == "SA6" then spawn = RussianTheaterSA6Spawn[1] end
         if data.spawn_name == "SA10" then spawn = RussianTheaterSA10Spawn[1] end
         spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["C2"]) do
-        log(data.callsign)
         RussianTheaterC2Spawn[1]:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["EWR"]) do
-        log(data.callsign)
         RussianTheaterEWRSpawn[1]:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
     end
 
-    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
-        log(data.callsign)
+    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do        
         local spawn
         if data['spawn_name'] == 'Ammo Dump' then spawn = AmmoDumpSpawn[1] end
         if data['spawn_name'] == 'Comms Array' then spawn = CommsArraySpawn[1] end
