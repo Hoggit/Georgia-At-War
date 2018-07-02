@@ -98,11 +98,11 @@ end
 
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
-    ["Novorossiysk"] = SPAWN:New("NovoroTransport"),
-    ["Gelendzhik"] = SPAWN:New("GelenTransport"), 
-    ["Krasnodar-Center"] = SPAWN:New("KDARTransport"),
-    ["Krasnodar-East"] = SPAWN:New("KDAR2Transport"),
-    ["Krymsk"] = SPAWN:New("KrymskTransport")
+    [AIRBASE.Caucasus.Novorossiysk] = {SPAWN:New("NovoroTransport"), SPAWN:New("NovoroTransportHelo")},
+    [AIRBASE.Caucasus.Gelendzhik] = {SPAWN:New("GelenTransport"), SPAWN:New("GelenTransportHelo")}, 
+    [AIRBASE.Caucasus.Krasnodar_Center] = {SPAWN:New("KDARTransport"), SPAWN:New("KrasCenterTransportHelo")},
+    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = {SPAWN:New("KDAR2Transport"), SPAWN:New("KrasPashTransportHelo")},
+    [AIRBASE.Caucasus.Krymsk] = {SPAWN:New("KrymskTransport"), SPAWN:New("KrymskTransportHelo")}
 }
 
 NorthGeorgiaFARPTransportSpawns = {
@@ -297,16 +297,25 @@ for i,v in ipairs(allcaps) do
 end
 
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
-    spawn:OnSpawnGroup(function(SpawnedGroup)
-        SpawnedGroup:HandleEvent(EVENTS.Land)
-        function SpawnedGroup:OnEventLand(EventData)
-            local apV3 = POINT_VEC3:NewFromVec3(EventData.place:getPosition().p)
-            apV3:SetX(apV3:GetX() + math.random(400, 600))
-            apV3:SetY(apV3:GetY() + math.random(200))
-            local air_def_grp = AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-            SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
-        end
-    end)
+    for i=1,2 do
+        spawn[i]:OnSpawnGroup(function(SpawnedGroup)
+            SpawnedGroup:HandleEvent(EVENTS.Land)
+            function SpawnedGroup:OnEventLand(EventData)
+                local apV3
+                if i == 1 then
+                    apV3 = POINT_VEC3:NewFromVec3(EventData.place:getPosition().p)
+                    apV3:SetX(apV3:GetX() + math.random(400, 600))
+                    apV3:SetY(apV3:GetY() + math.random(200))
+                elseif i == 2 then
+                    apV3 = POINT_VEC3:NewFromVec3(EventData.IniGroup:GetPositionVec3())
+                    apV3:SetX(apV3:GetX() + math.random(50,100))
+                    apV3:SetY(apV3:GetY() + math.random(50))
+                end
+                local air_def_grp = AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+                SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
+            end
+        end)
+    end
 end
 
 for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do

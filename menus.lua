@@ -156,8 +156,10 @@ SE FARP: 44 50'7" N 38 46'34"E]]
 end
 
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
-    local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name, XportMenu, function() 
-        local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn)
+    local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name, XportMenu, function()
+        local spawn_idx =1
+        if AIRBASE:FindByName(name):GetCoalition() == 1 then spawn_idx = 2 end
+        local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn[spawn_idx])
         if new_spawn_time ~= nil then
             game_state["last_launched_time"] = new_spawn_time
         end
