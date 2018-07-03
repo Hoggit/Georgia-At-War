@@ -3,6 +3,14 @@ local statefile = io.open(lfs.writedir() .. "Scripts\\GAW\\state.json", 'r')
 -- Enable slotblock
 trigger.action.setUserFlag("SSB",100)
 if statefile then
+    local ab_logi_slots = {
+        [AIRBASE.Caucasus.Novorossiysk] = NovoLogiSpawn,
+        [AIRBASE.Caucasus.Gelendzhik] = nil,
+        [AIRBASE.Caucasus.Krymsk] = KryLogiSpawn,
+        [AIRBASE.Caucasus.Krasnodar_Center] = KrasCenterLogiSpawn,
+        [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = nil,
+    }
+
     MESSAGE:New("Found a statefile.  Processing it instead of starting a new game", 40):ToAll()
     local state = statefile:read("*all")
     statefile:close()
@@ -11,9 +19,8 @@ if statefile then
         local flagval = 100
         local ab = AIRBASE:FindByName(name)
         local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
-        apV3:SetX(apV3:GetX() + math.random(-100, 200))
-        apV3:SetY(apV3:GetY() + math.random(-100, 200))
-
+        apV3:SetX(apV3:GetX() + math.random(100, 200))
+        apV3:SetY(apV3:GetY() + math.random(100, 200))
         game_state["Theaters"]["Russian Theater"]["Airfields"][name] = coalition
 
         if coalition == 1 then
@@ -21,11 +28,15 @@ if statefile then
             flagval = 100
         elseif coalition == 2 then
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-            apV3:SetX(apV3:GetX() + math.random(-100, 200))
-            apV3:SetY(apV3:GetY() + math.random(-100, 200))
+            apV3:SetX(apV3:GetX() + math.random(100, 200))
+            apV3:SetY(apV3:GetY() + math.random(100, 200))
             FSW:SpawnFromVec2(apV3:GetVec2())
             FSE:SpawnFromVec2(apV3:GetVec2())
             flagval = 0
+
+            if ab_logi_slots[name] then
+                activateLogi(ab_logi_slots[name])
+            end
         end
 
         for i,grp in ipairs(abslots[name]) do
@@ -37,8 +48,8 @@ if statefile then
         local flagval = 100
         local ab = AIRBASE:FindByName(name)
         local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
-        apV3:SetX(apV3:GetX() + math.random(400, 800))
-        apV3:SetY(apV3:GetY() + math.random(400, 800))
+        apV3:SetX(apV3:GetX() + math.random(100, 200))
+        apV3:SetY(apV3:GetY() + math.random(100, 200))
         local spawns = {NWFARPDEF, SWFARPDEF, NEFARPDEF, SEFARPDEF}
         game_state["Theaters"]["Russian Theater"]["FARPS"][name] = coalition
 
@@ -49,7 +60,8 @@ if statefile then
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
             apV3:SetX(apV3:GetX() + math.random(-100, 200))
             apV3:SetY(apV3:GetY() + math.random(-100, 200))
-
+            FSW:SpawnFromVec2(apV3:GetVec2())
+            FSE:SpawnFromVec2(apV3:GetVec2())
             flagval = 0
         end
 
