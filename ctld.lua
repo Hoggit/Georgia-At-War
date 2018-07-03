@@ -43,7 +43,7 @@ ctld.enableSmokeDrop = true -- if false, helis and c-130 will not be able to dro
 ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
 ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
 ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
-ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
+ctld.maximumMoveDistance = 500 -- max distance for troops to move from drop point if no enemy is nearby
 
 ctld.minimumDeployDistance = 1000 -- minimum distance from a friendly pickup zone where you can deploy a crate
 
@@ -90,9 +90,9 @@ ctld.allowRandomAiTeamPickups = false -- Allows the AI to randomize the loading 
 -- Simulated Sling load configuration
 
 ctld.minimumHoverHeight = 7.5 -- Lowest allowable height for crate hover
-ctld.maximumHoverHeight = 12.0 -- Highest allowable height for crate hover
-ctld.maxDistanceFromCrate = 5.5 -- Maximum distance from from crate for hover
-ctld.hoverTime = 10 -- Time to hold hover above a crate for loading in seconds
+ctld.maximumHoverHeight = 20.0 -- Highest allowable height for crate hover
+ctld.maxDistanceFromCrate = 10 -- Maximum distance from from crate for hover
+ctld.hoverTime = 5 -- Time to hold hover above a crate for loading in seconds
 
 -- end of Simulated Sling load configuration
 
@@ -150,14 +150,18 @@ ctld.JTAC_lock = "all" -- "vehicle" OR "troop" OR "all" forces JTAC to only lock
 
 --pickupZones = { "Zone name or Ship Unit Name", "smoke color", "limit (-1 unlimited)", "ACTIVE (yes/no)", "side (0 = Both sides / 1 = Red / 2 = Blue )", flag number (optional) }
 ctld.pickupZones = {
-    { "pickzone1", "blue", -1, "yes", 0 },
-    { "pickzone2", "red", -1, "yes", 0 },
-    { "pickzone3", "none", -1, "yes", 0 },
-    { "pickzone4", "none", -1, "yes", 0 },
-    { "pickzone5", "none", -1, "yes", 0 },
-    { "pickzone6", "none", -1, "yes", 0 },
-    { "pickzone7", "none", -1, "yes", 0 },
-    { "pickzone8", "none", -1, "yes", 0 },
+    { "kraspashlogizone", "green", -1, "no", 0 },
+    { "krascenterlogizone", "green", -1, "no", 0 },
+    { "krymsklogizone", "green", -1, "no", 0 },
+    { "novologizone", "green", -1, "no", 0 },
+    { "pickzone1", "green", -1, "yes", 0 },
+    { "pickzone2", "green", -1, "yes", 0 },
+    { "pickzone3", "green", -1, "yes", 0 },
+    { "pickzone4", "green", -1, "yes", 0 },
+    { "pickzone5", "green", -1, "yes", 0 },
+    { "pickzone6", "green", -1, "yes", 0 },
+    { "pickzone7", "green", -1, "yes", 0 },
+    { "pickzone8", "green", -1, "yes", 0 },
     { "pickzone9", "none", 5, "yes", 1 }, -- limits pickup zone 9 to 5 groups of soldiers or vehicles, only red can pick up
     { "pickzone10", "none", 10, "yes", 2 },  -- limits pickup zone 10 to 10 groups of soldiers or vehicles, only blue can pick up
 
@@ -194,13 +198,13 @@ ctld.dropOffZones = {
 --wpZones = { "Zone name", "smoke color",  "ACTIVE (yes/no)", "side (0 = Both sides / 1 = Red / 2 = Blue )", }
 ctld.wpZones = {
     { "wpzone1", "green","yes", 2 },
-    { "wpzone2", "blue","yes", 2 },
-    { "wpzone3", "orange","yes", 2 },
-    { "wpzone4", "none","yes", 2 },
-    { "wpzone5", "none","yes", 2 },
-    { "wpzone6", "none","yes", 1 },
-    { "wpzone7", "none","yes", 1 },
-    { "wpzone8", "none","yes", 1 },
+    { "wpzone2", "green","yes", 2 },
+    { "wpzone3", "green","yes", 2 },
+    { "wpzone4", "green","yes", 2 },
+    { "wpzone5", "green","yes", 2 },
+    { "wpzone6", "green","yes", 2 },
+    { "wpzone7", "green","yes", 2 },
+    { "wpzone8", "green","yes", 2 },
     { "wpzone9", "none","yes", 1 },
     { "wpzone10", "none","no", 0 }, -- Both sides as its set to 0
 }
@@ -237,6 +241,12 @@ ctld.transportPilotNames = {
     "helicargo23",
     "helicargo24",
     "helicargo25",
+
+    "helicargo26",
+    "helicargo27",
+    "helicargo28",
+    "helicargo29",
+    "helicargo30",
 
     "MEDEVAC #1",
     "MEDEVAC #2",
@@ -382,6 +392,11 @@ ctld.logisticUnits = {
     "logistic8",
     "logistic9",
     "logistic10",
+    "logistic11",
+    "logistic12",
+    "logistic13",
+    "logistic14",
+    "logistic15",
 }
 
 -- ************** UNITS ABLE TO TRANSPORT VEHICLES ******************

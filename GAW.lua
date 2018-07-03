@@ -59,17 +59,35 @@ game_state = {
 
 log("Game State INIT")
 
+abslots = {
+    [AIRBASE.Caucasus.Novorossiysk] = {"Novoro Huey 1", "Novoro Huey 2", "Novoro Mi-8 1", "Novoro Mi-8 2"},
+    [AIRBASE.Caucasus.Gelendzhik] = {},
+    [AIRBASE.Caucasus.Krymsk] = {"Krymsk Huey 1", "Krymsk Huey 2", "Krymsk Mi-8 1", "Krymsk Mi-8 2"},
+    [AIRBASE.Caucasus.Krasnodar_Center] = {"Krasnador Huey 1", "Kras Mi-8 1", "Krasnador Huey 2", "Kras Mi-8 2"},
+    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = {},
+    ['SW Warehouse'] = {"SWFARP Huey 1", "SWFARP Huey 2", "SWFARP Mi-8 1", "SWFARP Mi-8 2"},
+    ['NW Warehouse'] = {"NWFARP Huey 1", "NWFARP Huey 2", "NWFARP Mi-8 1", "NWFARP Mi-8 2", "NWFARP KA50"},
+    ['SE Warehouse'] ={"SEFARP Huey 1", "SEFARP Huey 2", "SEFARP Mi-8 1", "SEFARP Mi-8 2", "SEFARP KA50"},
+    ['NE Warehouse'] = {"NEFARP Huey 1", "NEFARP Huey 2", "NEFARP Mi-8 1", "NEFARP Mi-8 2"},
+}
+
 function baseCaptured(event)
     if event.id == world.event.S_EVENT_BASE_CAPTURED then
+        local abname = event.place:getName()
         local coalition = event.place:getCoalition()
         local capString
+        local flagval
         if coalition == 1 then
             capString = "Russian forces"
+            flagval = 100
         elseif coalition == 2 then
             capString = "Coalition forces"
+            flagval = 0
         end
 
-        local abname = event.place:getName()
+        for i,grp in ipairs(abslots[abname]) do
+            trigger.action.setUserFlag(grp, flagval)     
+        end
 
         if abname == 'SW Warehouse' or abname == 'NW Warehouse' or abname == 'SE Warehouse' or abname == 'NE Warehouse' then
             game_state["Theaters"]["Russian Theater"]['FARPS'][abname] = coalition

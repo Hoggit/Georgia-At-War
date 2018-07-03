@@ -1,10 +1,14 @@
 local statefile = io.open(lfs.writedir() .. "Scripts\\GAW\\state.json", 'r')
+
+-- Enable slotblock
+trigger.action.setUserFlag("SSB",100)
 if statefile then
     MESSAGE:New("Found a statefile.  Processing it instead of starting a new game", 40):ToAll()
     local state = statefile:read("*all")
     statefile:close()
     local saved_game_state = json:decode(state)
     for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["Airfields"]) do
+        local flagval = 100
         local ab = AIRBASE:FindByName(name)
         local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
         apV3:SetX(apV3:GetX() + math.random(-100, 200))
@@ -14,12 +18,23 @@ if statefile then
 
         if coalition == 1 then
             AirbaseSpawns[name][2]:Spawn()
+            flagval = 100
         elseif coalition == 2 then
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+            apV3:SetX(apV3:GetX() + math.random(-100, 200))
+            apV3:SetY(apV3:GetY() + math.random(-100, 200))
+            FSW:SpawnFromVec2(apV3:GetVec2())
+            FSE:SpawnFromVec2(apV3:GetVec2())
+            flagval = 0
+        end
+
+        for i,grp in ipairs(abslots[name]) do
+            trigger.action.setUserFlag(grp, flagval)     
         end
     end
 
     for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["FARPS"]) do
+        local flagval = 100
         local ab = AIRBASE:FindByName(name)
         local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
         apV3:SetX(apV3:GetX() + math.random(400, 800))
@@ -29,8 +44,17 @@ if statefile then
 
         if coalition == 1 then
             spawns[math.random(4)]:SpawnFromVec2(apV3:GetVec2())
+            flagval = 100
         elseif coalition == 2 then
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+            apV3:SetX(apV3:GetX() + math.random(-100, 200))
+            apV3:SetY(apV3:GetY() + math.random(-100, 200))
+
+            flagval = 0
+        end
+
+        for i,grp in ipairs(abslots[name]) do
+            trigger.action.setUserFlag(grp, flagval)     
         end
     end
 
@@ -144,6 +168,46 @@ else
     SWFARPDEF:Spawn()
     NEFARPDEF:Spawn()
     SEFARPDEF:Spawn()
+
+    -- Disable slots
+    trigger.action.setUserFlag("Novoro Huey 1",100)
+    trigger.action.setUserFlag("Novoro Huey 2",100)
+    trigger.action.setUserFlag("Novoro Mi-8 1",100)
+    trigger.action.setUserFlag("Novoro Mi-8 2",100)
+
+    trigger.action.setUserFlag("Krymsk Huey 1",100)
+    trigger.action.setUserFlag("Krymsk Huey 2",100)
+    trigger.action.setUserFlag("Krymsk Mi-8 1",100)
+    trigger.action.setUserFlag("Krymsk Mi-8 2",100)
+
+    trigger.action.setUserFlag("Krasnador Huey 1",100)
+    trigger.action.setUserFlag("Krasnador Huey 2",100)
+    trigger.action.setUserFlag("Kras Mi-8 1",100)
+    trigger.action.setUserFlag("Kras Mi-8 2",100)
+
+    -- FARPS
+    trigger.action.setUserFlag("SWFARP Huey 1",100)
+    trigger.action.setUserFlag("SWFARP Huey 2",100)
+    trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+    trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+
+    trigger.action.setUserFlag("NWFARP Huey 1",100)
+    trigger.action.setUserFlag("NWFARP Huey 2",100)
+    trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+    trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+
+    trigger.action.setUserFlag("NEFARP Huey 1",100)
+    trigger.action.setUserFlag("NEFARP Huey 2",100)
+    trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+    trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+
+    trigger.action.setUserFlag("SEFARP Huey 1",100)
+    trigger.action.setUserFlag("SEFARP Huey 2",100)
+    trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+    trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+
+    trigger.action.setUserFlag("NWFARP KA50",100)
+    trigger.action.setUserFlag("SEFARP KA50",100)
 end
 
 -- Kick off the commanders

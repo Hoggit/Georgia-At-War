@@ -96,13 +96,48 @@ buildCheckC2Event = function(group, callsign)
     end
 end
 
+local logispawn = SPAWNSTATIC:NewFromStatic("logistic3", country.id.USA)
+
+-- Forward Logistics spawns
+NovoLogiSpawn = {logispawn, "HEMTT TFFT", 
+    {
+        ['x'] = -39857.5703125,
+        ['y'] = 279000.5
+    },
+    "novologizone"
+}
+
+KryLogiSpawn = {logispawn, "HEMTT TFFT", 
+    {
+        ['x'] = -5951.622558,
+        ['y'] = 293862.25
+    },
+    "krymsklogizone"
+}
+
+KrasCenterLogiSpawn = {logispawn, "HEMTT TFFT", 
+    {
+        ['x'] = 11981.98046875,
+        ['y'] = 364532.65625
+    },
+    "krascenterlogizone"
+}
+
+KrasPashLogiSpawn = {logispawn, "HEMTT TFFT", 
+    {
+        ['x'] = 8229.2353515625,
+        ['y'] = 386831.65625
+    },
+    "kraspashlogizone"
+}
+
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
-    [AIRBASE.Caucasus.Novorossiysk] = {SPAWN:New("NovoroTransport"), SPAWN:New("NovoroTransportHelo")},
-    [AIRBASE.Caucasus.Gelendzhik] = {SPAWN:New("GelenTransport"), SPAWN:New("GelenTransportHelo")}, 
-    [AIRBASE.Caucasus.Krasnodar_Center] = {SPAWN:New("KDARTransport"), SPAWN:New("KrasCenterTransportHelo")},
-    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = {SPAWN:New("KDAR2Transport"), SPAWN:New("KrasPashTransportHelo")},
-    [AIRBASE.Caucasus.Krymsk] = {SPAWN:New("KrymskTransport"), SPAWN:New("KrymskTransportHelo")}
+    [AIRBASE.Caucasus.Novorossiysk] = {SPAWN:New("NovoroTransport"), SPAWN:New("NovoroTransportHelo"), NovoLogiSpawn},
+    [AIRBASE.Caucasus.Gelendzhik] = {SPAWN:New("GelenTransport"), SPAWN:New("GelenTransportHelo"), nil}, 
+    [AIRBASE.Caucasus.Krasnodar_Center] = {SPAWN:New("KDARTransport"), SPAWN:New("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
+    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = {SPAWN:New("KDAR2Transport"), SPAWN:New("KrasPashTransportHelo"), nil},
+    [AIRBASE.Caucasus.Krymsk] = {SPAWN:New("KrymskTransport"), SPAWN:New("KrymskTransportHelo"), KryLogiSpawn}
 }
 
 NorthGeorgiaFARPTransportSpawns = {
@@ -178,11 +213,22 @@ SWFARPDEF = SPAWN:New("FARP DEFENSE #001")
 NEFARPDEF = SPAWN:New("FARP DEFENSE #003")
 SEFARPDEF = SPAWN:New("FARP DEFENSE #002")
 
+-- FARP Support Groups
+FSW = SPAWN:New("FARP Support West")
+FSE = SPAWN:New("FARP Support East")
+
 -- Group spanws for easy randomization
 local allcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn}
 poopcaps = {RussianTheaterMig212ShipSpawn}
 goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn}
 baispawns = {RussianHeavyArtySpawn, ArmorColumnSpawn, MechInfSpawn}
+
+function activateLogi(spawn)
+    log(spawn[4])
+    local stat = spawn[1]:SpawnFromPointVec2(POINT_VEC2:NewFromVec2(spawn[3]), 0)
+    table.insert(ctld.logisticUnits, stat:getName())
+    ctld.activatePickupZone(spawn[4])
+end
 
 -- OnSpawn Callbacks.  Add ourselves to the game state
 RusNavySpawn[1]:OnSpawnGroup(function(SpawnedGroup)
@@ -311,7 +357,12 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
                     apV3:SetX(apV3:GetX() + math.random(50,100))
                     apV3:SetY(apV3:GetY() + math.random(50))
                 end
+                activateLogi(spawn[3])
                 local air_def_grp = AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+                apV3:SetX(apV3:GetX() + math.random(-50, 50))
+                apV3:SetY(apV3:GetY() + math.random(-50, 50))
+                FSW:SpawnFromVec2(apV3:GetVec2())
+                FSE:SpawnFromVec2(apV3:GetVec2())
                 SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
             end
         end)
@@ -326,6 +377,11 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
             apV3:SetX(apV3:GetX() + math.random(-100, 200))
             apV3:SetY(apV3:GetY() + math.random(-100, 200))
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
+
+            apV3:SetX(apV3:GetX() + math.random(-100, 100))
+            apV3:SetY(apV3:GetY() + math.random(-100, 100))
+            FSW:SpawnFromVec2(apV3:GetVec2())
+            FSE:SpawnFromVec2(apV3:GetVec2())
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
         end
     end)
