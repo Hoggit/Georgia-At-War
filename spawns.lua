@@ -96,7 +96,12 @@ buildCheckC2Event = function(group, callsign)
     end
 end
 
-local logispawn = SPAWNSTATIC:NewFromStatic("logistic3", country.id.USA)
+--local logispawn = SPAWNSTATIC:NewFromStatic("logistic3", country.id.USA)
+local logispawn = {
+    type = "HEMTT TFFT",
+    country = "USA",
+    category = "Ground vehicles"
+}
 
 -- Forward Logistics spawns
 NovoLogiSpawn = {logispawn, "HEMTT TFFT", 
@@ -224,9 +229,11 @@ goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn}
 baispawns = {RussianHeavyArtySpawn, ArmorColumnSpawn, MechInfSpawn}
 
 function activateLogi(spawn)
-    log(spawn[4])
-    local stat = spawn[1]:SpawnFromPointVec2(POINT_VEC2:NewFromVec2(spawn[3]), 0)
-    table.insert(ctld.logisticUnits, stat:getName())
+    local statictable = mist.utils.deepCopy(logispawn)
+    statictable.x = spawn[3].x
+    statictable.y = spawn[3].y
+    local static = mist.dynAddStatic(statictable)
+    table.insert(ctld.logisticUnits, static.name)
     ctld.activatePickupZone(spawn[4])
 end
 

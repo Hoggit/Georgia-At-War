@@ -192,6 +192,9 @@ else
     trigger.action.setUserFlag("Krymsk Mi-8 1",100)
     trigger.action.setUserFlag("Krymsk Mi-8 2",100)
 
+    trigger.action.setUserFlag("Krymsk Gazelle M",100)
+    trigger.action.setUserFlag("Krymsk Gazelle L",100)
+
     trigger.action.setUserFlag("Krasnador Huey 1",100)
     trigger.action.setUserFlag("Krasnador Huey 2",100)
     trigger.action.setUserFlag("Kras Mi-8 1",100)
@@ -202,6 +205,9 @@ else
     trigger.action.setUserFlag("SWFARP Huey 2",100)
     trigger.action.setUserFlag("SWFARP Mi-8 2",100)
     trigger.action.setUserFlag("SWFARP Mi-8 2",100)
+
+    trigger.action.setUserFlag("SEFARP Gazelle M",100)
+    trigger.action.setUserFlag("SEFARP Gazelle L",100)
 
     trigger.action.setUserFlag("NWFARP Huey 1",100)
     trigger.action.setUserFlag("NWFARP Huey 2",100)
