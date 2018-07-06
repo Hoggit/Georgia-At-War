@@ -229,12 +229,14 @@ goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn}
 baispawns = {RussianHeavyArtySpawn, ArmorColumnSpawn, MechInfSpawn}
 
 function activateLogi(spawn)
-    local statictable = mist.utils.deepCopy(logispawn)
-    statictable.x = spawn[3].x
-    statictable.y = spawn[3].y
-    local static = mist.dynAddStatic(statictable)
-    table.insert(ctld.logisticUnits, static.name)
-    ctld.activatePickupZone(spawn[4])
+    if spawn then
+        local statictable = mist.utils.deepCopy(logispawn)
+        statictable.x = spawn[3].x
+        statictable.y = spawn[3].y
+        local static = mist.dynAddStatic(statictable)
+        table.insert(ctld.logisticUnits, static.name)
+        ctld.activatePickupZone(spawn[4])
+    end
 end
 
 -- OnSpawn Callbacks.  Add ourselves to the game state

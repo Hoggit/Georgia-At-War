@@ -111,14 +111,16 @@ SE FARP: 44 50'7" N 38 46'34"E]]
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["NavalStrike"]) do
             local type_name = group_table["spawn_name"]
             local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
-            local callsign = group_table['callsign']
-            local coords = {
-                coord:ToStringLLDMS(), 
-                coord:ToStringMGRS(),
-                coord:ToStringLLDDM(),
-                "",
-            }
-            output = output .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            if coord then
+                local callsign = group_table['callsign']
+                local coords = {
+                    coord:ToStringLLDMS(), 
+                    coord:ToStringMGRS(),
+                    coord:ToStringLLDDM(),
+                    "",
+                }
+                output = output .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            end
         end
         MESSAGE:New(output, 60):ToGroup(Group)
     end)
@@ -128,14 +130,16 @@ SE FARP: 44 50'7" N 38 46'34"E]]
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
             local g = GROUP:FindByName(group_name)
             local coord = g:GetCoordinate()
-            local group_coord = Group:GetCoordinate()
-            local coords = {
-                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
-                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
-                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
-                coord:ToStringBRA(group_coord, useSettings),
-            }
-            intercepts = intercepts .. "AWACS: \t" .. coords[type] .. "\n"
+            if coord then
+                local group_coord = Group:GetCoordinate()
+                local coords = {
+                    coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
+                    coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
+                    coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
+                    coord:ToStringBRA(group_coord, useSettings),
+                }
+                intercepts = intercepts .. "AWACS: \t" .. coords[type] .. "\n"
+            end
         end
 
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
