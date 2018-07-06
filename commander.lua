@@ -104,12 +104,12 @@ russian_commander = function()
                 g:Destroy()
             end
         end
-        
+
         RussianTheaterMig312ShipSpawn:Spawn()
     end
 
 
-    if math.random() > 0.95 then
+    if math.random() > 0.9 then
         local targets = AttackableAirbases(Airbases)
         local target = targets[ math.random (#targets) ]
         log("The Russian commander has decided to strike " .. target .. " airbase")
@@ -120,7 +120,7 @@ russian_commander = function()
             SpawnOPFORCas(zone, RussianTheaterCASSpawn)
         else
             log(target .. " appears undefended! Muahaha!")
-            local spawn = AirbaseSpawns[target][1]
+            local spawn = SpawnForTargetAirbase(target)
             spawn:Spawn()
         end
     end
