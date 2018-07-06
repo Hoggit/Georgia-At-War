@@ -74,11 +74,16 @@ AirbaseSpawns = {
     [AIRBASE.Caucasus.Krymsk]={KrymskTransportSpawn, KrymskHeloSpawn, DefKrymsk}
 }
 
-onTransportLand = function(defense_group)
+onTransportLand = function(defense_group, airbase)
     local f = function(SpawnedGroup)
         SpawnedGroup:HandleEvent(EVENTS.Land)
         function SpawnedGroup:OnEventLand(EventData)
-            if EventData.place:getName() == airbase then
+            local grpLoc = EventData.IniGroup:GetPointVec2()
+            local airbaseLoc = AIRBASE:FindByName(airbase)
+            local distance = grpLoc:Get2DDistance(airbaseLoc)
+            log("The transport landed " .. distance .. "m away from designated landing zone")
+            if (distance <= 2500) then
+                log("Within range. Spawning russian forces.")
                 defense_group:Spawn()
             end
 
@@ -91,7 +96,7 @@ for airbase,spawn_info in pairs(AirbaseSpawns) do
     local plane_spawn = spawn_info[1]
     local helo_spawn = spawn_info[2]
     local defense_group = spawn_info[3]
-    local onLandFunc = onTransportLand(defense_group)
+    local onLandFunc = onTransportLand(defense_group, airbase)
     plane_spawn:OnSpawnGroup(onLandFunc)
     helo_spawn:OnSpawnGroup(onLandFunc)
 end
