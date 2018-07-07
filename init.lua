@@ -126,6 +126,20 @@ if statefile then
         spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
     end
 
+    for idx, data in ipairs(saved_game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"]) do
+        if data.name == 'hawk' then
+            hawkspawn:SpawnFromVec2(data.pos)
+        end
+
+        if data.name == 'avenger' then
+            avengerspawn:SpawnFromVec2(data.pos)
+        end
+
+        if data.name == 'ammo' then
+            ammospawn:SpawnFromVec2(data.pos)
+        end
+    end
+
 else
     -- Populate the world and gameplay environment.
     for i=1, 4 do

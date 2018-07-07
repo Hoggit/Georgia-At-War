@@ -91,7 +91,7 @@ ctld.allowRandomAiTeamPickups = false -- Allows the AI to randomize the loading 
 
 ctld.minimumHoverHeight = 7.5 -- Lowest allowable height for crate hover
 ctld.maximumHoverHeight = 20.0 -- Highest allowable height for crate hover
-ctld.maxDistanceFromCrate = 10 -- Maximum distance from from crate for hover
+ctld.maxDistanceFromCrate = 15 -- Maximum distance from from crate for hover
 ctld.hoverTime = 5 -- Time to hold hover above a crate for loading in seconds
 
 -- end of Simulated Sling load configuration

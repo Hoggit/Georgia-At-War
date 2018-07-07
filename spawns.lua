@@ -96,6 +96,11 @@ buildCheckC2Event = function(group, callsign)
     end
 end
 
+-- player placed spawns
+hawkspawn = SPAWN:New('hawk')
+avengerspawn = SPAWN:New('avenger')
+ammospawn = SPAWN:New('ammo')
+
 --local logispawn = SPAWNSTATIC:NewFromStatic("logistic3", country.id.USA)
 local logispawn = {
     type = "HEMTT TFFT",

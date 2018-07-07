@@ -47,6 +47,7 @@ game_state = {
             ["AWACS"] = {},
             ["Tanker"] = {},
             ["NavalStrike"] = {},
+            ["CTLD_ASSETS"] = {},
             ["FARPS"] = {
                 ["SW Warehouse"] = AIRBASE:FindByName("SW Warehouse"):GetCoalition(),
                 ["NW Warehouse"] = AIRBASE:FindByName("NW Warehouse"):GetCoalition(),
