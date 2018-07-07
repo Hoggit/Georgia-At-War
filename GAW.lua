@@ -95,9 +95,9 @@ function baseCaptured(event)
             game_state["Theaters"]["Russian Theater"]['Airfields'][abname] = coalition
         end 
 
-        if capString then
-            MESSAGE:New(event.place:getName() .. " has been captured by " .. capString, 20):ToAll()
-        end
+        --if capString then
+            --MESSAGE:New(event.place:getName() .. " has been captured by " .. capString, 20):ToAll()
+        --end
     end
 end
 
