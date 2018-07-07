@@ -175,13 +175,13 @@ else
     end
 
     -- Spawn the Sea of Azov navy
-    RusNavySpawn[1]:Spawn()
+    --RusNavySpawn[1]:Spawn()
     for i=1, 4 do
         local zone_index = math.random(2)
         local zone = ZONE:New("Naval" .. zone_index)
-        local spawn_index = math.random(2)
-        local spawn = navalstrikespawns[spawn_index]
-        spawn[1]:SpawnInZone(zone, true)
+        --local spawn_index = 1
+        --local spawn = navalstrikespawns[spawn_index]
+        --spawn[1]:SpawnInZone(zone, true)
 
         -- Spawn a oil platform as well
         local static = PlatformGroupSpawn[1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)

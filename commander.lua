@@ -12,7 +12,7 @@ russian_commander = function()
     local adcap_chance = 0.2
     local alivec2s = 0
     local alive_caps = 0
-    local max_caps = 3
+    local max_caps = 4
     local alive_bai_targets = 0
     local max_bai = 6
 
