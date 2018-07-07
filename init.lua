@@ -177,7 +177,7 @@ else
     -- Spawn the Sea of Azov navy
     RusNavySpawn[1]:Spawn()
     for i=1, 4 do
-        local zone_index = math.random(3)
+        local zone_index = math.random(2)
         local zone = ZONE:New("Naval" .. zone_index)
         local spawn_index = math.random(2)
         local spawn = navalstrikespawns[spawn_index]
