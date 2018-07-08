@@ -175,10 +175,6 @@ RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
 RussianTheaterAWACSSpawn = SPAWN:New("A50"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
 RUSTankerSpawn = SPAWN:New("IL78-RUSTanker"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(300)
 
--- REDFOR Naval spawn
-RusNavySpawn = {SPAWN:New("Naval Strike Group"):InitLimit(6, 0):SpawnScheduled(1800), "Naval Strike Group"}
-RusNavyEscortSpawn = {SPAWN:New("ShipEscort"):InitLimit(2, 0), "ShipEscort"}
-
 -- REDFOR specific airfield defense spawns
 DefKrasPash = SPAWN:New("Red Airfield Defense Kras-Pash 1")
 DefKrasCenter = SPAWN:New("Red Airfield Defense Kras-Center 1")
@@ -192,7 +188,6 @@ RussianTheaterMig292ShipSpawn = SPAWN:New("Mig29-2ship")
 RussianTheaterSu272sShipSpawn = SPAWN:New("Su27-2ship")
 RussianTheaterMig312ShipSpawn = SPAWN:New("Mig31-2ship"):InitLimit(2, 0)
 RussianTheaterAWACSPatrol = SPAWN:New("SU27-RUSAWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
-CarrierSU33Patrol = SPAWN:New("CarrierSu33"):InitRepeatOnEngineShutDown():InitLimit(2,0):SpawnScheduled(600)
 
 -- Strike Target Spawns
 RussianHeavyArtySpawn = { SPAWN:New("ARTILLERY"), "ARTILLERY" }
@@ -203,10 +198,7 @@ CommsArraySpawn = { SPAWNSTATIC:NewFromStatic("Comms Array", country.id.RUSSIA),
 PowerPlantSpawn = { SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA), "Power Plant" }
 
 -- Naval Strike target Spawns
-TankerGroupSpawn = {SPAWN:New("Tanker"), "Tanker"}
-CargoGroupSpawn = {SPAWN:New("Cargo"), "Cargo"}
 PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
-navalstrikespawns = {TankerGroupSpawn, CargoGroupSpawn}
 
 -- Airfield CAS Spawns
 RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup")
@@ -245,23 +237,6 @@ function activateLogi(spawn)
 end
 
 -- OnSpawn Callbacks.  Add ourselves to the game state
-RusNavySpawn[1]:OnSpawnGroup(function(SpawnedGroup)
-    local callsign = getCallsign()
-    RusNavyEscortSpawn[1]:Spawn()
-    CarrierSU33Patrol:Spawn()
-    AddNavalStrike("Russian Theater")(SpawnedGroup, "Naval Strike Group", callsign)
-end)
-
-TankerGroupSpawn[1]:OnSpawnGroup(function(SpawnedGroup)
-    local callsign = getCallsign()
-    AddNavalStrike("Russian Theater")(SpawnedGroup, "Tanker", callsign)
-end)
-
-CargoGroupSpawn[1]:OnSpawnGroup(function(SpawnedGroup)
-    local callsign = getCallsign()
-    AddNavalStrike("Russian Theater")(SpawnedGroup, "Cargo", callsign)
-end)
-
 RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
     RussianTheaterAWACSPatrol:Spawn()
 end)

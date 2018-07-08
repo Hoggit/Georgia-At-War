@@ -88,11 +88,6 @@ if statefile then
             }), 0)
 
             AddNavalStrike("Russian Theater")(STATIC:FindByName(static:getName()), "Oil Platform", data['callsign'])
-        else
-            if data.spawn_name == 'Tanker' then spawn = TankerGroupSpawn[1] end
-            if data.spawn_name == 'Cargo' then spawn = CargoGroupSpawn[1] end
-            if data.spawn_name == 'Naval Strike Group' then spawn = RusNavySpawn[1] end
-            spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
         end
     end
 
@@ -175,13 +170,9 @@ else
     end
 
     -- Spawn the Sea of Azov navy
-    --RusNavySpawn[1]:Spawn()
     for i=1, 4 do
         local zone_index = math.random(2)
         local zone = ZONE:New("Naval" .. zone_index)
-        --local spawn_index = 1
-        --local spawn = navalstrikespawns[spawn_index]
-        --spawn[1]:SpawnInZone(zone, true)
 
         -- Spawn a oil platform as well
         local static = PlatformGroupSpawn[1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)

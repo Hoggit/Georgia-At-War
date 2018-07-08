@@ -61,4 +61,4 @@ function cleanup()
     end
 end
 
-SCHEDULER:New(nil, cleanup, {}, 40, 60)
+SCHEDULER:New(nil, cleanup, {}, 47, 125)
