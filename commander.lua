@@ -1,5 +1,6 @@
 -- Main game loop, decision making about spawns happen here.
 russian_commander = function()
+    local mathrandom = math.random
     -- Russian Theater Decision Making
     log("Russian commander is thinking...")
     local time = timer.getAbsTime() + env.mission.start_time
@@ -53,17 +54,17 @@ russian_commander = function()
     if alivec2s == 3 then random_cap = 30 end
     if alivec2s == 2 then random_cap = 60; adcap_chance = 0.4 end
     if alivec2s == 1 then random_cap = 120 adcap_chance = 0.8 end
-    local command_delay = math.random(10, random_cap)
+    local command_delay = mathrandom(10, random_cap)
     log("The Russian commander has a command delay of " .. command_delay .. " and a " .. (adcap_chance * 100) .. "% chance of getting decent planes...")
 
     if alive_caps < max_caps then
         log("The Russian commander is going to request " .. (max_caps - alive_caps) .. " additional CAP units.")
         for i = alive_caps + 1, max_caps do
             SCHEDULER:New(nil, function()
-                if math.random() < adcap_chance then
+                if mathrandom() < adcap_chance then
                     -- Spawn fancy planes, 70% chance they come from airbase, otherwise they come from "off theater"
-                    local capspawn = goodcaps[math.random(#goodcaps)]
-                    if math.random() > 0.3 then
+                    local capspawn = goodcaps[mathrandom(#goodcaps)]
+                    if mathrandom() > 0.3 then
                         capspawn:SpawnAtAirbase(AIRBASE:FindByName(AIRBASE.Caucasus.Maykop_Khanskaya), SPAWN.Takeoff.Cold)
                         log("The Russian commander is getting a fancy plane from his local airbase")
                     else
@@ -72,8 +73,8 @@ russian_commander = function()
                     end
                 else
                     -- Spawn same ol crap
-                    local capspawn = poopcaps[math.random(#poopcaps)]
-                    if math.random() > 0.3 then
+                    local capspawn = poopcaps[mathrandom(#poopcaps)]
+                    if mathrandom() > 0.3 then
                         capspawn:SpawnAtAirbase(AIRBASE:FindByName(AIRBASE.Caucasus.Maykop_Khanskaya), SPAWN.Takeoff.Cold)
                         log("The Russian commander is getting a poopy plane from his local airbase")
                     else
@@ -89,15 +90,15 @@ russian_commander = function()
         log("The Russian Commander is going to request " .. (max_bai - alive_bai_targets) .. " additional strategic ground units")
         for i = alive_bai_targets + 1, max_bai do
             SCHEDULER:New(nil, function()
-                local baispawn = baispawns[math.random(#baispawns)][1]
-                local zone_index = math.random(13)
+                local baispawn = baispawns[mathrandom(#baispawns)][1]
+                local zone_index = mathrandom(13)
                 local zone = ZONE:New("NorthCAS" .. zone_index)
                 baispawn:SpawnInZone(zone, true)
             end, {}, command_delay)
         end
     end
 
-    if math.random() > 0.7 then
+    if mathrandom() > 0.7 then
         local g = RussianTheaterMig312ShipSpawn:GetFirstAliveGroup()
         if g then
             if g:AllOnGround() then
@@ -108,9 +109,9 @@ russian_commander = function()
         RussianTheaterMig312ShipSpawn:Spawn()
     end
 
-    if math.random() > 0.95 then
+    if mathrandom() > 0.95 then
         local targets = AttackableAirbases(Airbases)
-        local target = targets[ math.random (#targets) ]
+        local target = targets[ mathrandom (#targets) ]
         log("The Russian commander has decided to strike " .. target .. " airbase")
         if AirfieldIsDefended(target) then
             log(target .. " is defended by Blue! Send in the hounds.")
@@ -122,6 +123,8 @@ russian_commander = function()
             local spawn = SpawnForTargetAirbase(target)
             spawn:Spawn()
         end
+    else
+        log("The Russian commander is not going to strike any airfields right now.")
     end
 end
 

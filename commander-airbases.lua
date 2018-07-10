@@ -43,13 +43,14 @@ end
 AirfieldIsDefended = function(baseName)
     local base = AIRBASE:FindByName(baseName)
     local zone = ZONE_RADIUS:New("airfield-defense-chk", base:GetVec2(), 1500)
-    -- return zone:GetScannedCoalition(BLUE) ~= nil --BROKEN
-    local groupsInZone = SET_GROUP
-    :New()
-    :FilterCoalitions("blue")
-    :FilterCategoryGround()
-    :FilterStart()
-    return #groupsInZone > 0
+    log("Checking if airfield is defended.")
+    local anyInZone = SET_GROUP:New()
+                        :FilterCoalitions("blue")
+                        :FilterCategoryGround()
+                        :FilterStart()
+                        :AnyInZone(zone)
+    log("Airfield is defended? -- " .. tostring(anyInZone))
+    return anyInZone
 end
 
 SpawnForTargetAirbase = function(baseName)
