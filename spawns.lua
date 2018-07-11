@@ -161,7 +161,6 @@ NorthGeorgiaFARPTransportSpawns = {
 TexacoSpawn = SPAWN:New("Texaco"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(120)
 ShellSpawn = SPAWN:New("Shell"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(140)
 OverlordSpawn = SPAWN:New("AWACS Overlord"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(160)
-AWACSPatrol = SPAWN:New("AWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
 
 -- Local defense spawns.  Usually used after a transport spawn lands somewhere.
 AirfieldDefense = SPAWN:New("AirfieldDefense")
@@ -239,10 +238,6 @@ end
 -- OnSpawn Callbacks.  Add ourselves to the game state
 RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
     RussianTheaterAWACSPatrol:Spawn()
-end)
-
-OverlordSpawn:OnSpawnGroup(function(SpawnedGroup)
-    AWACSPatrol:Spawn()
 end)
 
 --local sammenu = MENU_MISSION:New("DESTROY SAMS")
