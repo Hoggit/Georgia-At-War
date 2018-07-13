@@ -247,7 +247,7 @@ SCHEDULER:New(nil, function()
     log("Starting Russian Commander, Comrade")
     --pcall(russian_commander)
     russian_commander()
-end, {}, 10, 400)
+end, {}, 10, 600)
 
 -- Kick off the supports
 RussianTheaterAWACSSpawn:Spawn()
