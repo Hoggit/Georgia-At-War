@@ -29,7 +29,8 @@ buildMenu = function(Group)
         local output = [[NW FARP: 45 12'10"N 38 4'45" E
 SW FARP: 44 55'45"N 38 5'17" E
 NE FARP: 45 10'4" N 38 55'22"E
-SE FARP: 44 50'7" N 38 46'34"E]]
+SE FARP: 44 50'7" N 38 46'34"E
+MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         MESSAGE:New(output, 60):ToGroup(Group)
     end)
 

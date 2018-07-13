@@ -141,6 +141,14 @@ KrasPashLogiSpawn = {logispawn, "HEMTT TFFT",
     "kraspashlogizone"
 }
 
+MaykopLogiSpawn = {logispawn, "HEMTT TFFT", 
+    {
+        ['x'] = -26322.15625,
+        ['y'] = 421495.96875
+    },
+    "mklogizone"
+}
+
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
     [AIRBASE.Caucasus.Novorossiysk] = {SPAWN:New("NovoroTransport"), SPAWN:New("NovoroTransportHelo"), NovoLogiSpawn},
@@ -155,6 +163,7 @@ NorthGeorgiaFARPTransportSpawns = {
     ["NE"] = SPAWN:New("NE FARP HELO"), 
     ["SW"] = SPAWN:New("SW FARP HELO"),
     ["SE"] = SPAWN:New("SE FARP HELO"),
+    ["MK"] = SPAWN:New("MK FARP HELO"),
 }
 
 -- Support Spawn
@@ -213,10 +222,10 @@ NWFARPDEF = SPAWN:New("FARP DEFENSE")
 SWFARPDEF = SPAWN:New("FARP DEFENSE #001")
 NEFARPDEF = SPAWN:New("FARP DEFENSE #003")
 SEFARPDEF = SPAWN:New("FARP DEFENSE #002")
+MKFARPDEF = SPAWN:New("FARP DEFENSE #004")
 
 -- FARP Support Groups
 FSW = SPAWN:New("FARP Support West")
-FSE = SPAWN:New("FARP Support East")
 
 -- Group spanws for easy randomization
 local allcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn}
@@ -346,7 +355,6 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
                 apV3:SetX(apV3:GetX() + math.random(-50, 50))
                 apV3:SetY(apV3:GetY() + math.random(-50, 50))
                 FSW:SpawnFromVec2(apV3:GetVec2())
-                FSE:SpawnFromVec2(apV3:GetVec2())
                 SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
             end
         end)
@@ -365,8 +373,11 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
             apV3:SetX(apV3:GetX() + math.random(-100, 100))
             apV3:SetY(apV3:GetY() + math.random(-100, 100))
             FSW:SpawnFromVec2(apV3:GetVec2())
-            FSE:SpawnFromVec2(apV3:GetVec2())
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
+
+            if string.match(SpawnedGroup:GetName(), "MK FARP") then
+                activateLogi(MaykopLogiSpawn)
+            end 
         end
     end)
 end

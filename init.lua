@@ -185,6 +185,7 @@ else
     SWFARPDEF:Spawn()
     NEFARPDEF:Spawn()
     SEFARPDEF:Spawn()
+    MKFARPDEF:Spawn()
 
     -- Disable slots
     trigger.action.setUserFlag("Novoro Huey 1",100)
@@ -204,6 +205,11 @@ else
     trigger.action.setUserFlag("Krasnador Huey 2",100)
     trigger.action.setUserFlag("Kras Mi-8 1",100)
     trigger.action.setUserFlag("Kras Mi-8 2",100)
+
+    trigger.action.setUserFlag("Krasnador2 Huey 1",100)
+    trigger.action.setUserFlag("Krasnador2 Huey 2",100)
+    trigger.action.setUserFlag("Kras2 Mi-8 1",100)
+    trigger.action.setUserFlag("Kras2 Mi-8 2",100)
 
     -- FARPS
     trigger.action.setUserFlag("SWFARP Huey 1",100)

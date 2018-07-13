@@ -150,6 +150,7 @@ ctld.JTAC_lock = "all" -- "vehicle" OR "troop" OR "all" forces JTAC to only lock
 
 --pickupZones = { "Zone name or Ship Unit Name", "smoke color", "limit (-1 unlimited)", "ACTIVE (yes/no)", "side (0 = Both sides / 1 = Red / 2 = Blue )", flag number (optional) }
 ctld.pickupZones = {
+    { "mklogizone", "green", -1, "no", 0 },
     { "kraspashlogizone", "green", -1, "no", 0 },
     { "krascenterlogizone", "green", -1, "no", 0 },
     { "krymsklogizone", "green", -1, "no", 0 },
@@ -247,6 +248,16 @@ ctld.transportPilotNames = {
     "helicargo28",
     "helicargo29",
     "helicargo30",
+    "helicargo31",
+    "helicargo32",
+    "helicargo33",
+    "helicargo34",
+    "helicargo35",
+    "helicargo36",
+    "helicargo37",
+    "helicargo38",
+    "helicargo39",
+    "helicargo40",
 
     "MEDEVAC #1",
     "MEDEVAC #2",
