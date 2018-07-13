@@ -31,7 +31,6 @@ if statefile then
             apV3:SetX(apV3:GetX() + math.random(100, 200))
             apV3:SetY(apV3:GetY() + math.random(100, 200))
             FSW:SpawnFromVec2(apV3:GetVec2())
-            FSE:SpawnFromVec2(apV3:GetVec2())
             flagval = 0
 
             if ab_logi_slots[name] then
@@ -61,13 +60,17 @@ if statefile then
             apV3:SetX(apV3:GetX() + math.random(-100, 200))
             apV3:SetY(apV3:GetY() + math.random(-100, 200))
             FSW:SpawnFromVec2(apV3:GetVec2())
-            FSE:SpawnFromVec2(apV3:GetVec2())
             flagval = 0
         end
 
         for i,grp in ipairs(abslots[name]) do
             trigger.action.setUserFlag(grp, flagval)     
         end
+
+        if name == "MK Warehouse" and coalition == 2 then
+            activateLogi(MaykopLogiSpawn)
+        end
+
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
