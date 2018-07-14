@@ -210,7 +210,7 @@ PowerPlantSpawn = { SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA),
 PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
 
 -- Airfield CAS Spawns
-RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup"):InitRepeatOnEngineShutDown()
+RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup"):InitRepeatOnLanding()
 --RussianTheatreCASEscort = SPAWN:New("Su27CASEscort")
 
 -- FARP defenses
