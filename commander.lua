@@ -109,7 +109,7 @@ russian_commander = function()
         RussianTheaterMig312ShipSpawn:Spawn()
     end
 
-    if mathrandom() > 0.95 then
+    if mathrandom() > 0.5 then
         local targets = AttackableAirbases(Airbases)
         local target = targets[ mathrandom (#targets) ]
         log("The Russian commander has decided to strike " .. target .. " airbase")

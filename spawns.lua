@@ -210,12 +210,7 @@ PowerPlantSpawn = { SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA),
 PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
 
 -- Airfield CAS Spawns
-RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup")
-RussianTheaterCASSpawn:HandleEvent(EVENTS.EngineShutdown)
-function RussianTheaterCASSpawn:_OnEngineShutdown(EventData)
-    local grp = EventData.IniGroup
-    grp:Destroy()
-end
+RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup"):InitRepeatOnEngineShutDown()
 --RussianTheatreCASEscort = SPAWN:New("Su27CASEscort")
 
 -- FARP defenses
@@ -302,17 +297,14 @@ RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
 end)
 
 SpawnOPFORCas = function(zone, spawn)
-    log("===== CAS Spawn begin")
+    --log("===== CAS Spawn begin")
     local casZone = AI_CAS_ZONE:New( zone, 100, 1500, 250, 600, zone )
     local casGroup = spawn:Spawn()
-    casGroup:HandleEvent(EVENTS.EngineShutdown, function(EventData)
-        casGroup:Destroy()
-    end)
-    
+
     casZone:SetControllable( casGroup )
     casZone:__Start ( 1 )
     casZone:__Engage( 2 )
-    log("===== CAS Spawn Done")
+    --log("===== CAS Spawn Done")
 end
 
 --local baimenu = MENU_MISSION:New("DESTROY BAIS")
