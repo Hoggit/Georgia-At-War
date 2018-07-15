@@ -92,7 +92,7 @@ function baseCaptured(event)
             trigger.action.setUserFlag(grp, flagval)     
         end
 
-        if abname == 'SW Warehouse' or abname == 'NW Warehouse' or abname == 'SE Warehouse' or abname == 'NE Warehouse' then
+        if abname == 'SW Warehouse' or abname == 'MK Warehouse' or abname == 'NW Warehouse' or abname == 'SE Warehouse' or abname == 'NE Warehouse' then
             game_state["Theaters"]["Russian Theater"]['FARPS'][abname] = coalition
         else
             game_state["Theaters"]["Russian Theater"]['Airfields'][abname] = coalition
