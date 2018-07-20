@@ -17,6 +17,8 @@ ctld.addCallback(function(_args)
             name = "avenger"
         elseif string.match(groupname, "M 818") then
             name = 'ammo'
+        elseif string.match(groupname, "JTAC") then
+            name = 'jtac'
         end
 
         table.insert(game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"], {

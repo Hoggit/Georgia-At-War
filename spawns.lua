@@ -100,6 +100,7 @@ end
 hawkspawn = SPAWN:New('hawk')
 avengerspawn = SPAWN:New('avenger')
 ammospawn = SPAWN:New('ammo')
+jtacspawn = SPAWN:New('HMMWV - JTAC')
 
 --local logispawn = SPAWNSTATIC:NewFromStatic("logistic3", country.id.USA)
 local logispawn = {

@@ -136,6 +136,13 @@ if statefile then
         if data.name == 'ammo' then
             ammospawn:SpawnFromVec2(data.pos)
         end
+
+        if data.name == 'jtac' then
+            local _spawnedGroups = jtacspawn:SpawnFromVec2(data.pos)
+            local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
+            table.insert(ctld.jtacGeneratedLaserCodes, _code)
+            ctld.JTACAutoLase(_spawnedGroups:GetName(), _code)
+        end
     end
 
 else
