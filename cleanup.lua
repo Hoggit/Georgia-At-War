@@ -61,4 +61,4 @@ function cleanup()
     end
 end
 
-SCHEDULER:New(nil, cleanup, {}, 47, 125)
+SCHEDULER:New(nil, function()pcall(cleanup)end, {}, 47, 125)

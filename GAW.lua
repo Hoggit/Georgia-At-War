@@ -14,8 +14,19 @@ function log(str)
     end
 end
 
---function log(str)end
 
+standbycassound = "l10n/DEFAULT/standby.ogg"
+ninelinecassound = "l10n/DEFAULT/marked.ogg"
+targetdestroyedsound = "l10n/DEFAULT/targetdestroyed.ogg"
+terminatecassound = "l10n/DEFAULT/depart.ogg"
+ableavesound =  "l10n/DEFAULT/transport.ogg"
+farpleavesound =  "l10n/DEFAULT/transportfarp.ogg"
+abcapsound = "l10n/DEFAULT/arrive.ogg"
+farpcapsound = "l10n/DEFAULT/arrivefarp.ogg"
+
+oncall_cas = {}
+
+--function log(str)end
 log("Logging System INIT")
 
 -- Setup an initial state object and provide functions for manipulating that state.

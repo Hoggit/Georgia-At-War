@@ -158,6 +158,46 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         end
         MESSAGE:New(intercepts, 60):ToGroup(Group)
     end)
+
+    MENU_GROUP_COMMAND:New(Group, "Check In On-Call CAS", MissionMenu, function()
+        if #oncall_cas > 2 then
+            MESSAGE:New("No more on call CAS taskings are available, please try again when players currently running CAS are finished."):ToGroup(Group)
+            return
+        end
+
+        for i,v in ipairs(oncall_cas) do
+            if v.name == Group:GetName() then
+                MESSAGE:New("You are already on call for CAS.  Stand by for tasking")
+                return
+            end
+        end
+
+        trigger.action.outSoundForGroup(Group:GetID(), standbycassound)
+        MESSAGE:New("Understood " .. Group:GetName() .. ", hold position east of Anapa and stand by for tasking.\nSelect 'Check Out On-Call CAS' to cancel mission" ):ToGroup(Group)
+        table.insert(oncall_cas, {name = Group:GetName(), mission = nil})
+    end)
+
+    MENU_GROUP_COMMAND:New(Group, "Check Out On-Call CAS", MissionMenu, function()
+        for i,v in ipairs(oncall_cas) do
+            if v.name == Group:GetName() then
+                pcall(function() GROUP:FindByName(oncall_cas[i].mission[1]):Destroy() end)
+                pcall(function() GROUP:FindByName(oncall_cas[i].mission[2]):Destroy() end)
+                table.remove(oncall_cas, i)
+                trigger.action.outSoundForGroup(Group:GetID(), terminatecassound)
+                return
+            end
+        end
+    end)
+
+    MENU_GROUP_COMMAND:New(Group, "Get Current CAS Target Location", MissionMenu, function()
+        for i,v in ipairs(oncall_cas) do
+            if v.name == Group:GetName() then
+                local enemy_coord = GROUP:FindByName(v.mission[1]):GetCoordinate()
+                local group_coord = Group:GetCoordinate()
+                MESSAGE:New("TGT: IFV's and Dismounted Infantry\n\nLOC:\n" .. enemy_coord:ToStringLLDMS() .. "\n" .. enemy_coord:ToStringLLDDM() .. "\n" .. enemy_coord:ToStringMGRS() .. "\n" .. enemy_coord:ToStringBRA(group_coord) .. "\n" .. "Marked with RED smoke", 60):ToGroup(Group)
+            end
+        end
+    end)
 end
 
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
@@ -166,6 +206,7 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
         if AIRBASE:FindByName(name):GetCoalition() == 1 then spawn_idx = 2 end
         local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn[spawn_idx])
         if new_spawn_time ~= nil then
+            trigger.action.outSoundForCoalition(2, ableavesound)
             game_state["last_launched_time"] = new_spawn_time
         end
     end)
@@ -175,6 +216,7 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
     local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name .. " FARP/WAREHOUSE", FARPXportMenu, function() 
         local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn)
         if new_spawn_time ~= nil then
+            trigger.action.outSoundForCoalition(2, farpleavesound)
             game_state["last_launched_time"] = new_spawn_time
         end
     end)

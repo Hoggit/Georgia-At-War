@@ -339,10 +339,12 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
                     apV3 = POINT_VEC3:NewFromVec3(EventData.place:getPosition().p)
                     apV3:SetX(apV3:GetX() + math.random(400, 600))
                     apV3:SetY(apV3:GetY() + math.random(200))
+                    trigger.action.outSoundForCoalition(2, abcapsound)
                 elseif i == 2 then
                     apV3 = POINT_VEC3:NewFromVec3(EventData.IniGroup:GetPositionVec3())
                     apV3:SetX(apV3:GetX() + math.random(50,100))
                     apV3:SetY(apV3:GetY() + math.random(50))
+                    trigger.action.outSoundForCoalition(2, farpcapsound)
                 end
                 activateLogi(spawn[3])
                 local air_def_grp = AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
