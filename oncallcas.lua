@@ -50,5 +50,5 @@ schedule_tasking = function()
     end
 end
 
---SCHEDULER:New(nil, function() pcall(schedule_tasking) end, {}, 10, 10)
-SCHEDULER:New(nil,schedule_tasking, {}, 10, 10)
+SCHEDULER:New(nil, function() pcall(schedule_tasking) end, {}, 120, 120)
+--SCHEDULER:New(nil,schedule_tasking, {}, 10, 10)
