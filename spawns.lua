@@ -96,6 +96,24 @@ buildCheckC2Event = function(group, callsign)
     end
 end
 
+-- Support rearming spawns
+rearm_spawns = { 
+    {SPAWN:New('rearm1'), "A shipment of AGM-65D's and AGM-65H's has arrived at Anapa"}, 
+    {SPAWN:New('rearm2'), "A shipment of 500lb and 2000lb JDAM's has arrived at Anapa"}, 
+    {SPAWN:New('rearm3'), "A shipment of 500lb and 2000lb GBU's, and AIM-120B's has arrived at Anapa"},
+}
+
+for i,rearm_spawn in ipairs(rearm_spawns) do
+    rearm_spawn[1]:OnSpawnGroup(function(SpawnedGroup)
+        SpawnedGroup:HandleEvent(EVENTS.Land)
+
+        function SpawnedGroup:OnEventLand(EventData)
+            MESSAGE:New(rearm_spawn[2], 20):ToAll()
+            SCHEDULER:New(nil, function() SpawnedGroup:Destroy() end, {}, 10)
+        end
+    end)
+end
+
 -- player placed spawns
 hawkspawn = SPAWN:New('hawk')
 avengerspawn = SPAWN:New('avenger')

@@ -27,6 +27,7 @@ schedule_tasking = function()
             trigger.action.outSoundForGroup(grp:GetID(), ninelinecassound)
             MESSAGE:New(v.name .. ", Standby for coordinates to target area...", 10):ToGroup(grp)
             MESSAGE:New("TGT: IFV's and Dismounted Infantry\n\nLOC:\n" .. enemy_coord:ToStringLLDMS() .. "\n" .. enemy_coord:ToStringLLDDM() .. "\n" .. enemy_coord:ToStringMGRS() .. "\n" .. enemy_coord:ToStringBRA(group_coord) .. "\n" .. "Marked with RED smoke\nTroops in contact marked with BLUE smoke", 60):ToGroup(grp)
+            --SCHEDULER:New(nil, function() rspawn:Destroy() end, {}, 10)
         else
             local enemy = GROUP:FindByName(v.mission[1])
             local friendly = GROUP:FindByName(v.mission[2])
@@ -40,6 +41,9 @@ schedule_tasking = function()
             if not enemy or not enemy:IsAlive() then
                 trigger.action.outSoundForGroup(grp:GetID(), targetdestroyedsound)
                 MESSAGE:New(v.name .. " target destroyed.  Stand by for new tasking."):ToGroup(grp)
+                for i,rearm_spawn in ipairs(rearm_spawns) do
+                    rearm_spawn[1]:Spawn()
+                end
                 friendly:Destroy()
                 v.mission = nil
             else
