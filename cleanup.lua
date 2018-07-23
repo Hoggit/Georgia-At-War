@@ -18,9 +18,9 @@ function cleanup()
                 baitargets[group_name] = nil
             end
         else
-            for i,rearm_spawn in ipairs(rearm_spawns) do
-                rearm_spawn[1]:Spawn()
-            end
+            --for i,rearm_spawn in ipairs(rearm_spawns) do
+            --    rearm_spawn[1]:Spawn()
+           -- end
             MESSAGE:New("BAI target " .. baitarget_table['callsign'] .. " destroyed!", 15):ToAll()
             baitargets[group_name] = nil
         end
@@ -36,9 +36,9 @@ function cleanup()
             target = GROUP:FindByName(group_name)
         end
         if not target or not target:IsAlive() then
-            for i,rearm_spawn in ipairs(rearm_spawns) do
-                rearm_spawn[1]:Spawn()
-            end
+            --for i,rearm_spawn in ipairs(rearm_spawns) do
+            --    rearm_spawn[1]:Spawn()
+            --end
             MESSAGE:New("Naval target " .. target_table['callsign'] .. " destroyed!", 15):ToAll()
             targets[group_name] = nil
         end
@@ -63,9 +63,9 @@ function cleanup()
         if not st or not st:IsAlive() then
             MESSAGE:New("Strike Target " .. group_table['callsign'] .. " destroyed!", 15):ToAll()
             game_state["Theaters"]["Russian Theater"]["StrikeTargets"][group_name] = nil
-            for i,rearm_spawn in ipairs(rearm_spawns) do
-                rearm_spawn[1]:Spawn()
-            end
+            --for i,rearm_spawn in ipairs(rearm_spawns) do
+            --    rearm_spawn[1]:Spawn()
+            --end
         end
     end
 end

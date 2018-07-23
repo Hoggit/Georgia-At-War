@@ -41,9 +41,9 @@ schedule_tasking = function()
             if not enemy or not enemy:IsAlive() then
                 trigger.action.outSoundForGroup(grp:GetID(), targetdestroyedsound)
                 MESSAGE:New(v.name .. " target destroyed.  Stand by for new tasking."):ToGroup(grp)
-                for i,rearm_spawn in ipairs(rearm_spawns) do
-                    rearm_spawn[1]:Spawn()
-                end
+                --for i,rearm_spawn in ipairs(rearm_spawns) do
+                --    rearm_spawn[1]:Spawn()
+                --end
                 friendly:Destroy()
                 v.mission = nil
             else
@@ -55,4 +55,4 @@ schedule_tasking = function()
 end
 
 SCHEDULER:New(nil, function() pcall(schedule_tasking) end, {}, 120, 120)
---SCHEDULER:New(nil,schedule_tasking, {}, 10, 10)
+--SCHEDULER:New(nil,schedule_tasking, {}, 10, 20)

@@ -105,12 +105,8 @@ rearm_spawns = {
 
 for i,rearm_spawn in ipairs(rearm_spawns) do
     rearm_spawn[1]:OnSpawnGroup(function(SpawnedGroup)
-        SpawnedGroup:HandleEvent(EVENTS.Land)
-
-        function SpawnedGroup:OnEventLand(EventData)
-            MESSAGE:New(rearm_spawn[2], 20):ToAll()
-            SCHEDULER:New(nil, function() SpawnedGroup:Destroy() end, {}, 10)
-        end
+        MESSAGE:New(rearm_spawn[2], 20):ToAll()
+        SCHEDULER:New(nil, function() SpawnedGroup:Destroy() end, {}, 20)
     end)
 end
 
