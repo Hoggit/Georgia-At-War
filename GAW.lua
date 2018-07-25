@@ -82,7 +82,7 @@ abslots = {
     ['NW Warehouse'] = {"NWFARP Huey 1", "NWFARP Huey 2", "NWFARP Mi-8 1", "NWFARP Mi-8 2", "NWFARP KA50"},
     ['SE Warehouse'] ={"SEFARP Gazelle M", "SEFARP Gazelle L", "SEFARP Huey 1", "SEFARP Huey 2", "SEFARP Mi-8 1", "SEFARP Mi-8 2", "SEFARP KA50"},
     ['NE Warehouse'] = {"NEFARP Huey 1", "NEFARP Huey 2", "NEFARP Mi-8 1", "NEFARP Mi-8 2"},
-    ['MK Warehouse'] = {"MKFARP Huey 1", "MKFARP Huey 2", "MKFARP Mi-8 1", "MKFARP Mi-8 2"},
+    ['MK Warehouse'] = {"MKFARP Huey 1", "MKFARP Huey 2", "MKFARP Mi-8 1", "MKFARP Mi-8 2", "MK FARP Ka-50"},
 }
 
 function baseCaptured(event)
@@ -253,7 +253,7 @@ AddRussianTheaterTankerTarget = function(group)
 end
 
 SpawnDefenseForces = function(time, last_launched_time, spawn)
-    if time > last_launched_time + 120 then
+    if time > last_launched_time + 600 then
         spawn:Spawn()
         return time
     else

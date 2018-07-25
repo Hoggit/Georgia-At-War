@@ -247,6 +247,8 @@ else
 
     trigger.action.setUserFlag("NWFARP KA50",100)
     trigger.action.setUserFlag("SEFARP KA50",100)
+
+    trigger.action.setUserFlag("MK FARP Ka-50", 100)
 end
 
 -- Kick off the commanders
