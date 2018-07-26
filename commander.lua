@@ -10,7 +10,7 @@ russian_commander = function()
     local baitargets = game_state["Theaters"]["Russian Theater"]["BAI"]
     local last_cap_spawn = game_state["Theaters"]["Russian Theater"]["last_cap_spawn"]
     local random_cap = 0
-    local adcap_chance = 0.2
+    local adcap_chance = 0.4
     local alivec2s = 0
     local alive_caps = 0
     local max_caps = 4
@@ -63,7 +63,7 @@ russian_commander = function()
             SCHEDULER:New(nil, function()
                 if mathrandom() < adcap_chance then
                     -- Spawn fancy planes, 70% chance they come from airbase, otherwise they come from "off theater"
-                    local capspawn = goodcaps[mathrandom(#goodcaps)]
+                    local capspawn = goodcaps[math.random(#goodcaps)]
                     if mathrandom() > 0.3 then
                         capspawn:SpawnAtAirbase(AIRBASE:FindByName(AIRBASE.Caucasus.Maykop_Khanskaya), SPAWN.Takeoff.Cold)
                         log("The Russian commander is getting a fancy plane from his local airbase")
@@ -73,7 +73,7 @@ russian_commander = function()
                     end
                 else
                     -- Spawn same ol crap
-                    local capspawn = poopcaps[mathrandom(#poopcaps)]
+                    local capspawn = poopcaps[math.random(#poopcaps)]
                     if mathrandom() > 0.3 then
                         capspawn:SpawnAtAirbase(AIRBASE:FindByName(AIRBASE.Caucasus.Maykop_Khanskaya), SPAWN.Takeoff.Cold)
                         log("The Russian commander is getting a poopy plane from his local airbase")

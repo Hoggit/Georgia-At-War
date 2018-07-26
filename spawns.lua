@@ -1,6 +1,6 @@
 -- Objective Names
 objective_names = {
-    "Blackjack", "Wildcard", "Crackpipe", "Bullhorn", "Outlaw", "Eclipse","Joker", "Anthill",
+    "Archangel","Blackjack", "Wildcard", "Crackpipe", "Bullhorn", "Outlaw", "Eclipse","Joker", "Anthill",
     "Firefly", "Buzzard", "Eagle", "Rambo", "Rocky", "Dredd", "Smokey", "Vulture", "Parrot",
     "Copper", "Ender", "Sanchez", "Freeman", "Bandito", "Atlanta", "Raleigh", "Charlotte", "Orlando",
     "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Snowball",
@@ -185,8 +185,8 @@ NorthGeorgiaFARPTransportSpawns = {
 TexacoSpawn = SPAWN:New("Texaco"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(120)
 ShellSpawn = SPAWN:New("Shell"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(140)
 OverlordSpawn = SPAWN:New("AWACS Overlord"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0):SpawnScheduled(160)
-F16Spawn = SPAWN:New("F16CAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
-MirageSpawn = SPAWN:New("MirageCAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
+--F16Spawn = SPAWN:New("F16CAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
+--MirageSpawn = SPAWN:New("MirageCAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
 -- Local defense spawns.  Usually used after a transport spawn lands somewhere.
 AirfieldDefense = SPAWN:New("AirfieldDefense")
 
@@ -210,6 +210,8 @@ DefGlensPenis = SPAWN:New("Red Airfield Defense GlensDick 1")
 RussianTheaterMig212ShipSpawn = SPAWN:New("Mig21-2ship")
 RussianTheaterMig292ShipSpawn = SPAWN:New("Mig29-2ship")
 RussianTheaterSu272sShipSpawn = SPAWN:New("Su27-2ship")
+RussianTheaterF5Spawn = SPAWN:New("f52ship")
+RussianTheaterJ11Spawn = SPAWN:New("j112ship")
 RussianTheaterMig312ShipSpawn = SPAWN:New("Mig31-2ship"):InitLimit(2, 0)
 RussianTheaterAWACSPatrol = SPAWN:New("SU27-RUSAWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
 
@@ -239,9 +241,9 @@ MKFARPDEF = SPAWN:New("FARP DEFENSE #004")
 FSW = SPAWN:New("FARP Support West")
 
 -- Group spanws for easy randomization
-local allcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn}
-poopcaps = {RussianTheaterMig212ShipSpawn}
-goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn}
+local allcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn, RussianTheaterJ11Spawn, RussianTheaterF5Spawn}
+poopcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterF5Spawn}
+goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterJ11Spawn}
 baispawns = {RussianHeavyArtySpawn, ArmorColumnSpawn, MechInfSpawn}
 
 function activateLogi(spawn)

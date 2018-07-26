@@ -25,5 +25,7 @@ ctld.addCallback(function(_args)
             name=name, 
             pos=GROUP:FindByName(groupname):GetVec2()
         })
+
+        write_state()
     end
 end)
