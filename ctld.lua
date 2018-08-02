@@ -258,6 +258,11 @@ ctld.transportPilotNames = {
     "helicargo38",
     "helicargo39",
     "helicargo40",
+    "helicargo41",
+    "helicargo42",
+    "helicargo43",
+    "helicargo44",
+    "helicargo45",
 
     "MEDEVAC #1",
     "MEDEVAC #2",
