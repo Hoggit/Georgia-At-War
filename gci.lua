@@ -53,7 +53,7 @@ SCHEDULER:New(nil, function()
                     end
                 end
             end)
-            output = output .. '{"red":['
+            output = output .. '{"time": "'.. timer.getAbsTime() + env.mission.start_time ..'", "uptime": "'.. timer.getAbsTime() ..'", "red":['
             local idx = 1
             for j,unit in ipairs(state) do
                 if idx > 1 then  output = output .. ',' end
