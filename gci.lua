@@ -7,13 +7,9 @@ package.path = fs.currentdir() .. "Scripts\\?.lua;" .. package.path
 local stateFile = fs.writedir()..[[Scripts\HoggitGCI\state.json]]
 log("STATEFILE: " .. stateFile )
 
--- Get AWACS units
-AWACSGroups = SET_GROUP:New():FilterPrefixes( "AWACS" ):FilterStart()
-AWACSDetection = DETECTION_UNITS:New(AWACSGroups):FilterCategories(Unit.Category.AIRPLANE)
-AWACSDetection:Start()
-
--- All blue
+-- All red
 BlueGroups = SET_GROUP:New():FilterCoalitions("blue"):FilterCategoryAirplane():FilterStart()
+RedGroups = SET_GROUP:New():FilterCoalitions("red"):FilterCategoryAirplane():FilterStart()
 
 local gci_airbases = {
     AIRBASE.Caucasus.Anapa_Vityazevo,
@@ -31,21 +27,19 @@ SCHEDULER:New(nil, function()
             local output = ""
             local state = {}
             local blue_state = {}
-            local file = io.open(stateFile, 'w')
-
-            for i,v in pairs(AWACSDetection:GetDetectedItems()) do
-                local lat, lon = coord.LOtoLL(v.Coordinate:GetVec3())
-                local unit = UNIT:FindByName(v.Name)
-                if unit then
-                    local id = unit:GetID()
-                    local group = unit:GetGroup()
-                    local type = unit:GetTypeName()
-                    local heading = group:GetHeading()
-                    local height = unit:GetHeight()
-                    local velocity = VELOCITY_POSITIONABLE:New(unit):GetMiph() * .86
-                    table.insert(state, {["type"] = type, ["height"] = height, ["lat"] = lat, ["long"] = lon, ["speed"]= velocity, ["id"]=id, ["name"] = v.Name, ["heading"] = heading})
+			
+			RedGroups:ForEachGroup(function(group)
+                if group:IsAlive() then
+                    for i,unit in ipairs(group:GetUnits()) do
+                        local lat, lon = coord.LOtoLL(unit:GetCoordinate():GetVec3())
+                        local id = unit:GetID()
+                        local height = unit:GetHeight()
+                        local heading = group:GetHeading()
+                        local velocity = VELOCITY_POSITIONABLE:New(unit):GetMiph() * .86
+                        table.insert(state, {["id"] = id, ["height"] = height, ["type"] = unit:GetTypeName(), ["lat"] = lat, ["long"] = lon, ["speed"] = velocity, ["heading"] = heading, ["name"] = unit:GetCallsign()})
+                    end
                 end
-            end
+            end)
 
             BlueGroups:ForEachGroup(function(group)
                 if group:IsAlive() then
@@ -63,7 +57,7 @@ SCHEDULER:New(nil, function()
             local idx = 1
             for j,unit in ipairs(state) do
                 if idx > 1 then  output = output .. ',' end
-                output = output .. '{"id":' .. unit['id'] .. ', "height":' .. unit['height'] .. ', "type":"' .. unit['type'] .. '", "lat":' .. unit['lat'] ..  ', "long": ' .. unit['long']  ..  ', "heading": ' .. unit['heading'] .. ', "speed": ' .. unit['speed'] .. ', "name": "' .. split(unit['name'], '-')[1] ..'"}'
+                output = output .. '{"id":' .. unit['id'] .. ', "height":' .. unit['height'] .. ', "type":"' .. unit['type'] .. '", "lat":' .. unit['lat'] ..  ', "long": ' .. unit['long']  ..  ', "heading": ' .. unit['heading'] .. ', "speed": ' .. unit['speed'] .. ', "name": "' .. unit['name'] ..'"}'
                 idx = idx + 1
             end
 
@@ -92,6 +86,7 @@ SCHEDULER:New(nil, function()
             end
 
             output = output .. '}}'
+			local file = io.open(stateFile, 'w')
             file:write(output)
             file:close()
         end)
