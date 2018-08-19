@@ -259,11 +259,12 @@ SCHEDULER:New(nil, function()
 end, {}, 10, 600)
 
 -- Kick off the supports
-RussianTheaterAWACSSpawn:Spawn()
-OverlordSpawn:Spawn()
-RUSTankerSpawn:Spawn()
-TexacoSpawn:Spawn()
-ShellSpawn:Spawn()
+RussianTheaterAWACSSpawn:SpawnScheduled(1200, 0)
+RussianTheaterAWACSPatrol:SpawnScheduled(1200, 0)
+OverlordSpawn:SpawnScheduled(300, 0)
+RUSTankerSpawn:SpawnScheduled(1200, 0)
+TexacoSpawn:SpawnScheduled(300, 0)
+ShellSpawn:SpawnScheduled(300, 0)
 
 SCHEDULER:New(nil, function() 
     local state = TheaterUpdate("Russian Theater")
