@@ -25,6 +25,10 @@ buildMenu = function(Group)
         type = 1
     end
 
+    if Group.GroupName == "Chevy 3" or Group.GroupName == "Chevy 4" then
+        type = 1
+    end
+
     MENU_GROUP_COMMAND:New(Group, "FARP/WAREHOUSE Locations", nil, function()
         local output = [[NW FARP: 45 12'10"N 38 4'45" E
 SW FARP: 44 55'45"N 38 5'17" E
