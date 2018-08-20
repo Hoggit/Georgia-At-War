@@ -314,15 +314,9 @@ RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
     AddRussianTheaterAWACSTarget(SpawnedGroup)
 end)
 
-SpawnOPFORCas = function(zone, spawn)
+SpawnOPFORCas = function(spawn)
     --log("===== CAS Spawn begin")
-    local casZone = AI_CAS_ZONE:New( zone, 100, 1500, 250, 600, zone )
     local casGroup = spawn:Spawn()
-
-    casZone:SetControllable( casGroup )
-    casZone:__Start ( 1 )
-    casZone:__Engage( 2 )
-    --log("===== CAS Spawn Done")
 end
 
 --local baimenu = MENU_MISSION:New("DESTROY BAIS")
@@ -379,12 +373,12 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
         SpawnedGroup:HandleEvent(EVENTS.Land)
         function SpawnedGroup:OnEventLand(EventData)
             local apV3 = POINT_VEC3:NewFromVec3(EventData.IniGroup:GetPositionVec3())
-            apV3:SetX(apV3:GetX() + math.random(-100, 200))
-            apV3:SetY(apV3:GetY() + math.random(-100, 200))
+            apV3:SetX(apV3:GetX() + math.random(-50, 50))
+            apV3:SetY(apV3:GetY() + math.random(-50, 50))
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
 
-            apV3:SetX(apV3:GetX() + math.random(-100, 100))
-            apV3:SetY(apV3:GetY() + math.random(-100, 100))
+            apV3:SetX(apV3:GetX() + math.random(-50, 50))
+            apV3:SetY(apV3:GetY() + math.random(-50, 50))
             FSW:SpawnFromVec2(apV3:GetVec2())
             SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
 

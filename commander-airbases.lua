@@ -4,11 +4,11 @@ local BLUE=2
 
 --Airbases in play.
 Airbases = {
-    AIRBASE.Caucasus.Gelendzhik,
-    AIRBASE.Caucasus.Krasnodar_Pashkovsky,
-    AIRBASE.Caucasus.Krasnodar_Center,
-    AIRBASE.Caucasus.Novorossiysk,
-    AIRBASE.Caucasus.Krymsk
+    {AIRBASE.Caucasus.Gelendzhik,  ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Gelendzhik, AIRBASE:FindByName(AIRBASE.Caucasus.Gelendzhik):GetVec2(), 1500)},
+    {AIRBASE.Caucasus.Krasnodar_Pashkovsky, ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Krasnodar_Pashkovsky, AIRBASE:FindByName(AIRBASE.Caucasus.Krasnodar_Pashkovsky):GetVec2(), 1500)},
+    {AIRBASE.Caucasus.Krasnodar_Center, ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Krasnodar_Center, AIRBASE:FindByName(AIRBASE.Caucasus.Krasnodar_Center):GetVec2(), 1500)},
+    {AIRBASE.Caucasus.Novorossiysk, ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Novorossiysk, AIRBASE:FindByName(AIRBASE.Caucasus.Novorossiysk):GetVec2(), 1500)},
+    {AIRBASE.Caucasus.Krymsk, ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Krymsk, AIRBASE:FindByName(AIRBASE.Caucasus.Krymsk):GetVec2(), 1500)},
 }
 
 -- Russian IL-76MD spawns to capture airfields
@@ -31,26 +31,18 @@ RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
 
 AttackableAirbases = function(airbaseList)
     local filtered = {}
-    for k,baseName in pairs(airbaseList) do
-        local base = AIRBASE:FindByName(baseName)
+    for i,ab in ipairs(airbaseList) do
+        local base = AIRBASE:FindByName(ab[1])
         if base:GetCoalition() == NEUTRAL or base:GetCoalition() == BLUE then
-            table.insert(filtered,baseName)
+            table.insert(filtered,ab)
         end
     end
     return filtered
 end
 
-AirfieldIsDefended = function(baseName)
-    local base = AIRBASE:FindByName(baseName)
-    local zone = ZONE_RADIUS:New("airfield-defense-chk", base:GetVec2(), 1500)
-    log("Checking if airfield is defended.")
-    local anyInZone = SET_GROUP:New()
-                        :FilterCoalitions("blue")
-                        :FilterCategoryGround()
-                        :FilterStart()
-                        :AnyInZone(zone)
-    log("Airfield is defended? -- " .. tostring(anyInZone))
-    return anyInZone
+AirfieldIsDefended = function(baseZone)
+    baseZone:Scan(Object.Category.UNIT)
+    return baseZone:IsSomeInZoneOfCoalition(BLUE)
 end
 
 SpawnForTargetAirbase = function(baseName)
@@ -82,7 +74,7 @@ onTransportLand = function(defense_group, airbase)
             local grpLoc = EventData.IniGroup:GetPointVec2()
             local airbaseLoc = AIRBASE:FindByName(airbase)
             local distance = grpLoc:Get2DDistance(airbaseLoc)
-            log("The transport landed " .. distance .. "m away from designated landing zone")
+            --log("The transport landed " .. distance .. "m away from designated landing zone")
             if (distance <= 2500) then
                 log("Within range. Spawning russian forces.")
                 defense_group:Spawn()

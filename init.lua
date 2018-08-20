@@ -47,8 +47,8 @@ if statefile then
         local flagval = 100
         local ab = AIRBASE:FindByName(name)
         local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
-        apV3:SetX(apV3:GetX() + math.random(100, 200))
-        apV3:SetY(apV3:GetY() + math.random(100, 200))
+        apV3:SetX(apV3:GetX() + math.random(-25, 25))
+        apV3:SetY(apV3:GetY() + math.random(-25, 25))
         local spawns = {NWFARPDEF, SWFARPDEF, NEFARPDEF, SEFARPDEF}
         game_state["Theaters"]["Russian Theater"]["FARPS"][name] = coalition
 
@@ -57,8 +57,8 @@ if statefile then
             flagval = 100
         elseif coalition == 2 then
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-            apV3:SetX(apV3:GetX() + math.random(-100, 200))
-            apV3:SetY(apV3:GetY() + math.random(-100, 200))
+            apV3:SetX(apV3:GetX() + math.random(-25, 25))
+            apV3:SetY(apV3:GetY() + math.random(-25, 25))
             FSW:SpawnFromVec2(apV3:GetVec2())
             flagval = 0
         end
@@ -265,6 +265,7 @@ OverlordSpawn:SpawnScheduled(300, 0)
 RUSTankerSpawn:SpawnScheduled(1200, 0)
 TexacoSpawn:SpawnScheduled(300, 0)
 ShellSpawn:SpawnScheduled(300, 0)
+RussianTheaterCASSpawn:SpawnScheduled(900, 0.5)
 
 SCHEDULER:New(nil, function() 
     local state = TheaterUpdate("Russian Theater")
