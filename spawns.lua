@@ -98,18 +98,18 @@ buildCheckC2Event = function(group, callsign)
 end
 
 -- Support rearming spawns
-rearm_spawns = { 
-    {SPAWN:New('rearm1'), "A shipment of AGM-65D's and AGM-65H's has arrived at Anapa"}, 
-    {SPAWN:New('rearm2'), "A shipment of 500lb and 2000lb JDAM's has arrived at Anapa"}, 
-    {SPAWN:New('rearm3'), "A shipment of 500lb and 2000lb GBU's, and AIM-120B's has arrived at Anapa"},
-}
+--rearm_spawns = { 
+--    {SPAWN:New('rearm1'), "A shipment of AGM-65D's and AGM-65H's has arrived at Anapa"}, 
+--    {SPAWN:New('rearm2'), "A shipment of 500lb and 2000lb JDAM's has arrived at Anapa"}, 
+--    {SPAWN:New('rearm3'), "A shipment of 500lb and 2000lb GBU's, and AIM-120B's has arrived at Anapa"},-
+--}
 
-for i,rearm_spawn in ipairs(rearm_spawns) do
-    rearm_spawn[1]:OnSpawnGroup(function(SpawnedGroup)
-        MESSAGE:New(rearm_spawn[2], 20):ToAll()
-        SCHEDULER:New(nil, function() SpawnedGroup:Destroy() end, {}, 20)
-    end)
-end
+--for i,rearm_spawn in ipairs(rearm_spawns) do
+--    rearm_spawn[1]:OnSpawnGroup(function(SpawnedGroup)
+--        MESSAGE:New(rearm_spawn[2], 20):ToAll()
+--        SCHEDULER:New(nil, function() SpawnedGroup:Destroy() end, {}, 20)
+--    end)
+--end
 
 -- player placed spawns
 hawkspawn = SPAWN:New('hawk')
@@ -225,7 +225,7 @@ CommsArraySpawn = { SPAWNSTATIC:NewFromStatic("Comms Array", country.id.RUSSIA),
 PowerPlantSpawn = { SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA), "Power Plant" }
 
 -- Naval Strike target Spawns
-PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
+--PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
 
 -- Airfield CAS Spawns
 RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup"):InitRepeatOnLanding():InitLimit(4, 0)

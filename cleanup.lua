@@ -1,4 +1,5 @@
 function cleanup()
+    log("Starting Cleanup BAI Targets")
     -- Get Alive BAI Targets and cleanup state
     local baitargets = game_state["Theaters"]["Russian Theater"]["BAI"]
     for group_name, baitarget_table in pairs(baitargets) do        
@@ -26,6 +27,7 @@ function cleanup()
         end
     end
 
+    log("Starting Cleanup Naval Units")
     -- Get alive naval targets and cleanup
     local targets = game_state["Theaters"]["Russian Theater"]["NavalStrike"]
     for group_name, target_table in pairs(targets) do
@@ -44,6 +46,7 @@ function cleanup()
         end
     end
 
+    log("Starting Cleanup C2")
     -- Get the number of C2s in existance, and cleanup the state for dead ones.
     local c2s = game_state["Theaters"]["Russian Theater"]["C2"]
     for group_name, group_table in pairs(c2s) do
@@ -55,6 +58,7 @@ function cleanup()
         end
     end
 
+    log("Starting Strike")
     -- Get the number of Strikes in existance, and cleanup the state for dead ones.
     local striketargets = game_state["Theaters"]["Russian Theater"]["StrikeTargets"]
     for group_name, group_table in pairs(striketargets) do

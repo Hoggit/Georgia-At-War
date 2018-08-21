@@ -28,8 +28,8 @@ if statefile then
             flagval = 100
         elseif coalition == 2 then
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-            apV3:SetX(apV3:GetX() + math.random(100, 200))
-            apV3:SetY(apV3:GetY() + math.random(100, 200))
+            apV3:SetX(apV3:GetX() + math.random(-50, 50))
+            apV3:SetY(apV3:GetY() + math.random(-50,50))
             FSW:SpawnFromVec2(apV3:GetVec2())
             flagval = 0
 
@@ -80,20 +80,6 @@ if statefile then
         spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
     end
 
-    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["NavalStrike"]) do
-        local spawn
-        if data.spawn_name == "Oil Platform" then
-            spawn = PlatformGroupSpawn[1]
-            local static = spawn:SpawnFromPointVec2(
-            POINT_VEC2:NewFromVec2({
-                ['x'] = data['position'][1],
-                ['y'] = data['position'][2]
-            }), 0)
-
-            AddNavalStrike("Russian Theater")(STATIC:FindByName(static:getName()), "Oil Platform", data['callsign'])
-        end
-    end
-
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["C2"]) do
         RussianTheaterC2Spawn[1]:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
     end
@@ -116,7 +102,6 @@ if statefile then
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["BAI"]) do
-        log(data.callsign)
         local spawn
         if data['spawn_name'] == "ARTILLERY" then spawn = RussianHeavyArtySpawn[1] end
         if data['spawn_name'] == "ARMOR COLUMN" then spawn = ArmorColumnSpawn[1] end
@@ -254,23 +239,18 @@ end
 -- Kick off the commanders
 SCHEDULER:New(nil, function()
     log("Starting Russian Commander, Comrade")
-    --pcall(russian_commander)
-    russian_commander()
+    pcall(russian_commander)
+    --russian_commander()
 end, {}, 10, 600)
 
 -- Kick off the supports
 RussianTheaterAWACSSpawn:SpawnScheduled(1200, 0)
 RussianTheaterAWACSPatrol:SpawnScheduled(1200, 0)
-OverlordSpawn:SpawnScheduled(300, 0)
+OverlordSpawn:SpawnScheduled(600, 0)
 RUSTankerSpawn:SpawnScheduled(1200, 0)
-TexacoSpawn:SpawnScheduled(300, 0)
-ShellSpawn:SpawnScheduled(300, 0)
+TexacoSpawn:SpawnScheduled(600, 0)
+ShellSpawn:SpawnScheduled(600, 0)
 RussianTheaterCASSpawn:SpawnScheduled(900, 0.5)
-
-SCHEDULER:New(nil, function() 
-    local state = TheaterUpdate("Russian Theater")
-    MESSAGE:New(state, 45):ToAll()
-end, {}, 120, 900)
 
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #003"), "NE FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE"), "NW FARP")

@@ -14,7 +14,7 @@ russian_commander = function()
     local alive_caps = 0
     local max_caps = 4
     local alive_bai_targets = 0
-    local max_bai = 4
+    local max_bai = 3
 
     -- Get the number of C2s in existance, and cleanup the state for dead ones.
     -- We'll make some further determiniation of what happens based on this
@@ -112,7 +112,7 @@ russian_commander = function()
         log("The Russian commander has decided to strike " .. target[1] .. " airbase")
         if not AirfieldIsDefended(target[2]) then
             log(target[1] .. " appears undefended! Muahaha!")
-            if math.random() > 0.5 then
+            if math.random() > 0.8 then
                 local spawn = SpawnForTargetAirbase(target[1])
                 spawn:Spawn()
             end
