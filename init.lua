@@ -165,15 +165,15 @@ else
     end
 
     -- Spawn the Sea of Azov navy
-    for i=1, 4 do
-        local zone_index = math.random(2)
-        local zone = ZONE:New("Naval" .. zone_index)
+    -- for i=1, 4 do
+        -- local zone_index = math.random(2)
+        -- local zone = ZONE:New("Naval" .. zone_index)
 
         -- Spawn a oil platform as well
-        local static = PlatformGroupSpawn[1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
-        local callsign = getCallsign()
-        AddNavalStrike("Russian Theater")(STATIC:FindByName(static:getName()), "Oil Platform", callsign)
-    end
+        -- local static = PlatformGroupSpawn[1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
+        -- local callsign = getCallsign()
+        -- AddNavalStrike("Russian Theater")(STATIC:FindByName(static:getName()), "Oil Platform", callsign)
+    -- end
 
     AirbaseSpawns[AIRBASE.Caucasus.Krasnodar_Pashkovsky][1]:Spawn()
     NWFARPDEF:Spawn()
