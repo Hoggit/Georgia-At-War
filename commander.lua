@@ -2,6 +2,12 @@
 russian_commander = function()
     -- Russian Theater Decision Making
     log("Russian commander is thinking...")
+    local bluePlanes = mist.makeUnitTable({'[blue][plane]'})
+    local bluePlaneCount = 0
+    for i,v in pairs(bluePlanes) do
+        log(v)
+        if Unit.getByName(v) then bluePlaneCount = bluePlaneCount + 1 end
+    end
     local time = timer.getAbsTime() + env.mission.start_time
     local c2s = game_state["Theaters"]["Russian Theater"]["C2"]
     local caps = game_state["Theaters"]["Russian Theater"]["CAP"]
@@ -12,9 +18,29 @@ russian_commander = function()
     local adcap_chance = 0.4
     local alivec2s = 0
     local alive_caps = 0
-    local max_caps = 4
+    local max_caps = 3
+
+    if bluePlaneCount < 13 then
+        max_caps = 1
+    end
+
+    if bluePlaneCount > 13 then
+        max_caps = 2
+    end
+
+    if bluePlaneCount > 18 then
+        max_caps = 3
+    end
+
+    if bluePlaneCount > 28 then
+        max_caps = 5
+    end
+
+    log("There are " .. bluePlaneCount .. " blue planes in the mission, so we'll spawn a max of " .. max_caps .. " groups of enemy CAP")
+
     local alive_bai_targets = 0
-    local max_bai = 3
+
+    local max_bai = 5
 
     -- Get the number of C2s in existance, and cleanup the state for dead ones.
     -- We'll make some further determiniation of what happens based on this
@@ -111,8 +137,8 @@ russian_commander = function()
     for i,target in pairs(AttackableAirbases(Airbases)) do
         log("The Russian commander has decided to strike " .. target[1] .. " airbase")
         if not AirfieldIsDefended(target[2]) then
-            log(target[1] .. " appears undefended! Muahaha!")
             if math.random() > 0.8 then
+                log(target[1] .. " appears undefended! Muahaha!")
                 local spawn = SpawnForTargetAirbase(target[1])
                 spawn:Spawn()
             end

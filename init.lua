@@ -24,7 +24,7 @@ if statefile then
         game_state["Theaters"]["Russian Theater"]["Airfields"][name] = coalition
 
         if coalition == 1 then
-            AirbaseSpawns[name][2]:Spawn()
+            AirbaseSpawns[name][3]:Spawn()
             flagval = 100
         elseif coalition == 2 then
             AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
@@ -250,7 +250,7 @@ OverlordSpawn:SpawnScheduled(600, 0)
 RUSTankerSpawn:SpawnScheduled(1200, 0)
 TexacoSpawn:SpawnScheduled(600, 0)
 ShellSpawn:SpawnScheduled(600, 0)
-RussianTheaterCASSpawn:SpawnScheduled(900, 0.5)
+RussianTheaterCASSpawn:SpawnScheduled(1400, 0)
 
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #003"), "NE FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE"), "NW FARP")
