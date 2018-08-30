@@ -5,7 +5,6 @@ russian_commander = function()
     local bluePlanes = mist.makeUnitTable({'[blue][plane]'})
     local bluePlaneCount = 0
     for i,v in pairs(bluePlanes) do
-        log(v)
         if Unit.getByName(v) then bluePlaneCount = bluePlaneCount + 1 end
     end
     local time = timer.getAbsTime() + env.mission.start_time

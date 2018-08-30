@@ -10,6 +10,7 @@ function log(str)
     if str == nil then str = 'nil' end
     if logFile then
        logFile:write("HOGGIT GAW LOG - " .. str .."\r\n")
+       BASE:I("HOGGIT GAW LOG - " .. str .."\r\n")
        logFile:flush()
     end
 end
@@ -59,6 +60,7 @@ game_state = {
             ["Tanker"] = {},
             ["NavalStrike"] = {},
             ["CTLD_ASSETS"] = {},
+            ['Convoys'] ={},
             ["FARPS"] = {
                 ["SW Warehouse"] = AIRBASE:FindByName("SW Warehouse"):GetCoalition(),
                 ["NW Warehouse"] = AIRBASE:FindByName("NW Warehouse"):GetCoalition(),
@@ -139,6 +141,11 @@ AddStrategicSAM = function(theater)
 
         group:GetCoordinate():MarkToCoalitionBlue("SAM - "..callsign)
     end
+end
+
+AddConvoy = function(group, spawn_name, callsign)
+    log("Adding convoy " .. callsign)
+    game_state['Theaters']['Russian Theater']['Convoys'][group:GetName()] = {spawn_name, callsign}
 end
 
 AddRussianTheaterStrategicSAM = function(group, spawn_name, callsign)
@@ -261,6 +268,46 @@ SpawnDefenseForces = function(time, last_launched_time, spawn)
         return nil
     end
 end
+
+ConvoyUpdate = function(group)
+    local output = "REDFOR Convoy Report:\n\n"
+    local numConvoys = 0
+    for name, convoy_info in pairs(game_state['Theaters']['Russian Theater']['Convoys']) do
+        local convoy = Group.getByName(name)
+        local cunits = {}
+        if convoy then
+            cunits = convoy:getUnits()
+            numConvoys = numConvoys + 1
+
+            local names = {}
+            if cunits then
+                for idx, unit in pairs(cunits) do
+                    table.insert(names, unit:getName())
+                end
+                output = output .. convoy_info[2] .." MGRS: " .. mist.getMGRSString({
+                    units=names, 
+                    acc=2
+                }) .. "\nLat/Long: " .. mist.getLLString({
+                    units=names, 
+                    acc=1, 
+                    DMS=true
+                })  .. "\n\n"
+            end
+        end
+    end
+
+    if numConvoys == 0 then
+        output = output .. "No Active Convoys"
+    end
+    if group == 'all' then
+        MESSAGE:New(output, 20):ToAll()
+    else
+        MESSAGE:New(output, 20):ToGroup(group)
+    end
+end
+
+SCHEDULER:New(nil, ConvoyUpdate, {"all"}, 300, 900)
+
 
 TheaterUpdate = function(theater)
     local output = "OPFOR Strategic Report: " .. theater .. "\n--------------------------\n\nSAM COVERAGE: "
