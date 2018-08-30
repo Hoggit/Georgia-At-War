@@ -44,6 +44,10 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
 
 
     local MissionMenu = MENU_GROUP:New(Group, "Get Current Missions")
+    MENU_GROUP_COMMAND:New(Group, "Convoy Strike", MissionMenu, function()
+        ConvoyUpdate(Group)
+    end)
+
     MENU_GROUP_COMMAND:New(Group, "SEAD", MissionMenu, function()
         local sams ="ACTIVE SAM REPORT:\n"
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do

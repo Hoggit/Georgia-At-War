@@ -58,7 +58,7 @@ function cleanup()
         end
     end
 
-    log("Starting Strike")
+    log("Starting Strike Cleanup")
     -- Get the number of Strikes in existance, and cleanup the state for dead ones.
     local striketargets = game_state["Theaters"]["Russian Theater"]["StrikeTargets"]
     for group_name, group_table in pairs(striketargets) do
@@ -70,6 +70,16 @@ function cleanup()
             --for i,rearm_spawn in ipairs(rearm_spawns) do
             --    rearm_spawn[1]:Spawn()
             --end
+        end
+    end
+
+    log("Starting Convoy Cleanup")
+    local convoys = game_state["Theaters"]["Russian Theater"]["Convoys"]
+    for name,convoy_info in pairs(convoys) do
+        local convoy = GROUP:FindByName(name)
+        if not convoy or not convoy:IsAlive() then
+            MESSAGE:New('Convoy ' .. convoy_info[2] .. ' has been destroyed!')
+            game_state["Theaters"]["Russian Theater"]["Convoys"][name] = nil
         end
     end
 end
