@@ -122,7 +122,7 @@ russian_commander = function()
         end
     end
 
-    if math.random() > 0.8 then
+    if math.random() > 0.85 then
         local g = RussianTheaterMig312ShipSpawn:GetFirstAliveGroup()
         if g then
             if g:AllOnGround() then

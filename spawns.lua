@@ -267,9 +267,6 @@ for i,spawn_tbl in ipairs(convoy_spawns) do
         local cs = getCallsign()
         log("Giving new convoy callsign: " .. cs)
         AddConvoy(SpawnedGroup, spawn_tbl[2],cs)
-        SCHEDULER:New(nil, function()
-            SpawnedGroup:Destroy()
-        end, {}, 30)
     end)
 end
 
