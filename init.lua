@@ -258,4 +258,6 @@ buildHitEvent(GROUP:FindByName("FARP DEFENSE #002"), "SE FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #001"), "SW FARP")
 
 BASE:I("HOGGIT GAW - INIT COMPLETE")
+BASE:TraceOnOff( false )
+BASE:TraceAll( false )
 log("init.lua complete")
