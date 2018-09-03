@@ -6,7 +6,7 @@ objective_names = {
     "Copper", "Ender", "Sanchez", "Freeman", "Bandito", "Atlanta", "Raleigh", "Charlotte", "Orlando",
     "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Snowball",
     "Pikachu", "Lucy", "Raja", "Bulbasaur", "Grimm", "Aurora", "Grumpy", "Sleepy", "Chihuahua",
-    "Pete", "Bijou", "Momo"
+    "Pete", "Bijou", "Momo", "Eiger", "Snax"
 }
 
 objective_idx = 1
