@@ -1,12 +1,11 @@
 -- Objective Names
 objective_names = {
-    "Archangel","Boot", "Blacklist", "Maria", "Husky", "Cheeki Breeki", "Carrack", "Primrose",
-    "Yersanlaz", "Blackjack", "Wildcard", "Crackpipe", "Bullhorn", "Outlaw", "Eclipse","Joker", "Anthill",
-    "Firefly", "Buzzard", "Eagle", "Rambo", "Rocky", "Dredd", "Smokey", "Vulture", "Parrot",
-    "Copper", "Ender", "Sanchez", "Freeman", "Bandito", "Atlanta", "Raleigh", "Charlotte", "Orlando",
-    "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Snowball",
-    "Pikachu", "Lucy", "Raja", "Bulbasaur", "Grimm", "Aurora", "Grumpy", "Sleepy", "Chihuahua",
-    "Pete", "Bijou", "Momo", "Eiger", "Snax"
+    "Archangel", "Yersanlaz", "Blackjack", "Wildcard", "Crackpipe", "Bullhorn", "Outlaw", "Eclipse","Joker", "Anthill",
+    "Firefly", "Rambo", "Rocky", "Dredd", "Smokey", "Vulture", "Parrot","Ender", "Sanchez", "Freeman", "Charlotte", "Orlando",
+    "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Pikachu", "Bulbasaur", "Grimm", "Aurora", "Grumpy", "Sleepy", 
+    --Patreon
+    "Pete", "Bijou", "Momo", "Eiger", "Snax", "Asteroid", "Sephton", "Blacklist", "Boot", "Maria", 
+    "Cheeki Breeki", "Husky", "Carrack", "Vegabond", "Jar Jar", "Plowshare", "Primrose"
 }
 
 objective_idx = 1
