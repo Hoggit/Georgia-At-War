@@ -41,11 +41,11 @@ ctld.slingLoad = false -- if false, crates can be used WITHOUT slingloading, by 
 ctld.enableSmokeDrop = true -- if false, helis and c-130 will not be able to drop smoke
 
 ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
-ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
+ctld.maximumDistanceLogistic = 300 -- max distance from vehicle to logistics to allow a loading or spawning operation
 ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
-ctld.maximumMoveDistance = 500 -- max distance for troops to move from drop point if no enemy is nearby
+ctld.maximumMoveDistance = 200 -- max distance for troops to move from drop point if no enemy is nearby
 
-ctld.minimumDeployDistance = 1000 -- minimum distance from a friendly pickup zone where you can deploy a crate
+ctld.minimumDeployDistance = 1 -- minimum distance from a friendly pickup zone where you can deploy a crate
 
 ctld.numberOfTroops = 10 -- default number of troops to load on a transport heli or C-130 
 							-- also works as maximum size of group that'll fit into a helicopter unless overridden
@@ -491,6 +491,15 @@ ctld.loadableGroups = {
 --
 ctld.spawnableCrates = {
     -- name of the sub menu on F10 for spawning crates
+    ["Artillery"] = {
+        { weight = 2400, desc = "M270 MLRS", unit = "MLRS", side = 2, cratesRequired = 2 },
+        { weight = 100, desc = "2B11 Mortar", unit = "2B11 mortar" },
+        { weight = 250, desc = "SPH 2S19 Msta", unit = "SAU Msta", side = 1, cratesRequired = 3 },
+        { weight = 255, desc = "M-109 Howitzer", unit = "M-109", side = 2, cratesRequired = 3 },
+    },
+    ["Base Building"] = {
+        { weight = 800, desc = "FOB Crate - Small", unit = "FOB-SMALL" }, -- Builds a FOB! - requires 3 * ctld.cratesRequiredForFOB
+    },
     ["Ground Forces"] = {
         --crates you can spawn
         -- weight in KG
@@ -501,27 +510,17 @@ ctld.spawnableCrates = {
         -- dont use that option with the HAWK Crates
         { weight = 500, desc = "HMMWV - TOW", unit = "M1045 HMMWV TOW", side = 2 },
         { weight = 505, desc = "HMMWV - MG", unit = "M1043 HMMWV Armament", side = 2 },
-
         { weight = 510, desc = "BTR-D", unit = "BTR_D", side = 1 },
         { weight = 515, desc = "BRDM-2", unit = "BRDM-2", side = 1 },
 
         { weight = 520, desc = "HMMWV - JTAC", unit = "Hummer", side = 2, }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
         { weight = 525, desc = "SKP-11 - JTAC", unit = "SKP-11", side = 1, }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
 
-        { weight = 100, desc = "2B11 Mortar", unit = "2B11 mortar" },
-
-        { weight = 250, desc = "SPH 2S19 Msta", unit = "SAU Msta", side = 1, cratesRequired = 3 },
-        { weight = 255, desc = "M-109", unit = "M-109", side = 2, cratesRequired = 3 },
-
         { weight = 252, desc = "Ural-375 Ammo Truck", unit = "Ural-375", side = 1, cratesRequired = 2 },
-        { weight = 253, desc = "M-818 Ammo Truck", unit = "M 818", side = 2, cratesRequired = 2 },
-
-        { weight = 800, desc = "FOB Crate - Small", unit = "FOB-SMALL" }, -- Builds a FOB! - requires 3 * ctld.cratesRequiredForFOB
+        { weight = 253, desc = "M-818 Ammo Truck", unit = "M 818", side = 2 },
     },
     ["AA Crates"] = {
-        { weight = 50, desc = "Stinger", unit = "Stinger manpad", side = 2 },
-        { weight = 55, desc = "Igla", unit = "SA-18 Igla manpad", side = 1 },
-
+        { weight = 1000, desc = "Gepard AAA", unit = "Gepard", side = 2, cratesRequired = 2 },
         -- HAWK System
         { weight = 540, desc = "HAWK Launcher", unit = "Hawk ln", side = 2},
         { weight = 545, desc = "HAWK Search Radar", unit = "Hawk sr", side = 2 },
@@ -2915,7 +2914,7 @@ function ctld.unpackCrates(_arguments)
             local _crate = ctld.getClosestCrate(_heli, _crates)
 
 
-            if ctld.inLogisticsZone(_heli) == true  or  ctld.farEnoughFromLogisticZone(_heli) == false then
+            if ctld.farEnoughFromLogisticZone(_heli) == false then
 
                 ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
 

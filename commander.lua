@@ -32,7 +32,7 @@ russian_commander = function()
     end
 
     if bluePlaneCount > 28 then
-        max_caps = 5
+        max_caps = 4
     end
 
     log("There are " .. bluePlaneCount .. " blue planes in the mission, so we'll spawn a max of " .. max_caps .. " groups of enemy CAP")
