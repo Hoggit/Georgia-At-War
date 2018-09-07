@@ -110,16 +110,20 @@ if statefile then
     end
 
     for idx, data in ipairs(saved_game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"]) do
-        if data.name == 'hawk' then
-            hawkspawn:SpawnFromVec2(data.pos)
-        end
-
         if data.name == 'avenger' then
             avengerspawn:SpawnFromVec2(data.pos)
         end
 
         if data.name == 'ammo' then
             ammospawn:SpawnFromVec2(data.pos)
+        end
+
+        if data.name == 'gepard' then
+            gepardspawn:SpawnFromVec2(data.pos)
+        end
+
+        if data.name == 'mlrs' then
+            mlrsspawn:SpawnFromVec2(data.pos)
         end
 
         if data.name == 'jtac' then
@@ -129,6 +133,15 @@ if statefile then
             ctld.JTACAutoLase(_spawnedGroups:GetName(), _code)
         end
     end
+
+    local CTLDstate = saved_game_state["Theaters"]["Russian Theater"]["Hawks"]
+    if CTLDstate ~= nil then
+        for k,v in pairs(CTLDstate) do
+            respawnHAWKFromState(v)
+        end
+    end
+
+    game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"] = saved_game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"]
 
 else
     -- Populate the world and gameplay environment.

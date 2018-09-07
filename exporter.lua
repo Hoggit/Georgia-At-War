@@ -7,6 +7,19 @@ end
 
 SCHEDULER:New(nil, write_state, {}, 513, 580)
 
+-- update list of active CTLD AA sites in the global game state
+function enumerateCTLD()
+    local CTLDstate = {}
+    for _groupname, _groupdetails in pairs(ctld.completeAASystems) do
+        local CTLDsite = {}
+        for k,v in pairs(_groupdetails) do
+            CTLDsite[v['unit']] = v['point']
+        end
+        CTLDstate[_groupname] = CTLDsite
+    end
+    game_state["Theaters"]["Russian Theater"]["Hawks"] = CTLDstate
+end
+
 ctld.addCallback(function(_args)
     if _args.action and _args.action == "unpack" then
         local name
@@ -17,6 +30,10 @@ ctld.addCallback(function(_args)
             name = "avenger"
         elseif string.match(groupname, "M 818") then
             name = 'ammo'
+        elseif string.match(groupname, "Gepard") then
+            name = 'gepard'
+        elseif string.match(groupname, "MLRS") then
+            name = 'mlrs'
         elseif string.match(groupname, "JTAC") then
             name = 'jtac'
         end
@@ -26,6 +43,7 @@ ctld.addCallback(function(_args)
             pos=GROUP:FindByName(groupname):GetVec2()
         })
 
+        enumerateCTLD()
         write_state()
     end
 end)

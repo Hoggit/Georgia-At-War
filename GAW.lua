@@ -87,6 +87,15 @@ abslots = {
     ['MK Warehouse'] = {"MKFARP Huey 1", "MKFARP Huey 2", "MKFARP Mi-8 1", "MKFARP Mi-8 2", "MK FARP Ka-50"},
 }
 
+logiSlots = {
+    [AIRBASE.Caucasus.Novorossiysk] = NovoLogiSpawn,
+    [AIRBASE.Caucasus.Gelendzhik] = nil,
+    [AIRBASE.Caucasus.Krymsk] = KryLogiSpawn,
+    [AIRBASE.Caucasus.Krasnodar_Center] = KrasCenterLogiSpawn,
+    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = KrasPashLogiSpawn,
+    ['MK Warehouse'] = MaykopLogiSpawn
+}
+
 function baseCaptured(event)
     if event.id == world.event.S_EVENT_BASE_CAPTURED then
         local abname = event.place:getName()
@@ -101,8 +110,14 @@ function baseCaptured(event)
             flagval = 0
         end
 
-        for i,grp in ipairs(abslots[abname]) do
-            trigger.action.setUserFlag(grp, flagval)     
+        if abslots[abname] then
+            for i,grp in ipairs(abslots[abname]) do
+                trigger.action.setUserFlag(grp, flagval)     
+            end
+        end
+
+        if logiSlots[abname] then
+            --activateLogi(logiSlots[abname])
         end
 
         if abname == 'SW Warehouse' or abname == 'MK Warehouse' or abname == 'NW Warehouse' or abname == 'SE Warehouse' or abname == 'NE Warehouse' then

@@ -2,9 +2,10 @@
 objective_names = {
     "Archangel", "Yersanlaz", "Blackjack", "Wildcard", "Crackpipe", "Bullhorn", "Outlaw", "Eclipse","Joker", "Anthill",
     "Firefly", "Rambo", "Rocky", "Dredd", "Smokey", "Vulture", "Parrot","Ender", "Sanchez", "Freeman", "Charlotte", "Orlando",
-    "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Pikachu", "Bulbasaur", "Grimm", "Aurora", "Grumpy", "Sleepy", 
+    "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Pikachu", "Bulbasaur", "Grimm", "Aurora", "Grumpy", "Sleepy",
+    "Pete", "Bijou", "Momo",
     --Patreon
-    "Pete", "Bijou", "Momo", "Eiger", "Snax", "Asteroid", "Sephton", "Blacklist", "Boot", "Maria", 
+    "Eiger", "Snax", "Asteroid", "Sephton", "Blacklist", "Boot", "Maria", 
     "Cheeki Breeki", "Husky", "Carrack", "Vegabond", "Jar Jar", "Plowshare", "Primrose"
 }
 
@@ -110,11 +111,34 @@ end
 --    end)
 --end
 
+function respawnHAWKFromState(_points)
+    -- spawn HAWK crates around center point
+    ctld.spawnCrateAtPoint("blue",551, _points["Hawk pcp"])
+    ctld.spawnCrateAtPoint("blue",540, _points["Hawk ln"])
+    ctld.spawnCrateAtPoint("blue",545, _points["Hawk sr"])
+    ctld.spawnCrateAtPoint("blue",550, _points["Hawk tr"])
+
+    -- spawn a helper unit that will "build" the site
+    local _SpawnObject = SPAWN:New( "NE FARP HELO" )
+    local _SpawnGroup = _SpawnObject:SpawnFromVec2({x=_points["Hawk pcp"]["x"], y=_points["Hawk pcp"]["z"]})
+    local _unit=_SpawnGroup:GetDCSUnit(1)
+
+    -- enumerate nearby crates
+    local _crates = ctld.getCratesAndDistance(_unit)
+    local _crate = ctld.getClosestCrate(_unit, _crates)
+    local terlaaTemplate = ctld.getAATemplate(_crate.details.unit)
+
+    ctld.unpackAASystem(_unit, _crate, _crates, terlaaTemplate)
+    _SpawnGroup:Destroy()
+end
+
 -- player placed spawns
 hawkspawn = SPAWN:New('hawk')
 avengerspawn = SPAWN:New('avenger')
 ammospawn = SPAWN:New('ammo')
 jtacspawn = SPAWN:New('HMMWV - JTAC')
+gepardspawn = SPAWN:New('gepard')
+mlrsspawn = SPAWN:New('mlrs')
 
 --local logispawn = SPAWNSTATIC:NewFromStatic("logistic3", country.id.USA)
 local logispawn = {
