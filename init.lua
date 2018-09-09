@@ -265,9 +265,9 @@ ShellSpawn:SpawnScheduled(600, 0)
 RussianTheaterCASSpawn:SpawnScheduled(2000, 0)
 
 -- Kick off the convoys
-for i,spawn_info in ipairs(convoy_spawns) do
-    spawn_info[1]:SpawnScheduled(2000, 0)
-end
+--for i,spawn_info in ipairs(convoy_spawns) do
+--    spawn_info[1]:SpawnScheduled(2000, 0)
+--end
 
 buildHitEvent(GROUP:FindByName("FARP DEFENSE #003"), "NE FARP")
 buildHitEvent(GROUP:FindByName("FARP DEFENSE"), "NW FARP")

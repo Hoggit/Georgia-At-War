@@ -264,7 +264,7 @@ MKFARPDEF = SPAWN:New("FARP DEFENSE #004")
 FSW = SPAWN:New("FARP Support West")
 
 -- Convoy spawns
-convoy_spawns = {{SPAWN:New('Convoy1'):InitLimit(15, 0), 'Convoy1'}, {SPAWN:New('Convoy2'):InitLimit(15, 0), 'Convoy2'}}
+--convoy_spawns = {{SPAWN:New('Convoy1'):InitLimit(15, 0), 'Convoy1'}, {SPAWN:New('Convoy2'):InitLimit(15, 0), 'Convoy2'}}
 
 -- Group spanws for easy randomization
 local allcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn, RussianTheaterJ11Spawn, RussianTheaterF5Spawn}
@@ -284,13 +284,13 @@ function activateLogi(spawn)
 end
 
 -- OnSpawn Callbacks.  Add ourselves to the game state
-for i,spawn_tbl in ipairs(convoy_spawns) do
-    spawn_tbl[1]:OnSpawnGroup(function(SpawnedGroup)
-        local cs = getCallsign()
-        log("Giving new convoy callsign: " .. cs)
-        AddConvoy(SpawnedGroup, spawn_tbl[2],cs)
-    end)
-end
+--for i,spawn_tbl in ipairs(convoy_spawns) do
+--    spawn_tbl[1]:OnSpawnGroup(function(SpawnedGroup)
+--        local cs = getCallsign()
+--        log("Giving new convoy callsign: " .. cs)
+--        AddConvoy(SpawnedGroup, spawn_tbl[2],cs)
+--    end)
+--end
 
 RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
     RussianTheaterAWACSPatrol:Spawn()
