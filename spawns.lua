@@ -221,7 +221,6 @@ RussianTheaterEWRSpawn = { SPAWN:New("EWR"), "EWR" }
 RussianTheaterC2Spawn = { SPAWN:New("C2"), "C2" }
 RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
 RussianTheaterAWACSSpawn = SPAWN:New("A50"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
-RUSTankerSpawn = SPAWN:New("IL78-RUSTanker"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
 
 -- REDFOR specific airfield defense spawns
 DefKrasPash = SPAWN:New("Red Airfield Defense Kras-Pash 1")
@@ -338,10 +337,6 @@ RussianTheaterC2Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     AddRussianTheaterC2(SpawnedGroup, "C2", callsign)
     buildHitEvent(SpawnedGroup, callsign)
     buildCheckC2Event(SpawnedGroup, callsign)
-end)
-
-RUSTankerSpawn:OnSpawnGroup(function(SpawnedGroup)
-    AddRussianTheaterTankerTarget(SpawnedGroup)
 end)
 
 RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
