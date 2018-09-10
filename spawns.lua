@@ -11,6 +11,11 @@ objective_names = {
 
 objective_idx = 1
 
+getMarkerId = function()
+    objectiveCounter = objectiveCounter + 1
+    return objectiveCounter
+end
+
 getCallsign = function()
     local callsign = objective_names[objective_idx]
     objective_idx = objective_idx + 1
@@ -23,27 +28,21 @@ Spawner = function(grpName)
     local CallBack = {}
     return {
         Spawn = function(self)
-            log("Spawning grp " .. grpName)
-            local grp = mist.getGroupData(grpName)
-            grp.clone=true
-            added_grp = mist.dynAdd(grp)
+            mist.cloneGroup(grpName)
             if CallBack.func then
                 if not CallBack.args then CallBack.args = {} end
-                mist.scheduleFunction(CallBack.func, {grpName, unpack(CallBack.args)}, timer.getTime() + 1)
+                mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
             end
+            --trigger.action.outText("Added group " .. grpName, 10)
         end,
         SpawnInZone = function(self, zoneName)
-            log("Spawning grp: " .. grpName .. " in Zone " .. zoneName)
-            local _point = mist.getRandomPointInZone(zoneName)
-            mist.teleportToPoint({
-                groupName=grpName,
-                point=_point,
-                action="clone"
-            })
+            mist.cloneInZone(grpName, zoneName)
+            
             if CallBack.func then
                 if not CallBack.args then CallBack.args = {} end
                 mist.scheduleFunction(CallBack.func, {grpName, unpack(CallBack.args)}, timer.getTime() + 1)
             end
+            --trigger.action.outText("Added group " .. grpName .. " in zone " .. zoneName, 10)
         end,
         OnSpawnGroup = function(self, f, args)
             CallBack.func = f
@@ -334,7 +333,9 @@ RussianTheaterSA6Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, sammenu, function()
     --    SpawnedGroup:Destroy()
     --end)
-    AddRussianTheaterStrategicSAM(SpawnedGroup, "SA6", callsign)
+    
+    AddObjective("StrategicSAM", getMarkerId())(SpawnedGroup, RussianTheaterSA6Spawn[1], callsign)
+    --AddRussianTheaterStrategicSAM(SpawnedGroup, "SA6", callsign)
     buildHitEvent(SpawnedGroup, callsign)
     buildCheckSAMEvent(SpawnedGroup, callsign)
 end)
@@ -372,6 +373,7 @@ RussianTheaterC2Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
 end)
 
 RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
+    trigger.action.outText(mist.utils.tableShow(SpawnedGroup), 15)
     AddRussianTheaterAWACSTarget(SpawnedGroup)
 end)
 

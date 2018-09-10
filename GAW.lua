@@ -162,14 +162,14 @@ end
 
 AddConvoy = function(group, spawn_name, callsign)
     log("Adding convoy " .. callsign)
-    game_state['Theaters']['Russian Theater']['Convoys'][group:GetName()] = {spawn_name, callsign}
+    game_state['Theaters']['Russian Theater']['Convoys'][group:getName()] = {spawn_name, callsign}
 end
 
 
 
 AddCAP = function(theater)
     return function(group)
-        table.insert(game_state["Theaters"][theater]["CAP"], group:GetName())
+        table.insert(game_state["Theaters"][theater]["CAP"], group:getName())
     end
 end
 
@@ -179,17 +179,18 @@ end
 
 AddAWACSTarget = function(theater)
     return function(group)
-        table.insert(game_state["Theaters"][theater]["AWACS"], group:GetName())
+        table.insert(game_state["Theaters"][theater]["AWACS"], group:getName())
     end
 end
 
 AddRussianTheaterAWACSTarget = function(group)
+    mist.utils.tableShow(group, 15)
     AddAWACSTarget("Russian Theater")(group)
 end
 
 AddTankerTarget = function(theater)
     return function(group)
-        table.insert(game_state["Theaters"][theater]["Tanker"], group:GetName())
+        table.insert(game_state["Theaters"][theater]["Tanker"], group:getName())
     end
 end
 

@@ -146,37 +146,39 @@ if statefile then
 
 else
     -- Populate the world and gameplay environment.
+    trigger.action.outText("No state file detected.  Creating new situation", 10)
     for i=1, 4 do
         local zone_index = math.random(23)
         local zone = "NorthSA6Zone"
-        RussianTheaterSA6Spawn[1]:SpawnInZone(zone)
+        RussianTheaterSA6Spawn[1]:SpawnInZone(zone .. zone_index)
     end
 
     for i=1, 3 do
         if i < 3 then
             local zone_index = math.random(8)
             local zone = "NorthSA10Zone"
-            RussianTheaterSA10Spawn[1]:SpawnInZone(zone)
+            RussianTheaterSA10Spawn[1]:SpawnInZone(zone .. zone_index)
         end
 
         local zone_index = math.random(8)
         local zone = "NorthSA10Zone"
-        RussianTheaterEWRSpawn[1]:SpawnInZone(zone)
+        RussianTheaterEWRSpawn[1]:SpawnInZone(zone .. zone_index)
 
         local zone_index = math.random(8)
         local zone = "NorthSA10Zone"
-        RussianTheaterC2Spawn[1]:SpawnInZone(zone)
+        RussianTheaterC2Spawn[1]:SpawnInZone(zone .. zone_index)
     end
 
-    for i=1, 10 do
-        local zone_index = math.random(18)
-        local zone = ZONE:New("NorthStatic" .. zone_index)
-        local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
-        local spawn_index = math.random(3)
-        local static = StaticSpawns[spawn_index][1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
-        local callsign = getCallsign()
-        AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), StaticSpawns[spawn_index][2], callsign)
-    end
+    --for i=1, 10 do
+    --    local zone_index = math.random(18)
+    --    local zone = ZONE:New("NorthStatic" .. zone_index)
+    --    local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
+    --    local spawn_index = math.random(3)
+    --    local static = StaticSpawns[spawn_index][1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
+    --    local callsign = getCallsign()
+    --    AddObjective()
+    --    AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), StaticSpawns[spawn_index][2], callsign)
+    --end
 
     -- Spawn the Sea of Azov navy
     -- for i=1, 4 do
@@ -258,12 +260,12 @@ SCHEDULER:New(nil, function()
 end, {}, 10, 600)
 
 -- Kick off the supports
-RussianTheaterAWACSSpawn:SpawnScheduled(1200, 0)
-RussianTheaterAWACSPatrol:SpawnScheduled(1200, 0)
-OverlordSpawn:SpawnScheduled(600, 0)
-TexacoSpawn:SpawnScheduled(600, 0)
-ShellSpawn:SpawnScheduled(600, 0)
-RussianTheaterCASSpawn:SpawnScheduled(2000, 0)
+--RussianTheaterAWACSSpawn:SpawnScheduled(1200, 0)
+--RussianTheaterAWACSPatrol:SpawnScheduled(1200, 0)
+--OverlordSpawn:SpawnScheduled(600, 0)
+--TexacoSpawn:SpawnScheduled(600, 0)
+--ShellSpawn:SpawnScheduled(600, 0)
+--RussianTheaterCASSpawn:SpawnScheduled(2000, 0)
 
 -- Kick off the convoys
 --for i,spawn_info in ipairs(convoy_spawns) do
