@@ -1,8 +1,10 @@
 local write_state = function()
+    log("Writing State...")
     local stateFile = lfs.writedir()..[[Scripts\GAW\state.json]]
     local fp = io.open(stateFile, 'w')
     fp:write(json:encode(game_state))
     fp:close()
+    log("Done writing state.")
 end
 
 SCHEDULER:New(nil, write_state, {}, 513, 580)
@@ -10,6 +12,7 @@ SCHEDULER:New(nil, write_state, {}, 513, 580)
 -- update list of active CTLD AA sites in the global game state
 function enumerateCTLD()
     local CTLDstate = {}
+    log("Enumerating CTLD")
     for _groupname, _groupdetails in pairs(ctld.completeAASystems) do
         local CTLDsite = {}
         for k,v in pairs(_groupdetails) do
@@ -18,6 +21,7 @@ function enumerateCTLD()
         CTLDstate[_groupname] = CTLDsite
     end
     game_state["Theaters"]["Russian Theater"]["Hawks"] = CTLDstate
+    log("Done Enumerating CTLD")
 end
 
 ctld.addCallback(function(_args)

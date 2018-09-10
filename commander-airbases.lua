@@ -31,12 +31,14 @@ RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
 
 AttackableAirbases = function(airbaseList)
     local filtered = {}
+    log("Iterating airbases")
     for i,ab in ipairs(airbaseList) do
         local base = AIRBASE:FindByName(ab[1])
         if base:GetCoalition() == NEUTRAL or base:GetCoalition() == BLUE then
             table.insert(filtered,ab)
         end
     end
+    log("Done iterating airbases")
     return filtered
 end
 

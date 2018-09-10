@@ -2,6 +2,7 @@ casspawns = { SPAWN:New("CAS1")}--, SPAWN:New("CAS2"), SPAWN:New("CAS3") }
 bcasspawns = { SPAWN:New("BCAS1")}--, SPAWN:New("BCAS2"), SPAWN:New("BCAS3") }
 
 schedule_tasking = function()
+    log("Iterating on-call CAS")
     for i=#oncall_cas,1,-1 do
         local v = oncall_cas[i]
         local grp = GROUP:FindByName(v.name)
@@ -52,6 +53,7 @@ schedule_tasking = function()
             end
         end
     end
+    log("Done Iterating on-call CAS")
 end
 
 SCHEDULER:New(nil, function() pcall(schedule_tasking) end, {}, 120, 120)

@@ -286,6 +286,7 @@ SpawnDefenseForces = function(time, last_launched_time, spawn)
 end
 
 ConvoyUpdate = function(group)
+    log("Doing convoy update")
     local output = "REDFOR Convoy Report:\n\n"
     local numConvoys = 0
     for name, convoy_info in pairs(game_state['Theaters']['Russian Theater']['Convoys']) do
@@ -320,12 +321,14 @@ ConvoyUpdate = function(group)
     else
         MESSAGE:New(output, 20):ToGroup(group)
     end
+    log("Done convoy update")
 end
 
 SCHEDULER:New(nil, ConvoyUpdate, {"all"}, 300, 900)
 
 
 TheaterUpdate = function(theater)
+    log("Doing theater Update")
     local output = "OPFOR Strategic Report: " .. theater .. "\n--------------------------\n\nSAM COVERAGE: "
     local numsams = 0
     for i,sam in pairs(game_state["Theaters"][theater]['StrategicSAM']) do
@@ -381,17 +384,8 @@ TheaterUpdate = function(theater)
 
     output = output .. "\n\nTHEATER OBJECTIVE:  Destroy all strike targets, all Command and Control (C2) units, and capture all primary airfields."
 
+    log("Done theater update")
     return output
-end
-
-CreateRussianCASMission = function(targetV3, zoneRadius)
-    log("===== CAS Mission Requested.")
-    --Create the zone
-    local v2Point = POINT_VEC2:NewFromVec3(targetV3)
-    local message = "---- ( " .. v2Point:ToStringLLDMS() .." ) ---"
-    log(message)
-    local zone = ZONE_RADIUS:New("CAS Zone", v2Point:GetVec2(), zoneRadius)
-    SCHEDULER:New(nil, SpawnOPFORCas, {zone, RussianTheaterCASSpawn}, seconds) 
 end
 
 BASE:I("HOGGIT GAW - GAW COMPLETE")

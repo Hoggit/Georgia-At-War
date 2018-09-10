@@ -39,6 +39,7 @@ buildHitEvent = function(group, callsign)
 end
 
 buildCheckSAMEvent = function(group, callsign)
+    log("Iterating sam events")
     for i,unit in ipairs(group:GetUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
@@ -61,9 +62,11 @@ buildCheckSAMEvent = function(group, callsign)
             end
         end
     end
+    log("Done Iterating sam events")
 end
 
 buildCheckEWREvent = function(group, callsign)
+    log("Iterating EWR event")
     for i,unit in ipairs(group:GetUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
@@ -78,9 +81,11 @@ buildCheckEWREvent = function(group, callsign)
             end
         end
     end
+    log("Done Iterating EWR event")
 end
 
 buildCheckC2Event = function(group, callsign)
+    log("Iterating c2 event")
     for i,unit in ipairs(group:GetUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
@@ -95,23 +100,11 @@ buildCheckC2Event = function(group, callsign)
             end
         end
     end
+    log("Done Iterating c2 event")
 end
 
--- Support rearming spawns
---rearm_spawns = { 
---    {SPAWN:New('rearm1'), "A shipment of AGM-65D's and AGM-65H's has arrived at Anapa"}, 
---    {SPAWN:New('rearm2'), "A shipment of 500lb and 2000lb JDAM's has arrived at Anapa"}, 
---    {SPAWN:New('rearm3'), "A shipment of 500lb and 2000lb GBU's, and AIM-120B's has arrived at Anapa"},-
---}
-
---for i,rearm_spawn in ipairs(rearm_spawns) do
---    rearm_spawn[1]:OnSpawnGroup(function(SpawnedGroup)
---        MESSAGE:New(rearm_spawn[2], 20):ToAll()
---        SCHEDULER:New(nil, function() SpawnedGroup:Destroy() end, {}, 20)
---    end)
---end
-
 function respawnHAWKFromState(_points)
+    log("Spawning hawk from state")
     -- spawn HAWK crates around center point
     ctld.spawnCrateAtPoint("blue",551, _points["Hawk pcp"])
     ctld.spawnCrateAtPoint("blue",540, _points["Hawk ln"])
@@ -130,8 +123,10 @@ function respawnHAWKFromState(_points)
 
     ctld.unpackAASystem(_unit, _crate, _crates, terlaaTemplate)
     _SpawnGroup:Destroy()
+    log("Done Spawning hawk from state")
 end
 
+log("Creating player placed spawns")
 -- player placed spawns
 hawkspawn = SPAWN:New('hawk')
 avengerspawn = SPAWN:New('avenger')
@@ -139,6 +134,7 @@ ammospawn = SPAWN:New('ammo')
 jtacspawn = SPAWN:New('HMMWV - JTAC')
 gepardspawn = SPAWN:New('gepard')
 mlrsspawn = SPAWN:New('mlrs')
+log("Done Creating player placed spawns")
 
 --local logispawn = SPAWNSTATIC:NewFromStatic("logistic3", country.id.USA)
 local logispawn = {

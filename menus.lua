@@ -7,6 +7,7 @@ metricSettings = SETTINGS:Set("COMMUNISTPIGS")
 
 -- Per group menu, called on groupspawn
 buildMenu = function(Group)
+    log("Building radio menus")
     local type
     local useSettings
 
@@ -206,9 +207,11 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             end
         end
     end)
+    log("Done building radio menus")
 end
 
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
+    log("Preparing menus for NorthGeorgiaTransportSpawns")
     local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name, XportMenu, function()
         local spawn_idx =1
         if AIRBASE:FindByName(name):GetCoalition() == 1 then spawn_idx = 2 end
@@ -218,9 +221,11 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
             game_state["last_launched_time"] = new_spawn_time
         end
     end)
+    log("Done preparing menus for NorthGeorgiaTransportSpawns")
 end
 
 for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
+    log("Preparing menus for NorthGeorgiaFARPTransportSpawns")
     local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name .. " FARP/WAREHOUSE", FARPXportMenu, function() 
         local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn)
         if new_spawn_time ~= nil then
@@ -228,6 +233,7 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
             game_state["last_launched_time"] = new_spawn_time
         end
     end)
+    log("Done Preparing menus for NorthGeorgiaFARPTransportSpawns")
 end
 
 EventHandler = EVENTHANDLER:New()
@@ -235,11 +241,13 @@ EventHandler = EVENTHANDLER:New()
 EventHandler:HandleEvent( EVENTS.Birth )
 function EventHandler:OnEventBirth( EventData )
     if EventData.IniGroup then
+        log("Group birth. Building menus")
         for i,u in ipairs(EventData.IniGroup:GetUnits()) do
             if u:GetPlayerName() ~= "" then
                 buildMenu(EventData.IniGroup)
             end
         end
+        log("Done group birth. Building menus")
     end
 end
 

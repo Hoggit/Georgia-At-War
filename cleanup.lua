@@ -82,6 +82,7 @@ function cleanup()
             game_state["Theaters"]["Russian Theater"]["Convoys"][name] = nil
         end
     end
+    log("Done Clean script")
 end
 
 SCHEDULER:New(nil, function()pcall(cleanup)end, {}, 47, 125)
