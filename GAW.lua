@@ -131,29 +131,32 @@ function baseCaptured(event)
     end
 end
 
+local objectiveTypeMap = {
+    ["NavalStrike"] = "NAVAL",
+    ["StrategicSAM"] = "SAM",
+    ["Convoys"] = "CONVOY",
+    ["C2"] = "C2",
+    ["EWR"] = "EWR",
+    ["StrikeTargets"] = "STRIKE",
+    ["InterceptTargets"] = "INTERCEPT",
+    ["BAI"] = "BAI"
+}
+
 mist.addEventHandler(baseCaptured)
-
-AddNavalStrike = function(theater)
+objectiveCounter = 0
+AddObjective = function(type, id)
     return function(group, spawn_name, callsign)
-        game_state["Theaters"][theater]['NavalStrike'][group:GetName()] = {
-            ["callsign"] = callsign, 
-            ["spawn_name"] = spawn_name, 
-            ["position"] = {group:GetVec2().x, group:GetVec2().y}
-        }
+        local unit = group:getUnit(1)
+        if unit then
+            local point = mist.utils.makeVec2(unit:getPosition().p)
+            game_state["Theaters"]["Russian Theater"][type][group:getName()] = {
+                ["callsign"] = callsign, 
+                ["spawn_name"] = spawn_name, 
+                ["position"] = {point.x, point.y}
+            }
 
-        group:GetCoordinate():MarkToCoalitionBlue("NAVAL - "..callsign)
-    end
-end
-
-AddStrategicSAM = function(theater)
-    return function(group, spawn_name, callsign)
-        game_state["Theaters"][theater]['StrategicSAM'][group:GetName()] = {
-            ["callsign"] = callsign, 
-            ["spawn_name"] = spawn_name, 
-            ["position"] = {group:GetVec2().x, group:GetVec2().y}
-        }
-
-        group:GetCoordinate():MarkToCoalitionBlue("SAM - "..callsign)
+            trigger.action.MarkToCoalition(id, objectiveTypeMap[type] .. " - " .. callsign, unit:getPosition().p, 2, true)
+        end
     end
 end
 
@@ -162,9 +165,7 @@ AddConvoy = function(group, spawn_name, callsign)
     game_state['Theaters']['Russian Theater']['Convoys'][group:GetName()] = {spawn_name, callsign}
 end
 
-AddRussianTheaterStrategicSAM = function(group, spawn_name, callsign)
-    AddStrategicSAM("Russian Theater")(group, spawn_name, callsign)
-end
+
 
 AddCAP = function(theater)
     return function(group)
@@ -174,83 +175,6 @@ end
 
 AddRussianTheaterCAP = function(group)
     AddCAP("Russian Theater")(group)
-end
-
-AddCASTarget = function(state)
-    return function(theater)
-        return function(group, callsign)
-            local castargets = mist.utils.deepCopy(state["Theaters"][theater]["CASTargets"])
-            table.insert(castargets, group)
-            group:GetCoordinate():MarkToCoalitionBlue("CAS - " .. callsign)
-            return castargets
-        end
-    end
-end
-
-AddRussianTheaterCASTarget = function(state, group, callsign)
-    local castargets = AddCASTarget(state)("Russian Theater")(group, callsign)
-    UpdateRussianCASTargetsState(state, castargets)
-end
-
-AddC2 = function(theater)
-    return function(group, spawn_name, callsign)
-        game_state["Theaters"][theater]["C2"][group:GetName()] = {
-            ["callsign"] = callsign, 
-            ["spawn_name"] = spawn_name,
-            ["position"] = {group:GetVec2().x, group:GetVec2().y}
-        }
-        group:GetCoordinate():MarkToCoalitionBlue("C2 - "..callsign)
-    end
-end
-
-AddRussianTheaterC2 = function(group, spawn_name, callsign)
-    AddC2("Russian Theater")(group, spawn_name, callsign)
-end
-
-AddEWR = function(theater)
-    return function(group, spawn_name, callsign)
-        game_state["Theaters"][theater]["EWR"][group:GetName()] = {
-            ["callsign"] = callsign, 
-            ["spawn_name"] = spawn_name, 
-            ["position"] = {group:GetVec2().x, group:GetVec2().y}
-        }
-    end
-end
-
-AddRussianTheaterEWR = function(group, spawn_name, callsign)
-    AddEWR("Russian Theater")(group, spawn_name, callsign)
-end
-
-AddStrikeTarget = function(theater)
-    return function(group, spawn_name, callsign)
-        game_state["Theaters"][theater]["StrikeTargets"][group:GetName()] = {
-            ["callsign"] = callsign, 
-            ["spawn_name"] = spawn_name, 
-            ["position"] = {group:GetVec2().x, group:GetVec2().y}
-        }
-
-        group:GetCoordinate():MarkToCoalitionBlue("STRIKE - "..callsign)
-    end
-end
-
-AddRussianTheaterStrikeTarget = function(group, spawn_name, callsign)
-    AddStrikeTarget("Russian Theater")(group, spawn_name, callsign)
-end
-
-AddBAITarget = function(theater)
-    return function(group, spawn_name, callsign)
-        game_state["Theaters"][theater]["BAI"][group:GetName()] = {
-            ["callsign"] = callsign, 
-            ["spawn_name"] = spawn_name, 
-            ["position"] = {group:GetVec2().x, group:GetVec2().y}
-        }
-
-        group:GetCoordinate():MarkToCoalitionBlue("BAI - "..callsign)
-    end
-end
-
-AddRussianTheaterBAITarget = function(group, spawn_name, callsign)
-    AddBAITarget("Russian Theater")(group, spawn_name, callsign)
 end
 
 AddAWACSTarget = function(theater)

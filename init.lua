@@ -98,7 +98,8 @@ if statefile then
                 ['x'] = data['position'][1],
                 ['y'] = data['position'][2]
             }), 0)
-        AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), data['spawn_name'], data['callsign'])
+        objectiveCounter = objectiveCounter + 1
+        AddObjective("StrikeTarget", objectiveCounter)(name, data['spawn_name'], data['callsign'])
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["BAI"]) do
