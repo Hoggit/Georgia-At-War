@@ -147,24 +147,24 @@ else
     -- Populate the world and gameplay environment.
     for i=1, 4 do
         local zone_index = math.random(23)
-        local zone = ZONE:New("NorthSA6Zone" .. zone_index)
-        RussianTheaterSA6Spawn[1]:SpawnInZone(zone, true)
+        local zone = "NorthSA6Zone"
+        RussianTheaterSA6Spawn[1]:SpawnInZone(zone)
     end
 
     for i=1, 3 do
         if i < 3 then
             local zone_index = math.random(8)
-            local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-            RussianTheaterSA10Spawn[1]:SpawnInZone(zone, true)
+            local zone = "NorthSA10Zone"
+            RussianTheaterSA10Spawn[1]:SpawnInZone(zone)
         end
 
         local zone_index = math.random(8)
-        local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-        RussianTheaterEWRSpawn[1]:SpawnInZone(zone, true)
+        local zone = "NorthSA10Zone"
+        RussianTheaterEWRSpawn[1]:SpawnInZone(zone)
 
         local zone_index = math.random(8)
-        local zone = ZONE:New("NorthSA10Zone" .. zone_index)
-        RussianTheaterC2Spawn[1]:SpawnInZone(zone, true)
+        local zone = "NorthSA10Zone"
+        RussianTheaterC2Spawn[1]:SpawnInZone(zone)
     end
 
     for i=1, 10 do

@@ -18,6 +18,42 @@ getCallsign = function()
     return callsign
 end
 
+-- Replace the spawn stuff
+Spawner = function(grpName)
+    local CallBack = {}
+    return {
+        Spawn = function(self)
+            log("Spawning grp " .. grpName)
+            local grp = mist.getGroupData(grpName)
+            grp.clone=true
+            added_grp = mist.dynAdd(grp)
+            if CallBack.func then
+                if not CallBack.args then CallBack.args = {} end
+                mist.scheduleFunction(CallBack.func, {grpName, unpack(CallBack.args)}, timer.getTime() + 1)
+            end
+        end,
+        SpawnInZone = function(self, zoneName)
+            log("Spawning grp: " .. grpName .. " in Zone " .. zoneName)
+            local _point = mist.getRandomPointInZone(zoneName)
+            mist.teleportToPoint({
+                groupName=grpName,
+                point=_point,
+                action="clone"
+            })
+            if CallBack.func then
+                if not CallBack.args then CallBack.args = {} end
+                mist.scheduleFunction(CallBack.func, {grpName, unpack(CallBack.args)}, timer.getTime() + 1)
+            end
+        end,
+        OnSpawnGroup = function(self, f, args)
+            CallBack.func = f
+            CallBack.args = args
+        end
+    }
+end
+
+
+
 local attack_message_lock = 0
 
 buildHitEvent = function(group, callsign)
@@ -128,12 +164,12 @@ end
 
 log("Creating player placed spawns")
 -- player placed spawns
-hawkspawn = SPAWN:New('hawk')
-avengerspawn = SPAWN:New('avenger')
-ammospawn = SPAWN:New('ammo')
-jtacspawn = SPAWN:New('HMMWV - JTAC')
-gepardspawn = SPAWN:New('gepard')
-mlrsspawn = SPAWN:New('mlrs')
+hawkspawn = Spawner('hawk')
+avengerspawn = Spawner('avenger')
+ammospawn = Spawner('ammo')
+jtacspawn = Spawner('HMMWV - JTAC')
+gepardspawn = Spawner('gepard')
+mlrsspawn = Spawner('mlrs')
 log("Done Creating player placed spawns")
 
 --local logispawn = SPAWNSTATIC:NewFromStatic("logistic3", country.id.USA)
@@ -186,19 +222,19 @@ MaykopLogiSpawn = {logispawn, "HEMTT TFFT",
 
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
-    [AIRBASE.Caucasus.Novorossiysk] = {SPAWN:New("NovoroTransport"), SPAWN:New("NovoroTransportHelo"), NovoLogiSpawn},
-    [AIRBASE.Caucasus.Gelendzhik] = {SPAWN:New("GelenTransport"), SPAWN:New("GelenTransportHelo"), nil}, 
-    [AIRBASE.Caucasus.Krasnodar_Center] = {SPAWN:New("KDARTransport"), SPAWN:New("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
-    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = {SPAWN:New("KDAR2Transport"), SPAWN:New("KrasPashTransportHelo"), nil},
-    [AIRBASE.Caucasus.Krymsk] = {SPAWN:New("KrymskTransport"), SPAWN:New("KrymskTransportHelo"), KryLogiSpawn}
+    [AIRBASE.Caucasus.Novorossiysk] = {Spawner("NovoroTransport"), Spawner("NovoroTransportHelo"), NovoLogiSpawn},
+    [AIRBASE.Caucasus.Gelendzhik] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil}, 
+    [AIRBASE.Caucasus.Krasnodar_Center] = {Spawner("KDARTransport"), Spawner("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
+    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = {Spawner("KDAR2Transport"), Spawner("KrasPashTransportHelo"), nil},
+    [AIRBASE.Caucasus.Krymsk] = {Spawner("KrymskTransport"), Spawner("KrymskTransportHelo"), KryLogiSpawn}
 }
 
 NorthGeorgiaFARPTransportSpawns = {
-    ["NW"] = SPAWN:New("NW FARP HELO"),
-    ["NE"] = SPAWN:New("NE FARP HELO"), 
-    ["SW"] = SPAWN:New("SW FARP HELO"),
-    ["SE"] = SPAWN:New("SE FARP HELO"),
-    ["MK"] = SPAWN:New("MK FARP HELO"),
+    ["NW"] = Spawner("NW FARP HELO"),
+    ["NE"] = Spawner("NE FARP HELO"), 
+    ["SW"] = Spawner("SW FARP HELO"),
+    ["SE"] = Spawner("SE FARP HELO"),
+    ["MK"] = Spawner("MK FARP HELO"),
 }
 
 -- Support Spawn
@@ -208,36 +244,36 @@ OverlordSpawn = SPAWN:New("AWACS Overlord"):InitDelayOff():InitRepeatOnEngineShu
 --F16Spawn = SPAWN:New("F16CAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
 --MirageSpawn = SPAWN:New("MirageCAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
 -- Local defense spawns.  Usually used after a transport spawn lands somewhere.
-AirfieldDefense = SPAWN:New("AirfieldDefense")
+AirfieldDefense = Spawner("AirfieldDefense")
 
 -- Strategic REDFOR spawns
-RussianTheaterSA10Spawn = { SPAWN:New("SA10"), "SA10" }
-RussianTheaterSA6Spawn = { SPAWN:New("SA6"), "SA6" }
-RussianTheaterEWRSpawn = { SPAWN:New("EWR"), "EWR" }
-RussianTheaterC2Spawn = { SPAWN:New("C2"), "C2" }
-RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
+RussianTheaterSA10Spawn = { Spawner("SA10"), "SA10" }
+RussianTheaterSA6Spawn = { Spawner("SA6"), "SA6" }
+RussianTheaterEWRSpawn = { Spawner("EWR"), "EWR" }
+RussianTheaterC2Spawn = { Spawner("C2"), "C2" }
+RussianTheaterAirfieldDefSpawn = Spawner("Russia-Airfield-Def")
 RussianTheaterAWACSSpawn = SPAWN:New("A50"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
 
 -- REDFOR specific airfield defense spawns
-DefKrasPash = SPAWN:New("Red Airfield Defense Kras-Pash 1")
-DefKrasCenter = SPAWN:New("Red Airfield Defense Kras-Center 1")
-DefKrymsk = SPAWN:New("Red Airfield Defense Krymsk 1")
-DefNovo = SPAWN:New("Red Airfield Defense Novo 1")
-DefGlensPenis = SPAWN:New("Red Airfield Defense GlensDick 1")
+DefKrasPash = Spawner("Red Airfield Defense Kras-Pash 1")
+DefKrasCenter = Spawner("Red Airfield Defense Kras-Center 1")
+DefKrymsk = Spawner("Red Airfield Defense Krymsk 1")
+DefNovo = Spawner("Red Airfield Defense Novo 1")
+DefGlensPenis = Spawner("Red Airfield Defense GlensDick 1")
 
 -- CAP Redfor spawns
-RussianTheaterMig212ShipSpawn = SPAWN:New("Mig21-2ship")
-RussianTheaterMig292ShipSpawn = SPAWN:New("Mig29-2ship")
-RussianTheaterSu272sShipSpawn = SPAWN:New("Su27-2ship")
-RussianTheaterF5Spawn = SPAWN:New("f52ship")
-RussianTheaterJ11Spawn = SPAWN:New("j112ship")
+RussianTheaterMig212ShipSpawn = Spawner("Mig21-2ship")
+RussianTheaterMig292ShipSpawn = Spawner("Mig29-2ship")
+RussianTheaterSu272sShipSpawn = Spawner("Su27-2ship")
+RussianTheaterF5Spawn = Spawner("f52ship")
+RussianTheaterJ11Spawn = Spawner("j112ship")
 RussianTheaterMig312ShipSpawn = SPAWN:New("Mig31-2ship"):InitLimit(2, 0)
 RussianTheaterAWACSPatrol = SPAWN:New("SU27-RUSAWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
 
 -- Strike Target Spawns
-RussianHeavyArtySpawn = { SPAWN:New("ARTILLERY"), "ARTILLERY" }
-ArmorColumnSpawn = { SPAWN:New("ARMOR COLUMN"), "ARMOR COLUMN" }
-MechInfSpawn = { SPAWN:New("MECH INF"), "MECH INF" }
+RussianHeavyArtySpawn = { Spawner("ARTILLERY"), "ARTILLERY" }
+ArmorColumnSpawn = { Spawner("ARMOR COLUMN"), "ARMOR COLUMN" }
+MechInfSpawn = { Spawner("MECH INF"), "MECH INF" }
 AmmoDumpSpawn = { SPAWNSTATIC:NewFromStatic("Ammo Dump", country.id.RUSSIA), "Ammo Dump" }
 CommsArraySpawn = { SPAWNSTATIC:NewFromStatic("Comms Array", country.id.RUSSIA), "Comms Array" }
 PowerPlantSpawn = { SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA), "Power Plant" }
@@ -250,14 +286,14 @@ RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup"):InitRepeatOnLanding():InitL
 --RussianTheatreCASEscort = SPAWN:New("Su27CASEscort")
 
 -- FARP defenses
-NWFARPDEF = SPAWN:New("FARP DEFENSE")
-SWFARPDEF = SPAWN:New("FARP DEFENSE #001")
-NEFARPDEF = SPAWN:New("FARP DEFENSE #003")
-SEFARPDEF = SPAWN:New("FARP DEFENSE #002")
-MKFARPDEF = SPAWN:New("FARP DEFENSE #004")
+NWFARPDEF = Spawner("FARP DEFENSE")
+SWFARPDEF = Spawner("FARP DEFENSE #001")
+NEFARPDEF = Spawner("FARP DEFENSE #003")
+SEFARPDEF = Spawner("FARP DEFENSE #002")
+MKFARPDEF = Spawner("FARP DEFENSE #004")
 
 -- FARP Support Groups
-FSW = SPAWN:New("FARP Support West")
+FSW = Spawner("FARP Support West")
 
 -- Convoy spawns
 --convoy_spawns = {{SPAWN:New('Convoy1'):InitLimit(15, 0), 'Convoy1'}, {SPAWN:New('Convoy2'):InitLimit(15, 0), 'Convoy2'}}
