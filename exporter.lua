@@ -1,4 +1,4 @@
-local write_state = function()
+write_state = function()
     log("Writing State...")
     local stateFile = lfs.writedir()..[[Scripts\GAW\state.json]]
     local fp = io.open(stateFile, 'w')
@@ -7,7 +7,7 @@ local write_state = function()
     log("Done writing state.")
 end
 
-SCHEDULER:New(nil, write_state, {}, 513, 580)
+SCHEDULER:New(nil, write_state, {}, 10, 580)
 
 -- update list of active CTLD AA sites in the global game state
 function enumerateCTLD()

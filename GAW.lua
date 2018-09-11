@@ -143,7 +143,7 @@ local objectiveTypeMap = {
 }
 
 mist.addEventHandler(baseCaptured)
-objectiveCounter = 0
+objectiveCounter = 99
 AddObjective = function(type, id)
     return function(group, spawn_name, callsign)
         local unit = group:getUnit(1)
@@ -152,12 +152,24 @@ AddObjective = function(type, id)
             game_state["Theaters"]["Russian Theater"][type][group:getName()] = {
                 ["callsign"] = callsign, 
                 ["spawn_name"] = spawn_name, 
-                ["position"] = {point.x, point.y}
+                ["position"] = {point.x, point.y},
+                ["markerID"] = id
             }
 
-            trigger.action.MarkToCoalition(id, objectiveTypeMap[type] .. " - " .. callsign, unit:getPosition().p, 2, true)
+            trigger.action.markToCoalition(id, objectiveTypeMap[type] .. " - " .. callsign, unit:getPosition().p, 2, true)
         end
     end
+end
+
+AddStaticObjective = function(id, callsign, spawn_name, staticNames)
+    local point = mist.utils.makeVec2(StaticObject.getByName(staticNames[1]):getPosition().p)
+    game_state["Theaters"]["Russian Theater"]["StrikeTargets"]["strike" .. id] = {
+        ['callsign'] = callsign,
+        ['spawn_name'] = spawn_name,
+        ['position'] = {point.x, point.y},
+        ['markerID'] = id,
+        ['statics'] = staticNames
+    }
 end
 
 AddConvoy = function(group, spawn_name, callsign)

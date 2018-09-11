@@ -28,7 +28,7 @@ Spawner = function(grpName)
     local CallBack = {}
     return {
         Spawn = function(self)
-            mist.cloneGroup(grpName)
+            local added_grp = Group.getByName(mist.cloneGroup(grpName).name)
             if CallBack.func then
                 if not CallBack.args then CallBack.args = {} end
                 mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
@@ -36,11 +36,10 @@ Spawner = function(grpName)
             --trigger.action.outText("Added group " .. grpName, 10)
         end,
         SpawnInZone = function(self, zoneName)
-            mist.cloneInZone(grpName, zoneName)
-            
+            local added_grp = Group.getByName(mist.cloneInZone(grpName, zoneName).name)
             if CallBack.func then
                 if not CallBack.args then CallBack.args = {} end
-                mist.scheduleFunction(CallBack.func, {grpName, unpack(CallBack.args)}, timer.getTime() + 1)
+                mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
             end
             --trigger.action.outText("Added group " .. grpName .. " in zone " .. zoneName, 10)
         end,
@@ -51,12 +50,40 @@ Spawner = function(grpName)
     }
 end
 
+StaticSpawner = function(groupName, numberInGroup, groupOffsets)
+    local CallBack = {}
+    return {
+        Spawn = function(self, firstPos)
+            local names = {}
+            for i=1,numberInGroup do
+                local groupData = mist.getGroupData(groupName .. i)
+                groupData.units[1].x = firstPos[1] + groupOffsets[i][1]
+                groupData.units[1].y = firstPos[2] + groupOffsets[i][2]
+                groupData.clone = true
+                table.insert(names, mist.dynAddStatic(groupData).name)
+            end
 
+            if CallBack.func then
+                if not CallBack.args then CallBack.args = {} end
+                mist.scheduleFunction(CallBack.func, {names, firstPos, unpack(CallBack.args)}, timer.getTime() + 1)
+            end
+
+            return names
+        end,
+        OnSpawnGroup = function(self, f, args)
+            CallBack.func = f
+            CallBack.args = args
+        end
+    }
+end
 
 local attack_message_lock = 0
 
 buildHitEvent = function(group, callsign)
-    for i,unit in ipairs(group:GetUnits()) do
+    -- TODO: Fix for MIST
+    return true
+end
+--[[    for i,unit in ipairs(group:getUnits()) do
         unit:HandleEvent(EVENTS.Hit)
         function unit:OnEventHit(EventData)
             if EventData.IniPlayerName then
@@ -71,17 +98,20 @@ buildHitEvent = function(group, callsign)
             end
         end
     end
-end
+end]]
 
 buildCheckSAMEvent = function(group, callsign)
-    log("Iterating sam events")
-    for i,unit in ipairs(group:GetUnits()) do
+    -- TODO: Fix for MIST
+    return true
+end
+--[[    log("Iterating sam events")
+    for i,unit in ipairs(group:getUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
             local radars = 0
             local launchers = 0
-            for i,inner_unit in ipairs(group:GetUnits()) do
-                local type_name = inner_unit:GetTypeName()
+            for i,inner_unit in ipairs(group:getUnits()) do
+                local type_name = inner_unit:getTypeName()
                 if type_name == "Kub 2P25 ln" then launchers = launchers + 1 end
                 if type_name == "Kub 1S91 str" then radars = radars + 1 end
                 if type_name == "S-300PS 64H6E sr" then radars = radars + 1 end
@@ -98,10 +128,13 @@ buildCheckSAMEvent = function(group, callsign)
         end
     end
     log("Done Iterating sam events")
-end
+end]]
 
 buildCheckEWREvent = function(group, callsign)
-    log("Iterating EWR event")
+    -- TODO: FIx for MIST
+    return true
+end
+--[[    log("Iterating EWR event")
     for i,unit in ipairs(group:GetUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
@@ -117,10 +150,13 @@ buildCheckEWREvent = function(group, callsign)
         end
     end
     log("Done Iterating EWR event")
-end
+end]]
 
 buildCheckC2Event = function(group, callsign)
-    log("Iterating c2 event")
+    -- TODO: Fix for MIST
+    return true
+end
+--[[    log("Iterating c2 event")
     for i,unit in ipairs(group:GetUnits()) do
         unit:HandleEvent(EVENTS.Dead)
         function unit:OnEventDead(EventData)
@@ -136,7 +172,7 @@ buildCheckC2Event = function(group, callsign)
         end
     end
     log("Done Iterating c2 event")
-end
+end]]
 
 function respawnHAWKFromState(_points)
     log("Spawning hawk from state")
@@ -251,7 +287,7 @@ RussianTheaterSA6Spawn = { Spawner("SA6"), "SA6" }
 RussianTheaterEWRSpawn = { Spawner("EWR"), "EWR" }
 RussianTheaterC2Spawn = { Spawner("C2"), "C2" }
 RussianTheaterAirfieldDefSpawn = Spawner("Russia-Airfield-Def")
-RussianTheaterAWACSSpawn = SPAWN:New("A50"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
+RussianTheaterAWACSSpawn = Spawner("A50")
 
 -- REDFOR specific airfield defense spawns
 DefKrasPash = Spawner("Red Airfield Defense Kras-Pash 1")
@@ -267,15 +303,76 @@ RussianTheaterSu272sShipSpawn = Spawner("Su27-2ship")
 RussianTheaterF5Spawn = Spawner("f52ship")
 RussianTheaterJ11Spawn = Spawner("j112ship")
 RussianTheaterMig312ShipSpawn = SPAWN:New("Mig31-2ship"):InitLimit(2, 0)
-RussianTheaterAWACSPatrol = SPAWN:New("SU27-RUSAWACS Patrol"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(600)
 
 -- Strike Target Spawns
 RussianHeavyArtySpawn = { Spawner("ARTILLERY"), "ARTILLERY" }
 ArmorColumnSpawn = { Spawner("ARMOR COLUMN"), "ARMOR COLUMN" }
 MechInfSpawn = { Spawner("MECH INF"), "MECH INF" }
-AmmoDumpSpawn = { SPAWNSTATIC:NewFromStatic("Ammo Dump", country.id.RUSSIA), "Ammo Dump" }
-CommsArraySpawn = { SPAWNSTATIC:NewFromStatic("Comms Array", country.id.RUSSIA), "Comms Array" }
-PowerPlantSpawn = { SPAWNSTATIC:NewFromStatic("Power Plant", country.id.RUSSIA), "Power Plant" }
+AmmoDumpDef = Spawner("Ammo DumpDEF")
+CommsArrayDef = Spawner("Comms ArrayDEF")
+PowerPlantDef = Spawner("Power PlantDEF")
+
+AmmoDumpSpawn = StaticSpawner("Ammo Dump", 7, {
+    {0, 0},
+    {40, 0},
+    {80, -50},
+    {80, 0},
+    {90, 50},
+    {0, 90},
+    {-90, 0}
+})
+
+AmmoDumpSpawn:OnSpawnGroup(function(staticNames, pos)
+    local callsign = getCallsign()
+    AddStaticObjective(getMarkerId(), callsign, "AmmoDump", staticNames)
+    SpawnStaticDefense("Ammo DumpDEF", pos)
+end)
+
+CommsArraySpawn = StaticSpawner("Comms Array", 3, {
+    {0, 0},
+    {80, 0},
+    {80, -50},
+})
+
+CommsArraySpawn:OnSpawnGroup(function(staticNames, pos)
+    local callsign = getCallsign()
+    AddStaticObjective(getMarkerId(), callsign, "CommsArray", staticNames)
+
+    SpawnStaticDefense("Comms ArrayDEF", pos)
+end)
+
+PowerPlantSpawn = StaticSpawner("Power Plant", 7, {
+    {0, 0},
+    {100, 0},
+    {200, 150},
+    {400, 150},
+    {130,  200},
+    {160, 200},
+    {190, 200}
+})
+
+PowerPlantSpawn:OnSpawnGroup(function(staticNames, pos)
+    local callsign = getCallsign()
+    AddStaticObjective(getMarkerId(), callsign, "PowerPlant", staticNames)
+    SpawnStaticDefense("Power PlantDEF", pos)
+end)
+
+SpawnStaticDefense = function(group_name, position)
+    local groupData = mist.getGroupData(group_name)
+    local leaderPos = {groupData.units[1].x, groupData.units[1].y}
+    for i,unit in ipairs(groupData.units) do
+        local separation = {}
+        separation[1] = unit.x - leaderPos[1]
+        separation[2] = unit.y - leaderPos[2]
+
+        trigger.action.outText(separation[1] .. " " .. separation[2], 20)
+        unit.x = position[1] + separation[1]
+        unit.y = position[2] + separation[2]
+    end
+
+    groupData.clone = true
+    mist.dynAdd(groupData)         
+end
 
 -- Naval Strike target Spawns
 --PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
@@ -324,6 +421,7 @@ end
 --end
 
 RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
+    AddObjective("AWACS", getMarkerId())(SpawnedGroup, "AWACS", callsign)
     RussianTheaterAWACSPatrol:Spawn()
 end)
 
@@ -334,8 +432,7 @@ RussianTheaterSA6Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --    SpawnedGroup:Destroy()
     --end)
     
-    AddObjective("StrategicSAM", getMarkerId())(SpawnedGroup, RussianTheaterSA6Spawn[1], callsign)
-    --AddRussianTheaterStrategicSAM(SpawnedGroup, "SA6", callsign)
+    AddObjective("StrategicSAM", getMarkerId())(SpawnedGroup, RussianTheaterSA6Spawn[2], callsign)
     buildHitEvent(SpawnedGroup, callsign)
     buildCheckSAMEvent(SpawnedGroup, callsign)
 end)
@@ -345,7 +442,7 @@ RussianTheaterSA10Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, sammenu, function()
     --    SpawnedGroup:Destroy()
     --end)
-    AddRussianTheaterStrategicSAM(SpawnedGroup, "SA10", callsign)
+    AddObjective("StrategicSAM", getMarkerId())(SpawnedGroup, RussianTheaterSA10Spawn[2], callsign)
     buildHitEvent(SpawnedGroup, callsign)
     buildCheckSAMEvent(SpawnedGroup, callsign)
 end)
@@ -356,7 +453,7 @@ RussianTheaterEWRSpawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, ewrmenu, function()
     --    SpawnedGroup:Destroy()
     --end)
-    AddRussianTheaterEWR(SpawnedGroup, "EWR", callsign)
+    AddObjective("EWR", getMarkerId())(SpawnedGroup, RussianTheaterEWRSpawn[2], callsign)
     buildHitEvent(SpawnedGroup, callsign)
     buildCheckEWREvent(SpawnedGroup, callsign)
 end)
@@ -367,14 +464,9 @@ RussianTheaterC2Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, c2menu, function()
     --    SpawnedGroup:Destroy()
     --end)
-    AddRussianTheaterC2(SpawnedGroup, "C2", callsign)
+    AddObjective("C2", getMarkerId())(SpawnedGroup, RussianTheaterC2Spawn[2], callsign)
     buildHitEvent(SpawnedGroup, callsign)
     buildCheckC2Event(SpawnedGroup, callsign)
-end)
-
-RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
-    trigger.action.outText(mist.utils.tableShow(SpawnedGroup), 15)
-    AddRussianTheaterAWACSTarget(SpawnedGroup)
 end)
 
 SpawnOPFORCas = function(spawn)
@@ -389,7 +481,8 @@ for i,v in ipairs(baispawns) do
         --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, baimenu, function()
         --    SpawnedGroup:Destroy()
         --end)
-        AddRussianTheaterBAITarget(SpawnedGroup, v[2], callsign)
+        AddObjective("BAI", getMarkerId())(SpawnedGroup, v[2], callsign)
+        --AddRussianTheaterBAITarget(SpawnedGroup, v[2], callsign)
     end)
 end
 

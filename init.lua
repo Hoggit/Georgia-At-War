@@ -169,16 +169,14 @@ else
         RussianTheaterC2Spawn[1]:SpawnInZone(zone .. zone_index)
     end
 
-    --for i=1, 10 do
-    --    local zone_index = math.random(18)
-    --    local zone = ZONE:New("NorthStatic" .. zone_index)
-    --    local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
-    --    local spawn_index = math.random(3)
-    --    local static = StaticSpawns[spawn_index][1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
-    --    local callsign = getCallsign()
-    --    AddObjective()
-    --    AddRussianTheaterStrikeTarget(STATIC:FindByName(static:getName()), StaticSpawns[spawn_index][2], callsign)
-    --end
+    for i=1, 10 do
+        local zone_index = math.random(18)
+        local zone = "NorthStatic" .. zone_index
+        local StaticSpawns = {AmmoDumpSpawn, PowerPlantSpawn, CommsArraySpawn}
+        local spawn_index = math.random(3)
+        local vec2 = mist.getRandomPointInZone(zone)
+        local id = StaticSpawns[spawn_index]:Spawn({vec2.x, vec2.y})
+    end
 
     -- Spawn the Sea of Azov navy
     -- for i=1, 4 do
