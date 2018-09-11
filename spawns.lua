@@ -43,11 +43,12 @@ Spawner = function(grpName)
                 action = "clone"
             }
 
-            mist.teleportToPoint(vars)
+            local name = mist.teleportToPoint(vars).name
             if CallBack.func then
                 if not CallBack.args then CallBack.args = {} end
                 mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
             end
+            return
         end,
         SpawnInZone = function(self, zoneName)
             local added_grp = Group.getByName(mist.cloneInZone(grpName, zoneName).name)
@@ -281,8 +282,6 @@ SpawnStaticDefense = function(group_name, position)
         local separation = {}
         separation[1] = unit.x - leaderPos[1]
         separation[2] = unit.y - leaderPos[2]
-
-        trigger.action.outText(separation[1] .. " " .. separation[2], 20)
         unit.x = position[1] + separation[1]
         unit.y = position[2] + separation[2]
     end

@@ -21,7 +21,6 @@ if statefile then
         local apV3 = ab:getPosition().p
         local posx = apV3.x + math.random(800, 1000)
         local posy = apV3.z - math.random(100, 200)
-        trigger.action.outText(mist.utils.tableShow(apV3), 20)
         game_state["Theaters"]["Russian Theater"]["Airfields"][name] = coalition
 
         if coalition == 1 then
@@ -83,29 +82,35 @@ if statefile then
         local spawn
         if data.spawn_name == "SA6" then spawn = RussianTheaterSA6Spawn[1] end
         if data.spawn_name == "SA10" then spawn = RussianTheaterSA10Spawn[1] end
-        spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+        spawn:SpawnAtPoint({
+            x = data['position'][1], 
+            y = data['position'][2]
+        })
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["C2"]) do
-        RussianTheaterC2Spawn[1]:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+        RussianTheaterC2Spawn[1]:SpawnAtPoint({
+            x = data['position'][1],
+            y = data['position'][2]
+        })
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["EWR"]) do
-        RussianTheaterEWRSpawn[1]:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+        RussianTheaterEWRSpawn[1]:SpawnAtPoint({
+            x = data['position'][1],
+            y = data['position'][2]
+        })
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do        
         local spawn
-        if data['spawn_name'] == 'Ammo Dump' then spawn = AmmoDumpSpawn[1] end
-        if data['spawn_name'] == 'Comms Array' then spawn = CommsArraySpawn[1] end
-        if data['spawn_name'] == 'Power Plant' then spawn = PowerPlantSpawn[1] end
-        local static = spawn:SpawnFromPointVec2(
-            POINT_VEC2:NewFromVec2({
-                ['x'] = data['position'][1],
-                ['y'] = data['position'][2]
-            }), 0)
-        objectiveCounter = objectiveCounter + 1
-        AddObjective("StrikeTarget", objectiveCounter)(name, data['spawn_name'], data['callsign'])
+        if data['spawn_name'] == 'AmmoDump' then spawn = AmmoDumpSpawn end
+        if data['spawn_name'] == 'CommsArray' then spawn = CommsArraySpawn end
+        if data['spawn_name'] == 'PowerPlant' then spawn = PowerPlantSpawn end
+        local static = spawn:Spawn({
+            data['position'][1],
+            data['position'][2]
+        })
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["BAI"]) do
@@ -113,31 +118,34 @@ if statefile then
         if data['spawn_name'] == "ARTILLERY" then spawn = RussianHeavyArtySpawn[1] end
         if data['spawn_name'] == "ARMOR COLUMN" then spawn = ArmorColumnSpawn[1] end
         if data['spawn_name'] == "MECH INF" then spawn = MechInfSpawn[1] end
-        spawn:SpawnFromVec2({['x'] = data['position'][1], ['y'] = data['position'][2]})
+        spawn:SpawnAtPoint({
+            x = data['position'][1],
+            y = data['position'][2]
+        })
     end
 
     for idx, data in ipairs(saved_game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"]) do
         if data.name == 'avenger' then
-            avengerspawn:SpawnFromVec2(data.pos)
+            avengerspawn:SpawnAtPoint(data.pos)
         end
 
         if data.name == 'ammo' then
-            ammospawn:SpawnFromVec2(data.pos)
+            ammospawn:SpawnAtPoint(data.pos)
         end
 
         if data.name == 'gepard' then
-            gepardspawn:SpawnFromVec2(data.pos)
+            gepardspawn:SpawnAtPoint(data.pos)
         end
 
         if data.name == 'mlrs' then
-            mlrsspawn:SpawnFromVec2(data.pos)
+            mlrsspawn:SpawnAtPoint(data.pos)
         end
 
         if data.name == 'jtac' then
-            local _spawnedGroups = jtacspawn:SpawnFromVec2(data.pos)
+            local _spawnedGroup = jtacspawn:SpawnAtPoint(data.pos)
             local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
             table.insert(ctld.jtacGeneratedLaserCodes, _code)
-            ctld.JTACAutoLase(_spawnedGroups:GetName(), _code)
+            ctld.JTACAutoLase(_spawnedGroup, _code)
         end
     end
 

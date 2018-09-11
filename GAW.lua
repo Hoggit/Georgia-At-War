@@ -29,6 +29,16 @@ oncall_cas = {}
 --function log(str)end
 log("Logging System INIT")
 
+function isAlive(group)
+    local grp = nil
+    if type(group) == "string" then 
+        grp = Group.getByName(group_name)
+    else
+        grp = group
+    end
+    if grp and grp:getSize() > 0 then return true else return false end
+end
+
 -- Setup an initial state object and provide functions for manipulating that state.
 game_state = {
     ["last_launched_time"] = 0,
@@ -146,6 +156,10 @@ mist.addEventHandler(baseCaptured)
 objectiveCounter = 99
 AddObjective = function(type, id)
     return function(group, spawn_name, callsign)
+        if not group then
+            trigger.action.outText(spawn_name)
+            return
+        end
         local unit = group:getUnit(1)
         if unit then
             local point = mist.utils.makeVec2(unit:getPosition().p)

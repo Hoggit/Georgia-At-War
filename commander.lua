@@ -51,8 +51,8 @@ russian_commander = function()
 
     -- Get alive caps and cleanup state
     for i=#caps, 1, -1 do
-        local cap = GROUP:FindByName(caps[i])
-        if cap and cap:IsAlive() then
+        local cap = Group.getByName(caps[i])
+        if cap and cap:isAlive() then
             if cap:AllOnGround() then
                 cap:Destroy()
                 log("Found inactive cap, removing")
