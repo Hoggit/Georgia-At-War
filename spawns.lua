@@ -28,7 +28,7 @@ Spawner = function(grpName)
     local CallBack = {}
     return {
         Spawn = function(self)
-            local added_grp = Group.getByName(mist.cloneGroup(grpName).name)
+            local added_grp = Group.getByName(mist.cloneGroup(grpName, true).name)
             if CallBack.func then
                 if not CallBack.args then CallBack.args = {} end
                 mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
@@ -220,7 +220,18 @@ RussianTheaterMig292ShipSpawn = Spawner("Mig29-2ship")
 RussianTheaterSu272sShipSpawn = Spawner("Su27-2ship")
 RussianTheaterF5Spawn = Spawner("f52ship")
 RussianTheaterJ11Spawn = Spawner("j112ship")
-RussianTheaterMig312ShipSpawn = SPAWN:New("Mig31-2ship"):InitLimit(2, 0)
+
+RussianTheaterMig212ShipSpawnGROUND = Spawner("Mig21-2shipGROUND")
+RussianTheaterMig292ShipSpawnGROUND = Spawner("Mig29-2shipGROUND")
+RussianTheaterSu272sShipSpawnGROUND = Spawner("Su27-2shipGROUND")
+RussianTheaterF5SpawnGROUND = Spawner("f52shipGROUND")
+RussianTheaterJ11SpawnGROUND = Spawner("j112shipGROUND")
+
+RussianTheaterMig312ShipSpawn = Spawner("Mig31-2ship")
+
+RussianTheaterMig312ShipSpawn:OnSpawnGroup(function(spawned_group)
+    table.insert(enemy_interceptors, spawned_group:getName())
+end)
 
 -- Strike Target Spawns
 RussianHeavyArtySpawn = { Spawner("ARTILLERY"), "ARTILLERY" }
@@ -311,9 +322,14 @@ FSW = Spawner("FARP Support West")
 --convoy_spawns = {{SPAWN:New('Convoy1'):InitLimit(15, 0), 'Convoy1'}, {SPAWN:New('Convoy2'):InitLimit(15, 0), 'Convoy2'}}
 
 -- Group spanws for easy randomization
-local allcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn, RussianTheaterJ11Spawn, RussianTheaterF5Spawn}
+local allcaps = {
+    RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn, RussianTheaterJ11Spawn, RussianTheaterF5Spawn,
+    RussianTheaterMig212ShipSpawnGROUND, RussianTheaterSu272sShipSpawnGROUND, RussianTheaterMig292ShipSpawnGROUND, RussianTheaterJ11SpawnGROUND, RussianTheaterF5SpawnGROUND
+}
 poopcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterF5Spawn}
 goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterJ11Spawn}
+poopcapsground = {RussianTheaterMig212ShipSpawnGROUND, RussianTheaterF5SpawnGROUND}
+goodcapsground = {RussianTheaterMig292ShipSpawnGROUND, RussianTheaterSu272sShipSpawnGROUND, RussianTheaterJ11SpawnGROUND}
 baispawns = {RussianHeavyArtySpawn, ArmorColumnSpawn, MechInfSpawn}
 
 function activateLogi(spawn)

@@ -265,5 +265,5 @@ else
 end
 
 -- Kick off the commanders
-mist.scheduleFunction(russian_commander, {}, timer.getTime() + 10, 600)
+mist.scheduleFunction(russian_commander, {}, timer.getTime() + 10, 30)
 log("init.lua complete")

@@ -241,13 +241,13 @@ EventHandler = EVENTHANDLER:New()
 EventHandler:HandleEvent( EVENTS.Birth )
 function EventHandler:OnEventBirth( EventData )
     if EventData.IniGroup then
-        log("Group birth. Building menus")
         for i,u in ipairs(EventData.IniGroup:GetUnits()) do
             if u:GetPlayerName() ~= "" then
+                log("Group birth. Building menus")
                 buildMenu(EventData.IniGroup)
+                log("Done group birth. Building menus")
             end
         end
-        log("Done group birth. Building menus")
     end
 end
 

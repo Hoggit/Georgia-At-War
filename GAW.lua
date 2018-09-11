@@ -25,6 +25,7 @@ abcapsound = "l10n/DEFAULT/arrive.ogg"
 farpcapsound = "l10n/DEFAULT/arrivefarp.ogg"
 
 oncall_cas = {}
+enemy_interceptors = {}
 
 --function log(str)end
 log("Logging System INIT")
@@ -32,11 +33,34 @@ log("Logging System INIT")
 function isAlive(group)
     local grp = nil
     if type(group) == "string" then 
-        grp = Group.getByName(group_name)
+        grp = Group.getByName(group)
     else
         grp = group
     end
     if grp and grp:getSize() > 0 then return true else return false end
+end
+
+function groupIsDead(groupName) 
+	if (Group.getByName(groupName) and Group.getByName(groupName):isExist() == false) or (Group.getByName(groupName) and #Group.getByName(groupName):getUnits() < 1) or not Group.getByName(groupName) then
+		return true
+	end
+	return false
+end
+
+function allOnGround(group)
+    local grp = nil
+    local allOnGround = true
+    if type(group) == "string" then 
+        grp = Group.getByName(group)
+    else
+        grp = group
+    end
+
+    for i,unit in ipairs(grp:getUnits()) do
+        if unit:inAir() then allOnGround = false end
+    end
+
+    return allOnGround
 end
 
 -- Setup an initial state object and provide functions for manipulating that state.
