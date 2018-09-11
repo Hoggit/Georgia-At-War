@@ -4,62 +4,68 @@ local statefile = io.open(lfs.writedir() .. "Scripts\\GAW\\state.json", 'r')
 trigger.action.setUserFlag("SSB",100)
 if statefile then
     local ab_logi_slots = {
-        [AIRBASE.Caucasus.Novorossiysk] = NovoLogiSpawn,
-        [AIRBASE.Caucasus.Gelendzhik] = nil,
-        [AIRBASE.Caucasus.Krymsk] = KryLogiSpawn,
-        [AIRBASE.Caucasus.Krasnodar_Center] = KrasCenterLogiSpawn,
-        [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = nil,
+        ["Novorossiysk"] = NovoLogiSpawn,
+        ["Gelendzhik"] = nil,
+        ["Krymsk"] = KryLogiSpawn,
+        ["Krasnodar-Center"] = KrasCenterLogiSpawn,
+        ["Krasnodar-Pashkovsky"] = nil,
     }
 
-    MESSAGE:New("Found a statefile.  Processing it instead of starting a new game", 40):ToAll()
+    trigger.action.outText("Found a statefile.  Processing it instead of starting a new game", 40)
     local state = statefile:read("*all")
     statefile:close()
     local saved_game_state = json:decode(state)
     for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["Airfields"]) do
         local flagval = 100
-        local ab = AIRBASE:FindByName(name)
-        local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
-        apV3:SetX(apV3:GetX() + math.random(100, 200))
-        apV3:SetY(apV3:GetY() + math.random(100, 200))
+        local ab = Airbase.getByName(name)
+        local apV3 = ab:getPosition().p
+        local posx = apV3.x + math.random(800, 1000)
+        local posy = apV3.z - math.random(100, 200)
+        trigger.action.outText(mist.utils.tableShow(apV3), 20)
         game_state["Theaters"]["Russian Theater"]["Airfields"][name] = coalition
 
         if coalition == 1 then
             AirbaseSpawns[name][3]:Spawn()
             flagval = 100
         elseif coalition == 2 then
-            AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-            apV3:SetX(apV3:GetX() + math.random(-50, 50))
-            apV3:SetY(apV3:GetY() + math.random(-50,50))
-            FSW:SpawnFromVec2(apV3:GetVec2())
+            AirfieldDefense:SpawnAtPoint({
+                x = posx,
+                y = posy
+            })
+
+            posx = posx + math.random(100, 200)
+            posy = posy + math.random(100, 200)
+            FSW:SpawnAtPoint({x=posx, y=posy})
             flagval = 0
 
             if ab_logi_slots[name] then
                 activateLogi(ab_logi_slots[name])
             end
-        end
+        end        
 
         for i,grp in ipairs(abslots[name]) do
-            trigger.action.setUserFlag(grp, flagval)     
+            trigger.action.setUserFlag(grp, flagval)
         end
     end
 
     for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["FARPS"]) do
         local flagval = 100
-        local ab = AIRBASE:FindByName(name)
-        local apV3 = POINT_VEC3:NewFromVec3(ab:GetPositionVec3())
-        apV3:SetX(apV3:GetX() + math.random(-25, 25))
-        apV3:SetY(apV3:GetY() + math.random(-25, 25))
+        local ab = Airbase.getByName(name)
+        local apV3 = ab:getPosition().p
+
+        apV3.x = apV3.x + math.random(-25, 25)
+        apV3.z = apV3.z + math.random(-25, 25)
         local spawns = {NWFARPDEF, SWFARPDEF, NEFARPDEF, SEFARPDEF}
         game_state["Theaters"]["Russian Theater"]["FARPS"][name] = coalition
 
         if coalition == 1 then
-            spawns[math.random(4)]:SpawnFromVec2(apV3:GetVec2())
+            spawns[math.random(4)]:SpawnAtPoint({x = apV3.x, y= apV3.z})
             flagval = 100
         elseif coalition == 2 then
-            AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-            apV3:SetX(apV3:GetX() + math.random(-25, 25))
-            apV3:SetY(apV3:GetY() + math.random(-25, 25))
-            FSW:SpawnFromVec2(apV3:GetVec2())
+            AirfieldDefense:SpawnAtPoint(apV3)
+            apV3.x = apV3.x - 100
+            apV3.z = apV3.z - 100
+            FSW:SpawnAtPoint({x=apV3.x, y=apV3.z})
             flagval = 0
         end
 
@@ -251,31 +257,5 @@ else
 end
 
 -- Kick off the commanders
-SCHEDULER:New(nil, function()
-    log("Starting Russian Commander, Comrade")
-    pcall(russian_commander)
-    --russian_commander()
-end, {}, 10, 600)
-
--- Kick off the supports
---RussianTheaterAWACSSpawn:SpawnScheduled(1200, 0)
---RussianTheaterAWACSPatrol:SpawnScheduled(1200, 0)
---OverlordSpawn:SpawnScheduled(600, 0)
---TexacoSpawn:SpawnScheduled(600, 0)
---ShellSpawn:SpawnScheduled(600, 0)
---RussianTheaterCASSpawn:SpawnScheduled(2000, 0)
-
--- Kick off the convoys
---for i,spawn_info in ipairs(convoy_spawns) do
---    spawn_info[1]:SpawnScheduled(2000, 0)
---end
-
-buildHitEvent(GROUP:FindByName("FARP DEFENSE #003"), "NE FARP")
-buildHitEvent(GROUP:FindByName("FARP DEFENSE"), "NW FARP")
-buildHitEvent(GROUP:FindByName("FARP DEFENSE #002"), "SE FARP")
-buildHitEvent(GROUP:FindByName("FARP DEFENSE #001"), "SW FARP")
-
-BASE:I("HOGGIT GAW - INIT COMPLETE")
-BASE:TraceOnOff( false )
-BASE:TraceAll( false )
+mist.scheduleFunction(russian_commander, {}, timer.getTime() + 10, 600)
 log("init.lua complete")

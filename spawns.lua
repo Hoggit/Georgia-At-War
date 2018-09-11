@@ -35,6 +35,20 @@ Spawner = function(grpName)
             end
             --trigger.action.outText("Added group " .. grpName, 10)
         end,
+        SpawnAtPoint = function(self, point)
+            --local added_grp = Group.getByName(mist.cloneGroup(grpName).name)
+            local vars = {
+                groupName = grpName,
+                point = point,
+                action = "clone"
+            }
+
+            mist.teleportToPoint(vars)
+            if CallBack.func then
+                if not CallBack.args then CallBack.args = {} end
+                mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
+            end
+        end,
         SpawnInZone = function(self, zoneName)
             local added_grp = Group.getByName(mist.cloneInZone(grpName, zoneName).name)
             if CallBack.func then
@@ -76,103 +90,6 @@ StaticSpawner = function(groupName, numberInGroup, groupOffsets)
         end
     }
 end
-
-local attack_message_lock = 0
-
-buildHitEvent = function(group, callsign)
-    -- TODO: Fix for MIST
-    return true
-end
---[[    for i,unit in ipairs(group:getUnits()) do
-        unit:HandleEvent(EVENTS.Hit)
-        function unit:OnEventHit(EventData)
-            if EventData.IniPlayerName then
-                local etime = timer.getAbsTime() + env.mission.start_time
-                if etime > attack_message_lock + 5 then
-                    local output = EventData.IniGroupName 
-                    output = output .. " (" .. EventData.IniPlayerName .. ")"
-                    output = output .. " is attacking " .. EventData.TgtTypeName .. " at objective " .. callsign
-                    MESSAGE:New(output, 10):ToAll()
-                    attack_message_lock = etime
-                end
-            end
-        end
-    end
-end]]
-
-buildCheckSAMEvent = function(group, callsign)
-    -- TODO: Fix for MIST
-    return true
-end
---[[    log("Iterating sam events")
-    for i,unit in ipairs(group:getUnits()) do
-        unit:HandleEvent(EVENTS.Dead)
-        function unit:OnEventDead(EventData)
-            local radars = 0
-            local launchers = 0
-            for i,inner_unit in ipairs(group:getUnits()) do
-                local type_name = inner_unit:getTypeName()
-                if type_name == "Kub 2P25 ln" then launchers = launchers + 1 end
-                if type_name == "Kub 1S91 str" then radars = radars + 1 end
-                if type_name == "S-300PS 64H6E sr" then radars = radars + 1 end
-                if type_name == "S-300PS 40B6MD sr" then radars = radars + 1 end
-                if type_name == "S-300PS 40B6M tr" then radars = radars + 1 end
-                if type_name == "S-300PS 5P85C ln" then launchers = launchers + 1 end
-                if type_name == "S-300PS 5P85D ln" then launchers = launchers + 1 end
-            end
-
-            if radars == 0 or launchers == 0 then
-                game_state['Theaters']['Russian Theater']['StrategicSAM'][group:GetName()] = nil
-                MESSAGE:New("SAM " .. callsign .. " has been destroyed!"):ToAll()
-            end
-        end
-    end
-    log("Done Iterating sam events")
-end]]
-
-buildCheckEWREvent = function(group, callsign)
-    -- TODO: FIx for MIST
-    return true
-end
---[[    log("Iterating EWR event")
-    for i,unit in ipairs(group:GetUnits()) do
-        unit:HandleEvent(EVENTS.Dead)
-        function unit:OnEventDead(EventData)
-            local radars = 0
-            for i,inner_unit in ipairs(group:GetUnits()) do
-                if inner_unit:GetTypeName() == "1L13 EWR" then radars = radars + 1 end
-            end
-
-            if radars == 0 then
-                game_state['Theaters']['Russian Theater']['EWR'][group:GetName()] = nil
-                MESSAGE:New("EWR " .. callsign .. " has been destroyed!"):ToAll()
-            end
-        end
-    end
-    log("Done Iterating EWR event")
-end]]
-
-buildCheckC2Event = function(group, callsign)
-    -- TODO: Fix for MIST
-    return true
-end
---[[    log("Iterating c2 event")
-    for i,unit in ipairs(group:GetUnits()) do
-        unit:HandleEvent(EVENTS.Dead)
-        function unit:OnEventDead(EventData)
-            local cps = 0
-            for i,inner_unit in ipairs(group:GetUnits()) do
-                if inner_unit:GetTypeName() == "SKP-11" then cps = cps + 1 end
-            end
-
-            if cps == 0 then
-                game_state['Theaters']['Russian Theater']['C2'][group:GetName()] = nil
-                MESSAGE:New("C2 " .. callsign .. " has been destroyed!"):ToAll()
-            end
-        end
-    end
-    log("Done Iterating c2 event")
-end]]
 
 function respawnHAWKFromState(_points)
     log("Spawning hawk from state")
@@ -433,7 +350,6 @@ RussianTheaterSA6Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --end)
     
     AddObjective("StrategicSAM", getMarkerId())(SpawnedGroup, RussianTheaterSA6Spawn[2], callsign)
-    buildHitEvent(SpawnedGroup, callsign)
     buildCheckSAMEvent(SpawnedGroup, callsign)
 end)
 
@@ -443,7 +359,6 @@ RussianTheaterSA10Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --    SpawnedGroup:Destroy()
     --end)
     AddObjective("StrategicSAM", getMarkerId())(SpawnedGroup, RussianTheaterSA10Spawn[2], callsign)
-    buildHitEvent(SpawnedGroup, callsign)
     buildCheckSAMEvent(SpawnedGroup, callsign)
 end)
 
@@ -454,7 +369,6 @@ RussianTheaterEWRSpawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --    SpawnedGroup:Destroy()
     --end)
     AddObjective("EWR", getMarkerId())(SpawnedGroup, RussianTheaterEWRSpawn[2], callsign)
-    buildHitEvent(SpawnedGroup, callsign)
     buildCheckEWREvent(SpawnedGroup, callsign)
 end)
 
@@ -465,7 +379,6 @@ RussianTheaterC2Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --    SpawnedGroup:Destroy()
     --end)
     AddObjective("C2", getMarkerId())(SpawnedGroup, RussianTheaterC2Spawn[2], callsign)
-    buildHitEvent(SpawnedGroup, callsign)
     buildCheckC2Event(SpawnedGroup, callsign)
 end)
 
