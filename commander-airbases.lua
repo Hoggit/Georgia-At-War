@@ -4,52 +4,52 @@ local BLUE=2
 
 --Airbases in play.
 Airbases = {
-    {AIRBASE.Caucasus.Gelendzhik,  ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Gelendzhik, AIRBASE:FindByName(AIRBASE.Caucasus.Gelendzhik):GetVec2(), 1500)},
-    {AIRBASE.Caucasus.Krasnodar_Pashkovsky, ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Krasnodar_Pashkovsky, AIRBASE:FindByName(AIRBASE.Caucasus.Krasnodar_Pashkovsky):GetVec2(), 1500)},
-    {AIRBASE.Caucasus.Krasnodar_Center, ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Krasnodar_Center, AIRBASE:FindByName(AIRBASE.Caucasus.Krasnodar_Center):GetVec2(), 1500)},
-    {AIRBASE.Caucasus.Novorossiysk, ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Novorossiysk, AIRBASE:FindByName(AIRBASE.Caucasus.Novorossiysk):GetVec2(), 1500)},
-    {AIRBASE.Caucasus.Krymsk, ZONE_RADIUS:New("airfield-defense-chk" .. AIRBASE.Caucasus.Krymsk, AIRBASE:FindByName(AIRBASE.Caucasus.Krymsk):GetVec2(), 1500)},
+    "Gelendzhik",
+    "Krasnodar-Pashkovsky",
+    "Krasnodar-Center",
+    "Novorossiysk",
+    "Krymsk",
 }
 
 -- Russian IL-76MD spawns to capture airfields
-NovoroTransportSpawn = SPAWN:New("NovoroRussiaTransport")
-NovoroHeloSpawn = SPAWN:New("NovoroHeloTransport")
+NovoroTransportSpawn = Spawner("NovoroRussiaTransport")
+NovoroHeloSpawn = Spawner("NovoroHeloTransport")
 
-KrymskTransportSpawn = SPAWN:New("KrymskRussiaTransport")
-KrymskHeloSpawn = SPAWN:New("KrymskHeloTransport")
+KrymskTransportSpawn = Spawner("KrymskRussiaTransport")
+KrymskHeloSpawn = Spawner("KrymskHeloTransport")
 
-GelenTransportSpawn = SPAWN:New("GelenRussiaTransport")
-GelenHeloSpawn = SPAWN:New("GelenHeloTransport")
+GelenTransportSpawn = Spawner("GelenRussiaTransport")
+GelenHeloSpawn = Spawner("GelenHeloTransport")
 
-KrasnodarCenterTransportSpawn = SPAWN:New("KrasCenterRussiaTransport")
-KrasnodarCenterHeloSpawn = SPAWN:New("KrasCenterHeloTransport")
+KrasnodarCenterTransportSpawn = Spawner("KrasCenterRussiaTransport")
+KrasnodarCenterHeloSpawn = Spawner("KrasCenterHeloTransport")
 
-KrasnodarPashkovskyTransportSpawn = SPAWN:New("KrasPashRussiaTransport")
-KrasnodarPashkovskyHeloSpawn = SPAWN:New("KrasPashHeloTransport")
+KrasnodarPashkovskyTransportSpawn = Spawner("KrasPashRussiaTransport")
+KrasnodarPashkovskyHeloSpawn = Spawner("KrasPashHeloTransport")
 
-RussianTheaterAirfieldDefSpawn = SPAWN:New("Russia-Airfield-Def")
+RussianTheaterAirfieldDefSpawn = Spawner("Russia-Airfield-Def")
 
 AttackableAirbases = function(airbaseList)
     local filtered = {}
     log("Iterating airbases")
     for i,ab in ipairs(airbaseList) do
-        local base = AIRBASE:FindByName(ab[1])
-        if base:GetCoalition() == NEUTRAL or base:GetCoalition() == BLUE then
+        local base = Airbase.getByName(ab)
+        if base:getCoalition() == NEUTRAL or base:getCoalition() == BLUE then
             table.insert(filtered,ab)
         end
     end
-    log("Done iterating airbases")
+    log("Done iterating airbases, found " .. #filtered .. " attackable airbases")
     return filtered
 end
 
 AirfieldIsDefended = function(baseZone)
-    baseZone:Scan(Object.Category.UNIT)
-    return baseZone:IsSomeInZoneOfCoalition(BLUE)
+    local units = mist.getUnitsInZones(mist.makeUnitTable({'[blue][vehicle]'}), {baseZone})
+    if #units > 0 then return true else return false end
 end
 
 SpawnForTargetAirbase = function(baseName)
-    local base = AIRBASE:FindByName(baseName)
-    if base:GetCoalition() == BLUE then
+    local base = Airbase.getByName(baseName)
+    if base:getCoalition() == BLUE then
         --Return the helo group since the transport planes can't land if it's blue.
         log(baseName .. " is a capitalist pig airport. Send in the choppas")
         return AirbaseSpawns[baseName][2]
@@ -60,40 +60,54 @@ SpawnForTargetAirbase = function(baseName)
     end
 end
 
+activeXports = {}
+
+addToActiveXports = function(group, defense_group_spawner, target)
+    activeXports[group:getName()] = {defense_group_spawner, target}
+    log("Added " .. group:getName() .. " to active red transports")
+end
+
+removeFromActiveXports = function(group, defense_group_spawner, target)
+    activeXports[group:getName()] = nil
+end
+
 --Airbase -> Spawn Map.
 AirbaseSpawns = {
-    [AIRBASE.Caucasus.Gelendzhik]={GelenTransportSpawn, GelenHeloSpawn, DefGlensPenis},
-    [AIRBASE.Caucasus.Krasnodar_Pashkovsky]={KrasnodarPashkovskyTransportSpawn, KrasnodarPashkovskyHeloSpawn, DefKrasPash},
-    [AIRBASE.Caucasus.Krasnodar_Center]={KrasnodarCenterTransportSpawn, KrasnodarCenterHeloSpawn, DefKrasCenter},
-    [AIRBASE.Caucasus.Novorossiysk]={NovoroTransportSpawn, NovoroHeloSpawn, DefNovo},
-    [AIRBASE.Caucasus.Krymsk]={KrymskTransportSpawn, KrymskHeloSpawn, DefKrymsk}
+    ["Gelendzhik"]={GelenTransportSpawn, GelenHeloSpawn, DefGlensPenis},
+    ["Krasnodar-Pashkovsky"]={KrasnodarPashkovskyTransportSpawn, KrasnodarPashkovskyHeloSpawn, DefKrasPash},
+    ["Krasnodar-Center"]={KrasnodarCenterTransportSpawn, KrasnodarCenterHeloSpawn, DefKrasCenter},
+    ["Novorossiysk"]={NovoroTransportSpawn, NovoroHeloSpawn, DefNovo},
+    ["Krymsk"]={KrymskTransportSpawn, KrymskHeloSpawn, DefKrymsk}
 }
 
-onTransportLand = function(defense_group, airbase)
-    local f = function(SpawnedGroup)
-        SpawnedGroup:HandleEvent(EVENTS.Land)
-        function SpawnedGroup:OnEventLand(EventData)
-            local grpLoc = EventData.IniGroup:GetPointVec2()
-            local airbaseLoc = AIRBASE:FindByName(airbase)
-            local distance = grpLoc:Get2DDistance(airbaseLoc)
-            --log("The transport landed " .. distance .. "m away from designated landing zone")
-            if (distance <= 2500) then
-                log("Within range. Spawning russian forces.")
-                defense_group:Spawn()
+function transportLand(event)
+    if event.id == world.event.S_EVENT_LAND then
+        if activeXports[event.initiator:getGroup():getName()] then
+            local grpLoc = event.initiator:getPosition().p
+            local landPos
+            if event.place then
+                landPos = event.place:getPosition().p
+            else
+                landPos = Airbase.getByName(activeXports[event.initiator:getGroup():getName()][2]):getPosition().p
             end
-
-            SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
+            local distance = mist.utils.get2DDist(grpLoc, landPos)
+            log("Transport landed " .. distance .. " meters from target")
+            if (distance <= 2500) then
+                log("Within range, spawning Russian Forces")
+                activeXports[event.initiator:getGroup():getName()][1]:Spawn()
+            end
         end
     end
-    return f
 end
+
+mist.addEventHandler(transportLand)
+
 for airbase,spawn_info in pairs(AirbaseSpawns) do
     local plane_spawn = spawn_info[1]
     local helo_spawn = spawn_info[2]
     local defense_group = spawn_info[3]
-    local onLandFunc = onTransportLand(defense_group, airbase)
-    plane_spawn:OnSpawnGroup(onLandFunc)
-    helo_spawn:OnSpawnGroup(onLandFunc)
+    plane_spawn:OnSpawnGroup(addToActiveXports, {defense_group, airbase})
+    helo_spawn:OnSpawnGroup(addToActiveXports, {defense_group, airbase})
 end
 
 log("AIRBASE CONFIG LOADED")

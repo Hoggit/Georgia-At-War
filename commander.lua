@@ -146,12 +146,12 @@ russian_commander = function()
     log("The commander has " .. #enemy_interceptors .. " alive")
 
 
-    for i,target in pairs(AttackableAirbases(Airbases)) do
-        log("The Russian commander has decided to strike " .. target[1] .. " airbase")
-        if not AirfieldIsDefended(target[2]) then
-            if math.random() > 0.8 then
-                log(target[1] .. " appears undefended! Muahaha!")
-                local spawn = SpawnForTargetAirbase(target[1])
+    for i,target in ipairs(AttackableAirbases(Airbases)) do
+        log("The Russian commander has decided to strike " .. target .. " airbase")
+        if not AirfieldIsDefended("airfield-defense-chk" .. target) then
+            if math.random() > 0.0 then
+                log(target .. " appears undefended! Muahaha!")
+                local spawn = SpawnForTargetAirbase(target)
                 spawn:Spawn()
             end
         end
