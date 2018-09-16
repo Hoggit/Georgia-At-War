@@ -298,7 +298,8 @@ ConvoyUpdate = function(group)
     log("Done convoy update")
 end
 
-SCHEDULER:New(nil, ConvoyUpdate, {"all"}, 300, 900)
+--SCHEDULER:New(nil, ConvoyUpdate, {"all"}, 300, 900)
+mist.scheduleFunction(ConvoyUpdate, {"all"}, timer.getTime()+ 300, 900)
 
 
 TheaterUpdate = function(theater)
@@ -362,5 +363,4 @@ TheaterUpdate = function(theater)
     return output
 end
 
-BASE:I("HOGGIT GAW - GAW COMPLETE")
 log("GAW.lua complete")

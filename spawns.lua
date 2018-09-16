@@ -101,8 +101,8 @@ function respawnHAWKFromState(_points)
     ctld.spawnCrateAtPoint("blue",550, _points["Hawk tr"])
 
     -- spawn a helper unit that will "build" the site
-    local _SpawnObject = SPAWN:New( "NE FARP HELO" )
-    local _SpawnGroup = _SpawnObject:SpawnFromVec2({x=_points["Hawk pcp"]["x"], y=_points["Hawk pcp"]["z"]})
+    local _SpawnObject = Spawner( "NE FARP HELO" )
+    local _SpawnGroup = _SpawnObject:SpawnAtPoint({x=_points["Hawk pcp"]["x"], y=_points["Hawk pcp"]["z"]})
     local _unit=_SpawnGroup:GetDCSUnit(1)
 
     -- enumerate nearby crates
@@ -175,11 +175,11 @@ MaykopLogiSpawn = {logispawn, "HEMTT TFFT",
 
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
-    [AIRBASE.Caucasus.Novorossiysk] = {Spawner("NovoroTransport"), Spawner("NovoroTransportHelo"), NovoLogiSpawn},
-    [AIRBASE.Caucasus.Gelendzhik] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil}, 
-    [AIRBASE.Caucasus.Krasnodar_Center] = {Spawner("KDARTransport"), Spawner("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
-    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = {Spawner("KDAR2Transport"), Spawner("KrasPashTransportHelo"), nil},
-    [AIRBASE.Caucasus.Krymsk] = {Spawner("KrymskTransport"), Spawner("KrymskTransportHelo"), KryLogiSpawn}
+    ['Novorossiysk'] = {Spawner("NovoroTransport"), Spawner("NovoroTransportHelo"), NovoLogiSpawn},
+    ['Gelendzhik'] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil}, 
+    ['Krasnodar-Center'] = {Spawner("KDARTransport"), Spawner("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
+    ['Krasnodar_Pashkovsky'] = {Spawner("KDAR2Transport"), Spawner("KrasPashTransportHelo"), nil},
+    ['Krymsk'] = {Spawner("KrymskTransport"), Spawner("KrymskTransportHelo"), KryLogiSpawn}
 }
 
 NorthGeorgiaFARPTransportSpawns = {
@@ -191,11 +191,9 @@ NorthGeorgiaFARPTransportSpawns = {
 }
 
 -- Support Spawn
-TexacoSpawn = SPAWN:New("Texaco"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
-ShellSpawn = SPAWN:New("Shell"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
-OverlordSpawn = SPAWN:New("AWACS Overlord"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
---F16Spawn = SPAWN:New("F16CAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
---MirageSpawn = SPAWN:New("MirageCAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
+TexacoSpawn = Spawner("Texaco")--:InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
+ShellSpawn = Spawner("Shell")--:InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
+OverlordSpawn = Spawner("AWACS Overlord")--:InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
 -- Local defense spawns.  Usually used after a transport spawn lands somewhere.
 AirfieldDefense = Spawner("AirfieldDefense")
 
@@ -305,7 +303,7 @@ end
 --PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
 
 -- Airfield CAS Spawns
-RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup"):InitRepeatOnLanding():InitLimit(4, 0)
+RussianTheaterCASSpawn = Spawner("Su25T-CASGroup")--:InitRepeatOnLanding():InitLimit(4, 0)
 --RussianTheatreCASEscort = SPAWN:New("Su27CASEscort")
 
 -- FARP defenses
@@ -473,5 +471,4 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
     end)
 end
 
-BASE:I("HOGGIT GAW - SPAWNS COMPLETE")
 log("spawns.lua complete")

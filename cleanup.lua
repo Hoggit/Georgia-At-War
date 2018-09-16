@@ -80,4 +80,3 @@ function cleanup()
 end
 
 mist.scheduleFunction(cleanup, {}, timer.getTime() + 47, 125)
---SCHEDULER:New(nil, function()pcall(cleanup)end, {}, 47, 125)
