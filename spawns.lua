@@ -100,8 +100,8 @@ function respawnHAWKFromState(_points)
     ctld.spawnCrateAtPoint("blue",550, _points["Hawk tr"])
 
     -- spawn a helper unit that will "build" the site
-    local _SpawnObject = SPAWN:New( "NE FARP HELO" )
-    local _SpawnGroup = _SpawnObject:SpawnFromVec2({x=_points["Hawk pcp"]["x"], y=_points["Hawk pcp"]["z"]})
+    local _SpawnObject = Spawner( "NE FARP HELO" )
+    local _SpawnGroup = _SpawnObject:SpawnAtPoint({x=_points["Hawk pcp"]["x"], y=_points["Hawk pcp"]["z"]})
     local _unit=_SpawnGroup:GetDCSUnit(1)
 
     -- enumerate nearby crates
@@ -182,11 +182,11 @@ SEFARPLogiSpawn = {logispawn, "HEMTT TFFT",
 
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
-    ["Novorossiysk"] = {Spawner("NovoroTransport"), Spawner("NovoroTransportHelo"), NovoLogiSpawn},
-    ["Gelendzhik"] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil}, 
-    ["Krasnodar-Center"] = {Spawner("KDARTransport"), Spawner("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
-    ["Krasnodar-Pashkovsky"] = {Spawner("KDAR2Transport"), Spawner("KrasPashTransportHelo"), nil},
-    ["Krymsk"] = {Spawner("KrymskTransport"), Spawner("KrymskTransportHelo"), KryLogiSpawn}
+    ['Novorossiysk'] = {Spawner("NovoroTransport"), Spawner("NovoroTransportHelo"), NovoLogiSpawn},
+    ['Gelendzhik'] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil}, 
+    ['Krasnodar-Center'] = {Spawner("KDARTransport"), Spawner("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
+    ['Krasnodar_Pashkovsky'] = {Spawner("KDAR2Transport"), Spawner("KrasPashTransportHelo"), nil},
+    ['Krymsk'] = {Spawner("KrymskTransport"), Spawner("KrymskTransportHelo"), KryLogiSpawn}
 }
 
 NorthGeorgiaFARPTransportSpawns = {
@@ -213,7 +213,6 @@ OverlordSpawn = Spawner("AWACS Overlord")
 OverlordSpawn:OnSpawnGroup(function(grp)
     scheduledSpawns[grp:getUnit(1):getName()] = {OverlordSpawn, 600}
 end)
-
 
 -- Local defense spawns.  Usually used after a transport spawn lands somewhere.
 AirfieldDefense = Spawner("AirfieldDefense")
@@ -477,5 +476,4 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
     end)
 end
 
-BASE:I("HOGGIT GAW - SPAWNS COMPLETE")
 log("spawns.lua complete")

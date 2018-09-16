@@ -80,5 +80,4 @@ function cleanup()
     log("Done Clean script")
 end
 
-mist.scheduleFunction(cleanup, {}, timer.getTime() + 20, 20)
---SCHEDULER:New(nil, function()pcall(cleanup)end, {}, 47, 125)
+mist.scheduleFunction(cleanup, {}, timer.getTime() + 47, 125)
