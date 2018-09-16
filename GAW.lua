@@ -37,7 +37,7 @@ function isAlive(group)
     else
         grp = group
     end
-    if grp and grp:getSize() > 0 then return true else return false end
+    if grp and grp:isExist() and grp:getSize() > 0 then return true else return false end
 end
 
 function groupIsDead(groupName) 
@@ -129,6 +129,74 @@ logiSlots = {
     ['MK Warehouse'] = MaykopLogiSpawn
 }
 
+function handleDeaths(event)
+    -- The scheduledSpawn stuff only works for groups with a single unit atm.
+    if event.id == world.event.S_EVENT_DEAD or event.id == world.event.S_EVENT_ENGINE_SHUTDOWN then
+        if scheduledSpawns[event.initiator:getName()] then
+            local spawner = scheduledSpawns[event.initiator:getName()][1]
+            local stimer = scheduledSpawns[event.initiator:getName()][2]
+            scheduledSpawns[event.initiator:getName()] = nil
+            mist.scheduleFunction(function()
+                spawner:Spawn()
+                if event.initiator:getGroup() then
+                    event.initiator:getGroup():destroy()
+                end
+            end, {}, timer.getTime() + stimer)
+        end
+    end
+end
+
+mist.addEventHandler(handleDeaths)
+
+function securityForcesLanding(event)
+    if event.id == world.event.S_EVENT_LAND then
+        local xport = activeBlueXports[event.initiator:getGroup():getName()]
+        if xport then
+            local abname = xport[2]
+            if xport[3] then abname = abname .. " Warehouse" end
+            log('Xport just landed at ' .. abname)
+            local grpLoc = event.initiator:getPosition().p
+            local landPos = Airbase.getByName(abname):getPosition().p
+            local distance = mist.utils.get2DDist(grpLoc, landPos)
+            log("Transport landed " .. distance .. " meters from target")
+            if (distance <= 2500) then
+                log("Within range, spawning Friendly Forces")
+                if xport[3] then
+                    trigger.action.outSoundForCoalition(2, farpcapsound)
+                else
+                    trigger.action.outSoundForCoalition(2, abcapsound)
+                end
+    
+                if xport[4][3] then
+                    activateLogi(xport[4][3])
+                    log("Logi activated")
+                else
+                    log("No logi point here")
+                end
+
+                local randFactor = 200
+                if xport[3] then
+                    randFactor = 50
+                end
+
+                local pos = {
+                    x = landPos.x + 80,
+                    y = landPos.z + 80
+                }
+
+                AirfieldDefense:SpawnAtPoint(pos)
+                FSW:SpawnAtPoint({
+                    x = pos.x - 10,
+                    y = pos.y - 10
+                })
+                log("Security forces have spawned")
+            end
+            mist.scheduleFunction(event.initiator.destroy, {event.initiator}, timer.getTime() + 120)
+        end
+    end
+end
+mist.addEventHandler(securityForcesLanding)
+
 function baseCaptured(event)
     if event.id == world.event.S_EVENT_BASE_CAPTURED then
         local abname = event.place:getName()
@@ -181,7 +249,6 @@ objectiveCounter = 99
 AddObjective = function(type, id)
     return function(group, spawn_name, callsign)
         if not group then
-            trigger.action.outText(spawn_name)
             return
         end
         local unit = group:getUnit(1)

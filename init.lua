@@ -15,6 +15,7 @@ if statefile then
     local state = statefile:read("*all")
     statefile:close()
     local saved_game_state = json:decode(state)
+    trigger.action.outText("Game state read", 10)
     for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["Airfields"]) do
         local flagval = 100
         local ab = Airbase.getByName(name)
@@ -47,6 +48,8 @@ if statefile then
         end
     end
 
+    trigger.action.outText("Finished processing airfields", 10)
+
     for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["FARPS"]) do
         local flagval = 100
         local ab = Airbase.getByName(name)
@@ -78,6 +81,8 @@ if statefile then
 
     end
 
+    trigger.action.outText("Finished processing FARPs", 10)
+
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
         local spawn
         if data.spawn_name == "SA6" then spawn = RussianTheaterSA6Spawn[1] end
@@ -102,6 +107,8 @@ if statefile then
         })
     end
 
+    trigger.action.outText("Finished processing strategic assets", 10)
+
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do        
         local spawn
         if data['spawn_name'] == 'AmmoDump' then spawn = AmmoDumpSpawn end
@@ -113,16 +120,19 @@ if statefile then
         })
     end
 
+
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["BAI"]) do
         local spawn
         if data['spawn_name'] == "ARTILLERY" then spawn = RussianHeavyArtySpawn[1] end
         if data['spawn_name'] == "ARMOR COLUMN" then spawn = ArmorColumnSpawn[1] end
         if data['spawn_name'] == "MECH INF" then spawn = MechInfSpawn[1] end
-        spawn:SpawnAtPoint({
+        local baitarget = spawn:SpawnAtPoint({
             x = data['position'][1],
             y = data['position'][2]
         })
     end
+
+    trigger.action.outText("Finished processing BAI", 10)
 
     for idx, data in ipairs(saved_game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"]) do
         if data.name == 'avenger' then
@@ -263,6 +273,15 @@ else
 
     trigger.action.setUserFlag("MK FARP Ka-50", 100)
 end
+
+-- Kick off supports
+mist.scheduleFunction(function()
+    TexacoSpawn:Spawn()
+    ShellSpawn:Spawn()
+    OverlordSpawn:Spawn()
+end, {}, timer.getTime() + 10)
+
+NorthGeorgiaTransportSpawns["Novorossiysk"][1]:Spawn()
 
 -- Kick off the commanders
 mist.scheduleFunction(russian_commander, {}, timer.getTime() + 10, 300)

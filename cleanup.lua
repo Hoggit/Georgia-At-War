@@ -12,6 +12,7 @@ function cleanup()
                 end
             end
 
+            log("There are " .. alive_units .. " in BAI target " .. baitarget_table['callsign'])
             if alive_units == 0 or alive_units / baitarget:getInitialSize() * 100 < 30 then
                 trigger.action.outText("BAI target " .. baitarget_table['callsign'] .. " destroyed!", 15)
                 log("Not enough units, destroying")
@@ -79,5 +80,5 @@ function cleanup()
     log("Done Clean script")
 end
 
-mist.scheduleFunction(cleanup, {}, timer.getTime() + 47, 125)
+mist.scheduleFunction(cleanup, {}, timer.getTime() + 20, 20)
 --SCHEDULER:New(nil, function()pcall(cleanup)end, {}, 47, 125)

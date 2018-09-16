@@ -7,7 +7,7 @@ write_state = function()
     log("Done writing state.")
 end
 
-SCHEDULER:New(nil, write_state, {}, 10, 580)
+mist.scheduleFunction(write_state, {}, timer.getTime() + 524, 580)
 
 -- update list of active CTLD AA sites in the global game state
 function enumerateCTLD()
@@ -43,8 +43,8 @@ ctld.addCallback(function(_args)
         end
 
         table.insert(game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"], {
-            name=name, 
-            pos=GROUP:FindByName(groupname):GetVec2()
+            name=name,
+            pos=Group.getByName(groupName):getPosition().p
         })
 
         enumerateCTLD()

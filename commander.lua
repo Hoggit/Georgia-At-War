@@ -127,7 +127,6 @@ russian_commander = function()
     end
 
     log("Checking interceptors...")
-    trigger.action.outText(mist.utils.tableShow(enemy_interceptors), 20)
     if math.random() > 0.05 then
         for i,g in ipairs(enemy_interceptors) do
             if allOnGround(g) then

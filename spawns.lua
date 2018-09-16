@@ -33,10 +33,9 @@ Spawner = function(grpName)
                 if not CallBack.args then CallBack.args = {} end
                 mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
             end
-            --trigger.action.outText("Added group " .. grpName, 10)
+            return added_grp
         end,
         SpawnAtPoint = function(self, point)
-            --local added_grp = Group.getByName(mist.cloneGroup(grpName).name)
             local vars = {
                 groupName = grpName,
                 point = point,
@@ -46,9 +45,9 @@ Spawner = function(grpName)
             local name = mist.teleportToPoint(vars).name
             if CallBack.func then
                 if not CallBack.args then CallBack.args = {} end
-                mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
+                mist.scheduleFunction(CallBack.func, {Group.getByName(name), unpack(CallBack.args)}, timer.getTime() + 1)
             end
-            return
+            return Group.getByName(name)
         end,
         SpawnInZone = function(self, zoneName)
             local added_grp = Group.getByName(mist.cloneInZone(grpName, zoneName).name)
@@ -56,7 +55,7 @@ Spawner = function(grpName)
                 if not CallBack.args then CallBack.args = {} end
                 mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
             end
-            --trigger.action.outText("Added group " .. grpName .. " in zone " .. zoneName, 10)
+            return added_grp
         end,
         OnSpawnGroup = function(self, f, args)
             CallBack.func = f
@@ -173,29 +172,49 @@ MaykopLogiSpawn = {logispawn, "HEMTT TFFT",
     "mklogizone"
 }
 
+SEFARPLogiSpawn = {logispawn, "HEMTT TFFT", 
+    {
+        ['x'] = -26322.15625,
+        ['y'] = 421495.96875
+    },
+    "sefarplogizone"
+}
+
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
-    [AIRBASE.Caucasus.Novorossiysk] = {Spawner("NovoroTransport"), Spawner("NovoroTransportHelo"), NovoLogiSpawn},
-    [AIRBASE.Caucasus.Gelendzhik] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil}, 
-    [AIRBASE.Caucasus.Krasnodar_Center] = {Spawner("KDARTransport"), Spawner("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
-    [AIRBASE.Caucasus.Krasnodar_Pashkovsky] = {Spawner("KDAR2Transport"), Spawner("KrasPashTransportHelo"), nil},
-    [AIRBASE.Caucasus.Krymsk] = {Spawner("KrymskTransport"), Spawner("KrymskTransportHelo"), KryLogiSpawn}
+    ["Novorossiysk"] = {Spawner("NovoroTransport"), Spawner("NovoroTransportHelo"), NovoLogiSpawn},
+    ["Gelendzhik"] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil}, 
+    ["Krasnodar-Center"] = {Spawner("KDARTransport"), Spawner("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
+    ["Krasnodar-Pashkovsky"] = {Spawner("KDAR2Transport"), Spawner("KrasPashTransportHelo"), nil},
+    ["Krymsk"] = {Spawner("KrymskTransport"), Spawner("KrymskTransportHelo"), KryLogiSpawn}
 }
 
 NorthGeorgiaFARPTransportSpawns = {
-    ["NW"] = Spawner("NW FARP HELO"),
-    ["NE"] = Spawner("NE FARP HELO"), 
-    ["SW"] = Spawner("SW FARP HELO"),
-    ["SE"] = Spawner("SE FARP HELO"),
-    ["MK"] = Spawner("MK FARP HELO"),
+    ["NW"] = {Spawner("NW FARP HELO"), nil, nil},
+    ["NE"] = {Spawner("NE FARP HELO"), nil, nil},
+    ["SW"] = {Spawner("SW FARP HELO"),nil, nil},
+    ["SE"] = {Spawner("SE FARP HELO"),nil, SEFARPLogiSpawn},
+    ["MK"] = {Spawner("MK FARP HELO"), nil, MaykopLogiSpawn}
 }
+scheduledSpawns = {}
 
 -- Support Spawn
-TexacoSpawn = SPAWN:New("Texaco"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
-ShellSpawn = SPAWN:New("Shell"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
-OverlordSpawn = SPAWN:New("AWACS Overlord"):InitDelayOff():InitRepeatOnEngineShutDown():InitLimit(1,0)
---F16Spawn = SPAWN:New("F16CAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
---MirageSpawn = SPAWN:New("MirageCAP"):InitRepeatOnEngineShutDown():InitLimit(2, 0):SpawnScheduled(900):Spawn()
+TexacoSpawn = Spawner("Texaco")
+TexacoSpawn:OnSpawnGroup(function(grp)
+    scheduledSpawns[grp:getUnit(1):getName()] = {TexacoSpawn, 600}
+end)
+
+ShellSpawn = Spawner("Shell")
+ShellSpawn:OnSpawnGroup(function(grp)
+    scheduledSpawns[grp:getUnit(1):getName()] = {ShellSpawn, 600}
+end)
+
+OverlordSpawn = Spawner("AWACS Overlord")
+OverlordSpawn:OnSpawnGroup(function(grp)
+    scheduledSpawns[grp:getUnit(1):getName()] = {OverlordSpawn, 600}
+end)
+
+
 -- Local defense spawns.  Usually used after a transport spawn lands somewhere.
 AirfieldDefense = Spawner("AirfieldDefense")
 
@@ -206,6 +225,10 @@ RussianTheaterEWRSpawn = { Spawner("EWR"), "EWR" }
 RussianTheaterC2Spawn = { Spawner("C2"), "C2" }
 RussianTheaterAirfieldDefSpawn = Spawner("Russia-Airfield-Def")
 RussianTheaterAWACSSpawn = Spawner("A50")
+
+RussianTheaterAWACSSpawn:OnSpawnGroup(function(grp)
+    scheduledSpawns[grp:getUnit(1):getName()] = {RussianTheaterAWACSSpawn, 1800}
+end)
 
 -- REDFOR specific airfield defense spawns
 DefKrasPash = Spawner("Red Airfield Defense Kras-Pash 1")
@@ -305,8 +328,7 @@ end
 --PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
 
 -- Airfield CAS Spawns
-RussianTheaterCASSpawn = SPAWN:New("Su25T-CASGroup"):InitRepeatOnLanding():InitLimit(4, 0)
---RussianTheatreCASEscort = SPAWN:New("Su27CASEscort")
+RussianTheaterCASSpawn = Spawner("Su25T-CASGroup")
 
 -- FARP defenses
 NWFARPDEF = Spawner("FARP DEFENSE")
@@ -317,9 +339,6 @@ MKFARPDEF = Spawner("FARP DEFENSE #004")
 
 -- FARP Support Groups
 FSW = Spawner("FARP Support West")
-
--- Convoy spawns
---convoy_spawns = {{SPAWN:New('Convoy1'):InitLimit(15, 0), 'Convoy1'}, {SPAWN:New('Convoy2'):InitLimit(15, 0), 'Convoy2'}}
 
 -- Group spanws for easy randomization
 local allcaps = {
@@ -424,52 +443,37 @@ for i,v in ipairs(allcaps) do
     end)
 end
 
+activeBlueXports = {}
+
+addToActiveBlueXports = function(group, defense_group_spawner, target, is_farp, xport_data)
+    activeBlueXports[group:getName()] = {defense_group_spawner, target, is_farp, xport_data}
+    log("Added " .. group:getName() .. " to active blue transports")
+end
+
+removeFromActiveBlueXports = function(group, defense_group_spawner, target)
+    activeBlueXports[group:getName()] = nil
+end
+
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
     for i=1,2 do
-        spawn[i]:OnSpawnGroup(function(SpawnedGroup)
-            SpawnedGroup:HandleEvent(EVENTS.Land)
-            function SpawnedGroup:OnEventLand(EventData)
-                local apV3
-                if i == 1 then
-                    apV3 = POINT_VEC3:NewFromVec3(EventData.place:getPosition().p)
-                    apV3:SetX(apV3:GetX() + math.random(400, 600))
-                    apV3:SetY(apV3:GetY() + math.random(200))
-                    trigger.action.outSoundForCoalition(2, abcapsound)
-                elseif i == 2 then
-                    apV3 = POINT_VEC3:NewFromVec3(EventData.IniGroup:GetPositionVec3())
-                    apV3:SetX(apV3:GetX() + math.random(50,100))
-                    apV3:SetY(apV3:GetY() + math.random(50))
-                    trigger.action.outSoundForCoalition(2, farpcapsound)
-                end
-                activateLogi(spawn[3])
-                local air_def_grp = AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-                apV3:SetX(apV3:GetX() + math.random(-50, 50))
-                apV3:SetY(apV3:GetY() + math.random(-50, 50))
-                FSW:SpawnFromVec2(apV3:GetVec2())
-                SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
-            end
-        end)
+        if i == 1 then
+            spawn[i]:OnSpawnGroup(function(SpawnedGroup)
+                addToActiveBlueXports(SpawnedGroup, AirfieldDefense, name, false, spawn[i])
+            end)
+        end
+
+        if i == 2 then
+            spawn[i]:OnSpawnGroup(function(SpawnedGroup)
+                addToActiveBlueXports(SpawnedGroup, AirfieldDefense, name, false, spawn[i])
+            end)
+        end
+
     end
 end
 
 for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
-    spawn:OnSpawnGroup(function(SpawnedGroup)
-        SpawnedGroup:HandleEvent(EVENTS.Land)
-        function SpawnedGroup:OnEventLand(EventData)
-            local apV3 = POINT_VEC3:NewFromVec3(EventData.IniGroup:GetPositionVec3())
-            apV3:SetX(apV3:GetX() + math.random(-50, 50))
-            apV3:SetY(apV3:GetY() + math.random(-50, 50))
-            AirfieldDefense:SpawnFromVec2(apV3:GetVec2())
-
-            apV3:SetX(apV3:GetX() + math.random(-50, 50))
-            apV3:SetY(apV3:GetY() + math.random(-50, 50))
-            FSW:SpawnFromVec2(apV3:GetVec2())
-            SCHEDULER:New(nil, SpawnedGroup.Destroy, {SpawnedGroup}, 120)
-
-            if string.match(SpawnedGroup:GetName(), "MK FARP") then
-                activateLogi(MaykopLogiSpawn)
-            end 
-        end
+    spawn[1]:OnSpawnGroup(function(SpawnedGroup)
+        addToActiveBlueXports(SpawnedGroup, AirfieldDefense, name, true, spawn)
     end)
 end
 
