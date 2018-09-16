@@ -1,24 +1,3 @@
--- Coalition Menu additions
-CoalitionMenu = function( coalition, text )
-    return missionCommands.addSubMenuForCoalition( coalition, text )
-end
-
-GroupMenu = function( groupId, text )
-    return missionCommands.addSubMenuForGroup( groupId, text )
-end
-
-CoalitionCommand = function(coalition, text, parent, handler)
-    missionCommands.addCommandForCoalition( coalition, text, parent, handler)
-end
-
-GroupCommand = function(group, text, parent, handler)
-    missionCommands.addCommandForGroup( group, text, parent, handler)
-end
-
-MessageToGroup = function(groupId, text, displayTime)
-    trigger.action.outTextForGroup( groupId, text, displayTime )
-end
-
 -- Global Menu, available to everyone
 XportMenu = CoalitionMenu(coalition.side.BLUE, "Deploy Airfield Security Forces")
 FARPXportMenu = CoalitionMenu(coalition.side.BLUE, "Deploy FARP/Warehouse Security Forces")

@@ -14,6 +14,101 @@ function log(str)
     end
 end
 
+-- Replace the spawn stuff
+Spawner = function(grpName)
+    local CallBack = {}
+    return {
+        Spawn = function(self)
+            local added_grp = Group.getByName(mist.cloneGroup(grpName, true).name)
+            if CallBack.func then
+                if not CallBack.args then CallBack.args = {} end
+                mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
+            end
+            return added_grp
+        end,
+        SpawnAtPoint = function(self, point)
+            local vars = {
+                groupName = grpName,
+                point = point,
+                action = "clone"
+            }
+
+            local name = mist.teleportToPoint(vars).name
+            if CallBack.func then
+                if not CallBack.args then CallBack.args = {} end
+                mist.scheduleFunction(CallBack.func, {Group.getByName(name), unpack(CallBack.args)}, timer.getTime() + 1)
+            end
+            return Group.getByName(name)
+        end,
+        SpawnInZone = function(self, zoneName)
+            local added_grp = Group.getByName(mist.cloneInZone(grpName, zoneName).name)
+            if CallBack.func then
+                if not CallBack.args then CallBack.args = {} end
+                mist.scheduleFunction(CallBack.func, {added_grp, unpack(CallBack.args)}, timer.getTime() + 1)
+            end
+            return added_grp
+        end,
+        OnSpawnGroup = function(self, f, args)
+            CallBack.func = f
+            CallBack.args = args
+        end
+    }
+end
+
+StaticSpawner = function(groupName, numberInGroup, groupOffsets)
+    local CallBack = {}
+    return {
+        Spawn = function(self, firstPos)
+            local names = {}
+            for i=1,numberInGroup do
+                local groupData = mist.getGroupData(groupName .. i)
+                groupData.units[1].x = firstPos[1] + groupOffsets[i][1]
+                groupData.units[1].y = firstPos[2] + groupOffsets[i][2]
+                groupData.clone = true
+                table.insert(names, mist.dynAddStatic(groupData).name)
+            end
+
+            if CallBack.func then
+                if not CallBack.args then CallBack.args = {} end
+                mist.scheduleFunction(CallBack.func, {names, firstPos, unpack(CallBack.args)}, timer.getTime() + 1)
+            end
+
+            return names
+        end,
+        OnSpawnGroup = function(self, f, args)
+            CallBack.func = f
+            CallBack.args = args
+        end
+    }
+end
+
+GetCoordinate = function(grp)
+    local firstUnit = grp:GetUnit(1)
+    if firstUnit then
+        return firstUnit:getPosition()
+    end
+end
+
+-- Coalition Menu additions
+CoalitionMenu = function( coalition, text )
+    return missionCommands.addSubMenuForCoalition( coalition, text )
+end
+
+GroupMenu = function( groupId, text )
+    return missionCommands.addSubMenuForGroup( groupId, text )
+end
+
+CoalitionCommand = function(coalition, text, parent, handler)
+    missionCommands.addCommandForCoalition( coalition, text, parent, handler)
+end
+
+GroupCommand = function(group, text, parent, handler)
+    missionCommands.addCommandForGroup( group, text, parent, handler)
+end
+
+MessageToGroup = function(groupId, text, displayTime)
+    trigger.action.outTextForGroup( groupId, text, displayTime )
+end
 
 standbycassound = "l10n/DEFAULT/standby.ogg"
 ninelinecassound = "l10n/DEFAULT/marked.ogg"
