@@ -427,8 +427,10 @@ AddRussianTheaterTankerTarget = function(group)
 end
 
 SpawnDefenseForces = function(target_string, time, last_launched_time, spawn)
+    log("Defense forces requested to " .. target_string)
     local launch_frequency_seconds = 600
     if time > (last_launched_time + launch_frequency_seconds) then
+        log("Time OK. Spawning Security forces")
         spawn:Spawn()
         MessageToAll("Security Forces en route to ".. target_string, 30)
         return time

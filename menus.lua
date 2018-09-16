@@ -237,7 +237,8 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
     log("Preparing menus for NorthGeorgiaFARPTransportSpawns")
     --local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name .. " FARP/WAREHOUSE", FARPXportMenu, function() 
     local curMenu = CoalitionCommand(coalition.side.BLUE, "Deploy to " .. name .. " FARP/WAREHOUSE", FARPXportMenu, function() 
-        local new_spawn_time = SpawnDefenseForces(name, timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn)
+        log("Requested deploy to " .. name)
+        local new_spawn_time = SpawnDefenseForces(name, timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn[1])
         if new_spawn_time ~= nil then
             trigger.action.outSoundForCoalition(2, farpleavesound)
             game_state["last_launched_time"] = new_spawn_time
