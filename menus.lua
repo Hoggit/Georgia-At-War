@@ -30,29 +30,29 @@ buildMenu = function(Group)
         type = 1
     end
 
-    GroupCommand(Group, "FARP/WAREHOUSE Locations", nil, function()
+    GroupCommand(Group:getID(), "FARP/WAREHOUSE Locations", nil, function()
         local output = [[NW FARP: 45 12'10"N 38 4'45" E
 SW FARP: 44 55'45"N 38 5'17" E
 NE FARP: 45 10'4" N 38 55'22"E
 SE FARP: 44 50'7" N 38 46'34"E
 MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         --MESSAGE:New(output, 60):ToGroup(Group)
-        MessageToGroup( Group:GetID(), output, 60 )
+        MessageToGroup( Group:getID(), output, 60 )
     end)
 
-    local MissionMenu = GroupMenu(Group:GetID(), "Get Mission Status", nil, function()
+    local MissionMenu = GroupMenu(Group:getID(), "Get Mission Status", nil, function()
         --MESSAGE:New(TheaterUpdate("Russian Theater"), 60):ToGroup(Group)
-        MessageToGroup(Group:GetID(), TheaterUpdate("Russian Theater"), 60)
+        MessageToGroup(Group:getID(), TheaterUpdate("Russian Theater"), 60)
     end)
 
 
-    local MissionMenu = GroupMenu(Group, "Get Current Missions")
-    GroupCommand(Group:GetID(), "Convoy Strike", MissionMenu, function()
+    local MissionMenu = GroupMenu(Group:getID(), "Get Current Missions")
+    GroupCommand(Group:getID(), "Convoy Strike", MissionMenu, function()
         ConvoyUpdate(Group)
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "SEAD", MissionMenu, function()
-    GroupMenu(Group:GetID(), "SEAD", MissionMenu, function()
+    GroupCommand(Group:getID(), "SEAD", MissionMenu, function()
         local sams ="ACTIVE SAM REPORT:\n"
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
             local type_name = group_table["spawn_name"]
@@ -67,11 +67,11 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             sams = sams .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         --MESSAGE:New(sams, 60):ToGroup(Group)
-        MessageToGroup(Group:GetID(), sams, 60)
+        MessageToGroup(Group:getID(), sams, 60)
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Air Interdiction", MissionMenu, function()
-    GroupMenu(Group:GetID(), "Air Interdiction", MissionMenu, function()
+    GroupCommand(Group:getID(), "Air Interdiction", MissionMenu, function()
         local bais ="BAI TASK LIST:\n"
         for id,group_table in pairs(game_state["Theaters"]["Russian Theater"]["BAI"]) do
             --local g = group_table[1]
@@ -87,11 +87,11 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             bais = bais .. "OBJ: " .. group_table["callsign"] .. " -- " .. type_name .. ": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         --MESSAGE:New(bais, 60):ToGroup(Group)
-        MessageToGroup(Group:GetID(), bais, 60)
+        MessageToGroup(Group:getID(), bais, 60)
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Strike", MissionMenu, function()
-    GroupMenu(Group:GetID(), "Strike", MissionMenu, function()
+    GroupCommand(Group:getID(), "Strike", MissionMenu, function()
         local strikes ="STRIKE TARGET LIST:\n"
         for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["C2"]) do
             local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
@@ -121,11 +121,11 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         end
 
         --MESSAGE:New(strikes, 60):ToGroup(Group)
-        MessageToGroup(Group:GetID(), strikes, 60)
+        MessageToGroup(Group:getID(), strikes, 60)
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Naval Strike", MissionMenu, function()
-    GroupMenu(Group:GetID(), "Naval Strike", MissionMenu, function()
+    GroupCommand(Group:getID(), "Naval Strike", MissionMenu, function()
         local output ="MARITIME REPORT:\n"
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["NavalStrike"]) do
             local type_name = group_table["spawn_name"]
@@ -142,11 +142,11 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             end
         end
         --MESSAGE:New(output, 60):ToGroup(Group)
-        MessageToGroup(Group:GetID(), output, 60)
+        MessageToGroup(Group:getID(), output, 60)
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Interception", MissionMenu, function()
-    GroupMenu(Group:GetID(), "Interception", MissionMenu, function()
+    GroupCommand(Group:getID(), "Interception", MissionMenu, function()
         local intercepts ="INTERCEPTION TARGETS:\n"
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
             local g = GROUP:FindByName(group_name)
@@ -180,48 +180,48 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Check In On-Call CAS", MissionMenu, function()
-    GroupMenu(Group:GetID(), "Check In On-Call CAS", MissionMenu, function()
+    GroupCommand(Group:getID(), "Check In On-Call CAS", MissionMenu, function()
         if #oncall_cas > 2 then
             --MESSAGE:New("No more on call CAS taskings are available, please try again when players currently running CAS are finished."):ToGroup(Group)
-            MessageToGroup(Group:GetID(), "No more on call CAS taskings are available, please try again when players currently running CAS are finished.", 30)
+            MessageToGroup(Group:getID(), "No more on call CAS taskings are available, please try again when players currently running CAS are finished.", 30)
             return
         end
 
         for i,v in ipairs(oncall_cas) do
             if v.name == Group:GetName() then
                 --MESSAGE:New("You are already on call for CAS.  Stand by for tasking")
-                MessageToGroup( Group:GetID(), "You are already on call for CAS.  Stand by for tasking", 30)
+                MessageToGroup( Group:getID(), "You are already on call for CAS.  Stand by for tasking", 30)
                 return
             end
         end
 
-        trigger.action.outSoundForGroup(Group:GetID(), standbycassound)
+        trigger.action.outSoundForGroup(Group:getID(), standbycassound)
         --MESSAGE:New("Understood " .. Group:GetName() .. ", hold position east of Anapa and stand by for tasking.\nSelect 'Check Out On-Call CAS' to cancel mission" ):ToGroup(Group)
-        MessageToGroup(Group:GetID(), "Understood " .. Group:GetName() .. ", hold position east of Anapa and stand by for tasking.\nSelect 'Check Out On-Call CAS' to cancel mission", 30)
+        MessageToGroup(Group:getID(), "Understood " .. Group:GetName() .. ", hold position east of Anapa and stand by for tasking.\nSelect 'Check Out On-Call CAS' to cancel mission", 30)
         table.insert(oncall_cas, {name = Group:GetName(), mission = nil})
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Check Out On-Call CAS", MissionMenu, function()
-    GroupCommand(Group:GetID(), "Check Out On-Call CAS", MissionMenu, function()
+    GroupCommand(Group:getID(), "Check Out On-Call CAS", MissionMenu, function()
         for i,v in ipairs(oncall_cas) do
             if v.name == Group:GetName() then
                 pcall(function() Group.getByName(oncall_cas[i].mission[1]):destroy() end)
                 pcall(function() Group.getByName(oncall_cas[i].mission[2]):destroy() end)
                 table.remove(oncall_cas, i)
-                trigger.action.outSoundForGroup(Group:GetID(), terminatecassound)
+                trigger.action.outSoundForGroup(Group:getID(), terminatecassound)
                 return
             end
         end
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Get Current CAS Target Location", MissionMenu, function()
-    GroupCommand(Group:GetID(), "Get Current CAS Target Location", MissionMenu, function()
+    GroupCommand(Group:getID(), "Get Current CAS Target Location", MissionMenu, function()
         for i,v in ipairs(oncall_cas) do
             if v.name == Group:GetName() then
                 local enemy_coord = Group.getByName(v.mission[1]):GetCoordinate()
                 local group_coord = Group:GetCoordinate()
                 --MESSAGE:New("TGT: IFV's and Dismounted Infantry\n\nLOC:\n" .. enemy_coord:ToStringLLDMS() .. "\n" .. enemy_coord:ToStringLLDDM() .. "\n" .. enemy_coord:ToStringMGRS() .. "\n" .. enemy_coord:ToStringBRA(group_coord) .. "\n" .. "Marked with RED smoke", 60):ToGroup(Group)
-                MessageToGroup( Group:GetID(), "TGT: IFV's and Dismounted Infantry\n\nLOC:\n" .. enemy_coord:ToStringLLDMS() .. "\n" .. enemy_coord:ToStringLLDDM() .. "\n" .. enemy_coord:ToStringMGRS() .. "\n" .. enemy_coord:ToStringBRA(group_coord) .. "\n" .. "Marked with RED smoke", 60)
+                MessageToGroup( Group:getID(), "TGT: IFV's and Dismounted Infantry\n\nLOC:\n" .. enemy_coord:ToStringLLDMS() .. "\n" .. enemy_coord:ToStringLLDDM() .. "\n" .. enemy_coord:ToStringMGRS() .. "\n" .. enemy_coord:ToStringBRA(group_coord) .. "\n" .. "Marked with RED smoke", 60)
             end
         end
     end)
@@ -258,17 +258,20 @@ end
 
 
 function groupBirthHandler( Event )
-    local Group = Event.initiator:getGroup()
-    if Group then
-        for i,u in ipairs(Group:GetUnits()) do
-            if u:GetPlayerName() ~= "" then
+    if Event.id ~= world.event.S_EVENT_BIRTH then return end
+    if not Event.initiator then return end
+    if not Event.initiator.getGroup then return end
+    local grp = Event.initiator:getGroup()
+    if grp then
+        for i,u in ipairs(grp:getUnits()) do
+            if u:getPlayerName() ~= "" then
                 log("Group birth. Building menus")
-                buildMenu(Group)
+                buildMenu(grp)
                 log("Done group birth. Building menus")
             end
         end
     end
 end
-
+mist.addEventHandler(groupBirthHandler)
 log("Event Handler complete")
 log("menus.lua complete")
