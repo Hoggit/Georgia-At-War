@@ -13,7 +13,19 @@ function log(str)
        logFile:flush()
     end
 end
+SecondsToClock = function(seconds)
+  local seconds = tonumber(seconds)
 
+  if seconds <= 0 then
+    return "00m 00s";
+  else
+    mins = string.format("%02.f", math.floor(seconds/60));
+    secs = string.format("%02.f", math.floor(seconds - mins *60));
+    return mins.."m "..secs.."s"
+  end
+end
+
+log("Testing SecondsToclock -- " .. SecondsToClock(300))
 -- Replace the spawn stuff
 Spawner = function(grpName)
     local CallBack = {}
@@ -94,8 +106,8 @@ CoalitionMenu = function( coalition, text )
     return missionCommands.addSubMenuForCoalition( coalition, text )
 end
 
-GroupMenu = function( groupId, text )
-    return missionCommands.addSubMenuForGroup( groupId, text )
+GroupMenu = function( groupId, text, parent )
+    return missionCommands.addSubMenuForGroup( groupId, text, parent )
 end
 
 CoalitionCommand = function(coalition, text, parent, handler)
@@ -108,6 +120,10 @@ end
 
 MessageToGroup = function(groupId, text, displayTime)
     trigger.action.outTextForGroup( groupId, text, displayTime )
+end
+
+MessageToAll = function( text, displayTime )
+    trigger.action.outText( text, displayTime )
 end
 
 standbycassound = "l10n/DEFAULT/standby.ogg"
@@ -410,13 +426,15 @@ AddRussianTheaterTankerTarget = function(group)
     AddTankerTarget("Russian Theater")(group)
 end
 
-SpawnDefenseForces = function(time, last_launched_time, spawn)
+SpawnDefenseForces = function(target_string, time, last_launched_time, spawn)
     local launch_frequency_seconds = 600
     if time > (last_launched_time + launch_frequency_seconds) then
         spawn:Spawn()
+        MessageToAll("Security Forces en route to ".. target_string, 30)
         return time
     else
-        MESSAGE:New("Unable to send security forces, next mission available in " .. (launch_frequency_seconds + last_launched_time - time) .. " seconds"):ToAll()
+        log("Can't send security forces yet. Still on cooldown")
+        MessageToAll("Unable to send security forces, next mission available in " .. SecondsToClock(launch_frequency_seconds + last_launched_time - time), 30)
         return nil
     end
 end
@@ -453,9 +471,9 @@ ConvoyUpdate = function(group)
         output = output .. "No Active Convoys"
     end
     if group == 'all' then
-        MESSAGE:New(output, 20):ToAll()
+        MessageToAll(output, 20)
     else
-        MESSAGE:New(output, 20):ToGroup(group)
+        MessageToGroup(group, output, 20)
     end
     log("Done convoy update")
 end

@@ -8,9 +8,7 @@ FARPXportMenu = CoalitionMenu(coalition.side.BLUE, "Deploy FARP/Warehouse Securi
 -- Per group menu, called on groupspawn
 buildMenu = function(Group)
     log("Building radio menus")
-    local type
-    local useSettings
-
+    local type = 1
     --if string.match(Group.GroupName, "Hawg") then 
     --   type = 2
     --   useSettings = imperialSettings
@@ -36,12 +34,10 @@ SW FARP: 44 55'45"N 38 5'17" E
 NE FARP: 45 10'4" N 38 55'22"E
 SE FARP: 44 50'7" N 38 46'34"E
 MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
-        --MESSAGE:New(output, 60):ToGroup(Group)
         MessageToGroup( Group:getID(), output, 60 )
     end)
 
     local MissionMenu = GroupMenu(Group:getID(), "Get Mission Status", nil, function()
-        --MESSAGE:New(TheaterUpdate("Russian Theater"), 60):ToGroup(Group)
         MessageToGroup(Group:getID(), TheaterUpdate("Russian Theater"), 60)
     end)
 
@@ -51,22 +47,19 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         ConvoyUpdate(Group)
     end)
 
-    --MENU_GROUP_COMMAND:New(Group, "SEAD", MissionMenu, function()
     GroupCommand(Group:getID(), "SEAD", MissionMenu, function()
         local sams ="ACTIVE SAM REPORT:\n"
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
             local type_name = group_table["spawn_name"]
-            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
             local callsign = group_table['callsign']
+            --TODO: Add BR etc. again. Can't easily figure it out yet.
             local coords = {
-                coord:ToStringLLDMS(), 
-                coord:ToStringMGRS(),
-                coord:ToStringLLDDM(),
+                mist.toStringLL(coord['y'], coord['x'], 3, false),
                 "",
             }
-            sams = sams .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            sams = sams .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. "\n"
         end
-        --MESSAGE:New(sams, 60):ToGroup(Group)
         MessageToGroup(Group:getID(), sams, 60)
     end)
 
@@ -74,36 +67,32 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     GroupCommand(Group:getID(), "Air Interdiction", MissionMenu, function()
         local bais ="BAI TASK LIST:\n"
         for id,group_table in pairs(game_state["Theaters"]["Russian Theater"]["BAI"]) do
-            --local g = group_table[1]
             local type_name = group_table["spawn_name"]
-            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
 
             local coords = {
-                coord:ToStringLLDMS(), 
-                coord:ToStringMGRS(),
-                coord:ToStringLLDDM(),
+                mist.toStringLL(coord['y'], coord['x'], 3, false),
+                --coord:ToStringLLDMS(), 
+                --coord:ToStringMGRS(),
+                --coord:ToStringLLDDM(),
                 "",
             }
-            bais = bais .. "OBJ: " .. group_table["callsign"] .. " -- " .. type_name .. ": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            bais = bais .. "OBJ: " .. group_table["callsign"] .. " -- " .. type_name .. ": \t" .. coords[type] .. "\n"
         end
-        --MESSAGE:New(bais, 60):ToGroup(Group)
         MessageToGroup(Group:getID(), bais, 60)
     end)
 
-    --MENU_GROUP_COMMAND:New(Group, "Strike", MissionMenu, function()
     GroupCommand(Group:getID(), "Strike", MissionMenu, function()
         local strikes ="STRIKE TARGET LIST:\n"
         for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["C2"]) do
-            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
             local callsign = group_table['callsign']
             local coords = {
-                coord:ToStringLLDMS(), 
-                coord:ToStringMGRS(),
-                coord:ToStringLLDDM(),
+                mist.toStringLL(coord['y'], coord['x'], 3, false),
                 "",
             }
             
-            strikes = strikes .. "OBJ: " .. callsign .. " -- MOBILE CP: \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            strikes = strikes .. "OBJ: " .. callsign .. " -- MOBILE CP: \t" .. coords[type] .. "\n" -- " ".. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
         
         for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
@@ -111,13 +100,11 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             local callsign = group_table['callsign']
             local spawn_name = group_table['spawn_name']
             local coords = {
-                coord:ToStringLLDMS(), 
-                coord:ToStringMGRS(),
-                coord:ToStringLLDDM(),
+                mist.toStringLL(coord['y'], coord['x'], 3, false),
                 "",
             }
 
-            strikes = strikes .. "OBJ: " .. callsign .. " -- " .. spawn_name .. ": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+            strikes = strikes .. "OBJ: " .. callsign .. " -- " .. spawn_name .. ": \t" .. coords[type] .. "\n" -- " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
         end
 
         --MESSAGE:New(strikes, 60):ToGroup(Group)
@@ -129,16 +116,14 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         local output ="MARITIME REPORT:\n"
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["NavalStrike"]) do
             local type_name = group_table["spawn_name"]
-            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
             if coord then
                 local callsign = group_table['callsign']
                 local coords = {
-                    coord:ToStringLLDMS(), 
-                    coord:ToStringMGRS(),
-                    coord:ToStringLLDDM(),
+                    mist.toStringLL(coord['y'], coord['x'], 3, false),
                     "",
                 }
-                output = output .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
+                output = output .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. "\n" -- " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
             end
         end
         --MESSAGE:New(output, 60):ToGroup(Group)
@@ -149,34 +134,36 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     GroupCommand(Group:getID(), "Interception", MissionMenu, function()
         local intercepts ="INTERCEPTION TARGETS:\n"
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
-            local g = GROUP:FindByName(group_name)
-            local coord = g:GetCoordinate()
+            local g = Group.getByName(group_name)
+            local coord = GetCoordinate(g)
             if coord then
-                local group_coord = Group:GetCoordinate()
+                local group_coord = GetCoordinate(Group)
                 local coords = {
-                    coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
-                    coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
-                    coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
-                    coord:ToStringBRA(group_coord, useSettings),
+                    mist.toStringLL(coord['y'], coord['x'], 3, false),
+                    --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
+                    --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
+                    --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
+                    --coord:ToStringBRA(group_coord, useSettings),
                 }
                 intercepts = intercepts .. "AWACS: \t" .. coords[type] .. "\n"
             end
         end
 
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
-            local g = GROUP:FindByName(group_name)
-            local coord = g:GetCoordinate()
-            local group_coord = Group:GetCoordinate()
+            local g = Group.getByName(group_name)
+            local coord = GetCoordinate(g)
+            local group_coord = GetCoordinate(Group)
 
             local coords = {
-                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
-                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
-                coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
-                coord:ToStringBRA(group_coord, useSettings),
+                mist.toStringLL(coord['y'], coord['x'], 3, false),
+                --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
+                --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
+                --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
+                --coord:ToStringBRA(group_coord, useSettings),
             }
             intercepts = intercepts .. "TANKER: \t" .. coords[type] .. "\n"
         end
-        MESSAGE:New(intercepts, 60):ToGroup(Group)
+        MessageToGroup(Group, intercepts, 60)
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Check In On-Call CAS", MissionMenu, function()
@@ -218,9 +205,10 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     GroupCommand(Group:getID(), "Get Current CAS Target Location", MissionMenu, function()
         for i,v in ipairs(oncall_cas) do
             if v.name == Group:GetName() then
-                local enemy_coord = Group.getByName(v.mission[1]):GetCoordinate()
-                local group_coord = Group:GetCoordinate()
+                local enemy_coord = GetCoordinate(Group.getByName(v.mission[1]))
+                local group_coord = GetCoordinate(Group)
                 --MESSAGE:New("TGT: IFV's and Dismounted Infantry\n\nLOC:\n" .. enemy_coord:ToStringLLDMS() .. "\n" .. enemy_coord:ToStringLLDDM() .. "\n" .. enemy_coord:ToStringMGRS() .. "\n" .. enemy_coord:ToStringBRA(group_coord) .. "\n" .. "Marked with RED smoke", 60):ToGroup(Group)
+                --TODO This won't work.
                 MessageToGroup( Group:getID(), "TGT: IFV's and Dismounted Infantry\n\nLOC:\n" .. enemy_coord:ToStringLLDMS() .. "\n" .. enemy_coord:ToStringLLDDM() .. "\n" .. enemy_coord:ToStringMGRS() .. "\n" .. enemy_coord:ToStringBRA(group_coord) .. "\n" .. "Marked with RED smoke", 60)
             end
         end
@@ -232,9 +220,11 @@ for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
     log("Preparing menus for NorthGeorgiaTransportSpawns")
     --local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name, XportMenu, function()
     local curMenu = CoalitionCommand(coalition.side.BLUE, "Deploy to " .. name, XportMenu, function()
+        log("Requested deploy to " .. name)
         local spawn_idx =1
-        if Airbase.getByName(name):GetCoalition() == 1 then spawn_idx = 2 end
-        local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn[spawn_idx])
+        local ab = Airbase.getByName(name)
+        if ab:getCoalition() == 1 then spawn_idx = 2 end
+        local new_spawn_time = SpawnDefenseForces(name, timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn[spawn_idx])
         if new_spawn_time ~= nil then
             trigger.action.outSoundForCoalition(2, ableavesound)
             game_state["last_launched_time"] = new_spawn_time
@@ -247,7 +237,7 @@ for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
     log("Preparing menus for NorthGeorgiaFARPTransportSpawns")
     --local curMenu = MENU_COALITION_COMMAND:New(coalition.side.BLUE, "Deploy to " .. name .. " FARP/WAREHOUSE", FARPXportMenu, function() 
     local curMenu = CoalitionCommand(coalition.side.BLUE, "Deploy to " .. name .. " FARP/WAREHOUSE", FARPXportMenu, function() 
-        local new_spawn_time = SpawnDefenseForces(timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn)
+        local new_spawn_time = SpawnDefenseForces(name, timer.getAbsTime() + env.mission.start_time, game_state["last_launched_time"], spawn)
         if new_spawn_time ~= nil then
             trigger.action.outSoundForCoalition(2, farpleavesound)
             game_state["last_launched_time"] = new_spawn_time

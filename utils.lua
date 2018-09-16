@@ -18,3 +18,15 @@ function dump(o)
     end
     return result;
 end
+
+function SecondsToClock(seconds)
+  local seconds = tonumber(seconds)
+
+  if seconds <= 0 then
+    return "00m 00s";
+  else
+    mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
+    secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
+    return mins.."m "..secs.."s"
+  end
+end
