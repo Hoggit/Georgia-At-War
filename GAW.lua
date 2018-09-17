@@ -13,6 +13,7 @@ function log(str)
        logFile:flush()
     end
 end
+
 SecondsToClock = function(seconds)
   local seconds = tonumber(seconds)
 
@@ -25,7 +26,6 @@ SecondsToClock = function(seconds)
   end
 end
 
-log("Testing SecondsToclock -- " .. SecondsToClock(300))
 -- Replace the spawn stuff
 Spawner = function(grpName)
     local CallBack = {}
@@ -110,12 +110,21 @@ GroupMenu = function( groupId, text, parent )
     return missionCommands.addSubMenuForGroup( groupId, text, parent )
 end
 
+try = function(func, catch)
+    local r, e = pcall(func)
+    if not r then
+        catch(e)
+    end
+end
+
 CoalitionCommand = function(coalition, text, parent, handler)
-    missionCommands.addCommandForCoalition( coalition, text, parent, handler)
+    callback = try(handler, function(err) log("Error in coalition command" .. e) end)
+    missionCommands.addCommandForCoalition( coalition, text, parent, callback)
 end
 
 GroupCommand = function(group, text, parent, handler)
-    missionCommands.addCommandForGroup( group, text, parent, handler)
+    callback = try(handler, function(err) log("Error in coalition command" .. e) end)
+    missionCommands.addCommandForGroup( group, text, parent, callback)
 end
 
 MessageToGroup = function(groupId, text, displayTime)
