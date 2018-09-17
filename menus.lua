@@ -37,7 +37,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         MessageToGroup( Group:getID(), output, 60 )
     end)
 
-    local MissionMenu = GroupMenu(Group:getID(), "Get Mission Status", nil, function()
+    local MissionMenu = GroupCommand(Group:getID(), "Get Mission Status", nil, function()
         MessageToGroup(Group:getID(), TheaterUpdate("Russian Theater"), 60)
     end)
 
