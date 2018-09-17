@@ -58,7 +58,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             --TODO: Add BR etc. again. Can't easily figure it out yet.
             log("Setting coorrds: " .. mist.utils.tableShow(coord))
             local coords = {
-                mist.toStringLL(coord[2], coord[1], 3, false),
+                mist.tostringLL(coord[2], coord[1], 3, false),
                 "",
             }
             log("appending message")
@@ -75,7 +75,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
 
             local coords = {
-                mist.toStringLL(coord['y'], coord['x'], 3, false),
+                mist.tostringLL(coord['y'], coord['x'], 3, false),
                 --coord:ToStringLLDMS(), 
                 --coord:ToStringMGRS(),
                 --coord:ToStringLLDDM(),
@@ -92,7 +92,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
             local callsign = group_table['callsign']
             local coords = {
-                mist.toStringLL(coord['y'], coord['x'], 3, false),
+                mist.tostringLL(coord['y'], coord['x'], 3, false),
                 "",
             }
             
@@ -104,7 +104,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             local callsign = group_table['callsign']
             local spawn_name = group_table['spawn_name']
             local coords = {
-                mist.toStringLL(coord['y'], coord['x'], 3, false),
+                mist.tostringLL(coord['y'], coord['x'], 3, false),
                 "",
             }
 
@@ -124,7 +124,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             if coord then
                 local callsign = group_table['callsign']
                 local coords = {
-                    mist.toStringLL(coord['y'], coord['x'], 3, false),
+                    mist.tostringLL(coord['y'], coord['x'], 3, false),
                     "",
                 }
                 output = output .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. "\n" -- " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
@@ -143,7 +143,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             if coord then
                 local group_coord = GetCoordinate(Group)
                 local coords = {
-                    mist.toStringLL(coord['y'], coord['x'], 3, false),
+                    mist.tostringLL(coord['y'], coord['x'], 3, false),
                     --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
                     --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
                     --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
@@ -159,7 +159,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             local group_coord = GetCoordinate(Group)
 
             local coords = {
-                mist.toStringLL(coord['y'], coord['x'], 3, false),
+                mist.tostringLL(coord['y'], coord['x'], 3, false),
                 --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
                 --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
                 --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),

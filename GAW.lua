@@ -111,19 +111,21 @@ GroupMenu = function( groupId, text, parent )
 end
 
 try = function(func, catch)
-    local r, e = pcall(func)
-    if not r then
-        catch(e)
+    return function()
+        local r, e = pcall(func)
+        if not r then
+            catch(e)
+        end
     end
 end
 
 CoalitionCommand = function(coalition, text, parent, handler)
-    callback = try(handler, function(err) log("Error in coalition command" .. e) end)
+    callback = try(handler, function(err) log("Error in coalition command: " .. err) end)
     missionCommands.addCommandForCoalition( coalition, text, parent, callback)
 end
 
 GroupCommand = function(group, text, parent, handler)
-    callback = try(handler, function(err) log("Error in coalition command" .. e) end)
+    callback = try(handler, function(err) log("Error in group command" .. err) end)
     missionCommands.addCommandForGroup( group, text, parent, callback)
 end
 
@@ -175,6 +177,7 @@ function allOnGround(group)
     else
         grp = group
     end
+    if not grp then return false end
 
     for i,unit in ipairs(grp:getUnits()) do
         if unit:inAir() then allOnGround = false end
