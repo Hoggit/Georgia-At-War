@@ -48,16 +48,20 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     end)
 
     GroupCommand(Group:getID(), "SEAD", MissionMenu, function()
+        log("Sending SAM report")
         local sams ="ACTIVE SAM REPORT:\n"
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
+            log("Iterating sam group " .. group_name)
             local type_name = group_table["spawn_name"]
-            local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
+            local coord = {group_table["position"][1], group_table["position"][2]}
             local callsign = group_table['callsign']
             --TODO: Add BR etc. again. Can't easily figure it out yet.
+            log("Setting coorrds: " .. mist.utils.tableShow(coord))
             local coords = {
-                mist.toStringLL(coord['y'], coord['x'], 3, false),
+                mist.toStringLL(coord[2], coord[1], 3, false),
                 "",
             }
+            log("appending message")
             sams = sams .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. "\n"
         end
         MessageToGroup(Group:getID(), sams, 60)
@@ -175,7 +179,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         end
 
         for i,v in ipairs(oncall_cas) do
-            if v.name == Group:GetName() then
+            if v.name == Group:getName() then
                 --MESSAGE:New("You are already on call for CAS.  Stand by for tasking")
                 MessageToGroup( Group:getID(), "You are already on call for CAS.  Stand by for tasking", 30)
                 return
@@ -184,14 +188,14 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
 
         trigger.action.outSoundForGroup(Group:getID(), standbycassound)
         --MESSAGE:New("Understood " .. Group:GetName() .. ", hold position east of Anapa and stand by for tasking.\nSelect 'Check Out On-Call CAS' to cancel mission" ):ToGroup(Group)
-        MessageToGroup(Group:getID(), "Understood " .. Group:GetName() .. ", hold position east of Anapa and stand by for tasking.\nSelect 'Check Out On-Call CAS' to cancel mission", 30)
-        table.insert(oncall_cas, {name = Group:GetName(), mission = nil})
+        MessageToGroup(Group:getID(), "Understood " .. Group:getName() .. ", hold position east of Anapa and stand by for tasking.\nSelect 'Check Out On-Call CAS' to cancel mission", 30)
+        table.insert(oncall_cas, {name = Group:getName(), mission = nil})
     end)
 
     --MENU_GROUP_COMMAND:New(Group, "Check Out On-Call CAS", MissionMenu, function()
     GroupCommand(Group:getID(), "Check Out On-Call CAS", MissionMenu, function()
         for i,v in ipairs(oncall_cas) do
-            if v.name == Group:GetName() then
+            if v.name == Group:getName() then
                 pcall(function() Group.getByName(oncall_cas[i].mission[1]):destroy() end)
                 pcall(function() Group.getByName(oncall_cas[i].mission[2]):destroy() end)
                 table.remove(oncall_cas, i)

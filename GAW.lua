@@ -469,13 +469,15 @@ ConvoyUpdate = function(group)
         end
     end
 
+    log("Done iterating convoys")
     if numConvoys == 0 then
         output = output .. "No Active Convoys"
     end
     if group == 'all' then
         MessageToAll(output, 20)
     else
-        MessageToGroup(group, output, 20)
+
+        MessageToGroup(group:getID(), output, 20)
     end
     log("Done convoy update")
 end
