@@ -53,12 +53,12 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
             log("Iterating sam group " .. group_name)
             local type_name = group_table["spawn_name"]
-            local coord = {group_table["position"][1], group_table["position"][2]}
+            local lat,long = coord.LOtoLL(group_table["position"])
             local callsign = group_table['callsign']
             --TODO: Add BR etc. again. Can't easily figure it out yet.
-            log("Setting coorrds: " .. mist.utils.tableShow(coord))
+            log("Setting coorrds: " .. mist.utils.tableShow(group_table["position"]))
             local coords = {
-                mist.tostringLL(coord[2], coord[1], 3, false),
+                mist.tostringLL(lat, long, 3),
                 "",
             }
             log("appending message")
@@ -72,10 +72,9 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         local bais ="BAI TASK LIST:\n"
         for id,group_table in pairs(game_state["Theaters"]["Russian Theater"]["BAI"]) do
             local type_name = group_table["spawn_name"]
-            local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
-
+            local lat,long = coord.LOtoLL(group_table["position"])
             local coords = {
-                mist.tostringLL(coord['y'], coord['x'], 3, false),
+                mist.tostringLL(lat, long, 3),
                 --coord:ToStringLLDMS(), 
                 --coord:ToStringMGRS(),
                 --coord:ToStringLLDDM(),
@@ -89,10 +88,10 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     GroupCommand(Group:getID(), "Strike", MissionMenu, function()
         local strikes ="STRIKE TARGET LIST:\n"
         for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["C2"]) do
-            local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
+            local lat,long = coord.LOtoLL(group_table["position"])
             local callsign = group_table['callsign']
             local coords = {
-                mist.tostringLL(coord['y'], coord['x'], 3, false),
+                mist.tostringLL(lat, long, 3),
                 "",
             }
             
@@ -100,11 +99,11 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         end
         
         for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
-            local coord = COORDINATE:NewFromVec2({['x'] = group_table["position"][1], ['y'] = group_table["position"][2]})
+            local lat,long = coord.LOtoLL(group_table["position"])
             local callsign = group_table['callsign']
             local spawn_name = group_table['spawn_name']
             local coords = {
-                mist.tostringLL(coord['y'], coord['x'], 3, false),
+                mist.tostringLL(lat, long, 3),
                 "",
             }
 
@@ -120,11 +119,11 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         local output ="MARITIME REPORT:\n"
         for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["NavalStrike"]) do
             local type_name = group_table["spawn_name"]
-            local coord = {['x'] = group_table["position"][1], ['y'] = group_table["position"][2]}
+            local lat,long = coord.LOtoLL(group_table["position"])
             if coord then
                 local callsign = group_table['callsign']
                 local coords = {
-                    mist.tostringLL(coord['y'], coord['x'], 3, false),
+                    mist.tostringLL(lat, long, 3),
                     "",
                 }
                 output = output .. "OBJ: ".. callsign .." -- TYPE: " .. type_name ..": \t" .. coords[type] .. "\n" -- " " .. coord:ToStringBR(Group:GetCoordinate(), useSettings) .. "\n"
@@ -143,7 +142,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             if coord then
                 local group_coord = GetCoordinate(Group)
                 local coords = {
-                    mist.tostringLL(coord['y'], coord['x'], 3, false),
+                    mist.tostringLL(lat, long, 3),
                     --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
                     --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
                     --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
@@ -159,7 +158,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             local group_coord = GetCoordinate(Group)
 
             local coords = {
-                mist.tostringLL(coord['y'], coord['x'], 3, false),
+                mist.tostringLL(lat, long, 3),
                 --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
                 --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
                 --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),

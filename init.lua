@@ -88,22 +88,22 @@ if statefile then
         if data.spawn_name == "SA6" then spawn = RussianTheaterSA6Spawn[1] end
         if data.spawn_name == "SA10" then spawn = RussianTheaterSA10Spawn[1] end
         spawn:SpawnAtPoint({
-            x = data['position'][1], 
-            y = data['position'][2]
+            x = data['position'].x,
+            y = data['position'].y
         })
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["C2"]) do
         RussianTheaterC2Spawn[1]:SpawnAtPoint({
-            x = data['position'][1],
-            y = data['position'][2]
+            x = data['position'].x,
+            y = data['position'].y
         })
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["EWR"]) do
         RussianTheaterEWRSpawn[1]:SpawnAtPoint({
-            x = data['position'][1],
-            y = data['position'][2]
+            x = data['position'].x,
+            y = data['position'].y
         })
     end
 
@@ -115,8 +115,8 @@ if statefile then
         if data['spawn_name'] == 'CommsArray' then spawn = CommsArraySpawn end
         if data['spawn_name'] == 'PowerPlant' then spawn = PowerPlantSpawn end
         local static = spawn:Spawn({
-            data['position'][1],
-            data['position'][2]
+            data['position'].x,
+            data['position'].y
         })
     end
 
@@ -127,8 +127,8 @@ if statefile then
         if data['spawn_name'] == "ARMOR COLUMN" then spawn = ArmorColumnSpawn[1] end
         if data['spawn_name'] == "MECH INF" then spawn = MechInfSpawn[1] end
         local baitarget = spawn:SpawnAtPoint({
-            x = data['position'][1],
-            y = data['position'][2]
+            x = data['position'].x,
+            y = data['position'].y
         })
     end
 
@@ -213,7 +213,7 @@ else
         -- AddNavalStrike("Russian Theater")(STATIC:FindByName(static:getName()), "Oil Platform", callsign)
     -- end
 
-    AirbaseSpawns[AIRBASE.Caucasus.Krasnodar_Pashkovsky][1]:Spawn()
+    AirbaseSpawns["Krasnodar-Pashkovsky"][1]:Spawn()
     NWFARPDEF:Spawn()
     SWFARPDEF:Spawn()
     NEFARPDEF:Spawn()

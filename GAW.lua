@@ -97,7 +97,7 @@ end
 GetCoordinate = function(grp)
     local firstUnit = grp:GetUnit(1)
     if firstUnit then
-        return firstUnit:getPosition()
+        return firstUnit:getPosition().p
     end
 end
 
@@ -376,11 +376,10 @@ AddObjective = function(type, id)
         end
         local unit = group:getUnit(1)
         if unit then
-            local point = mist.utils.makeVec2(unit:getPosition().p)
             game_state["Theaters"]["Russian Theater"][type][group:getName()] = {
                 ["callsign"] = callsign, 
                 ["spawn_name"] = spawn_name, 
-                ["position"] = {point.x, point.y},
+                ["position"] = unit:getPosition().p,
                 ["markerID"] = id
             }
 
@@ -390,11 +389,11 @@ AddObjective = function(type, id)
 end
 
 AddStaticObjective = function(id, callsign, spawn_name, staticNames)
-    local point = mist.utils.makeVec2(StaticObject.getByName(staticNames[1]):getPosition().p)
+    local point = StaticObject.getByName(staticNames[1]):getPosition().p
     game_state["Theaters"]["Russian Theater"]["StrikeTargets"]["strike" .. id] = {
         ['callsign'] = callsign,
         ['spawn_name'] = spawn_name,
-        ['position'] = {point.x, point.y},
+        ['position'] = point,
         ['markerID'] = id,
         ['statics'] = staticNames
     }
