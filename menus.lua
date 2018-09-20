@@ -121,30 +121,17 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         local intercepts ="INTERCEPTION TARGETS:\n"
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
             local g = Group.getByName(group_name)
-            local lat,long = coord.LOtoLL(GetCoordinate(g))
+            local group_point = GetCoordinate(g)
+            local lat,long = coord.LOtoLL(group_point)
             if lat and long then
-                local group_coord = GetCoordinate(Group)
-                local coords = {
-                    mist.tostringLL(lat, long, 3),
-                    --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
-                }
-                intercepts = intercepts .. "AWACS: \t" .. coords[type] .. "\n"
+                intercepts = intercepts .. "AWACS: \t" .. mist.getBRString({units = {Group:getUnit(1):getName()}, ref=group_point, alt=false, metric=true}) .. "\n"
             end
         end
 
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
             local g = Group.getByName(group_name)
             local coord = GetCoordinate(g)
-            local group_coord = GetCoordinate(Group)
-
-            local coords = {
-                mist.tostringLL(lat, long, 3),
-                --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDMS(), 
-                --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringMGRS(),
-                --coord:ToStringBRA(group_coord, useSettings) .. " -- " .. coord:ToStringLLDDM(),
-                --coord:ToStringBRA(group_coord, useSettings),
-            }
-            intercepts = intercepts .. "TANKER: \t" .. coords[type] .. "\n"
+            intercepts = intercepts .. "TANKER: \t" ..  mist.getBRString({units = {Group:getUnit(1):getName()}, ref=group_point, alt=false, metric=true}) .. "\n"
         end
         MessageToGroup(Group:getID(), intercepts, 60)
     end)

@@ -488,7 +488,6 @@ AddAWACSTarget = function(theater)
 end
 
 AddRussianTheaterAWACSTarget = function(group)
-    mist.utils.tableShow(group, 15)
     AddAWACSTarget("Russian Theater")(group)
 end
 
