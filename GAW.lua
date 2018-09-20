@@ -186,6 +186,24 @@ function allOnGround(group)
     return allOnGround
 end
 
+checkedSams = {}
+checkedEWRs = {}
+checkedC2s = {}
+
+buildCheckSAMEvent = function(group, callsign)
+    checkedSams[group] = callsign
+end
+
+buildCheckEWREvent = function(group, callsign)
+    checkedEWRs[group] = callsign
+end
+
+buildCheckC2Event = function(group, callsign)
+    checkedC2s[group] = callsign
+end
+
+mist.addEventHandler(handleDeaths)
+
 -- Setup an initial state object and provide functions for manipulating that state.
 game_state = {
     ["last_launched_time"] = 0,
@@ -255,6 +273,53 @@ logiSlots = {
 function handleDeaths(event)
     -- The scheduledSpawn stuff only works for groups with a single unit atm.
     if event.id == world.event.S_EVENT_DEAD or event.id == world.event.S_EVENT_ENGINE_SHUTDOWN then
+        if checkedSams[event.initiator:getGroup():getName()] then
+            local radars = 0
+            local launchers = 0
+            for i, unit in pairs(event.initiator:getGroup():getUnits()) do
+                local type_name = unit:getTypeName()
+                if type_name == "Kub 2P25 ln" then launchers = launchers + 1 end
+                if type_name == "Kub 1S91 str" then radars = radars + 1 end
+                if type_name == "S-300PS 64H6E sr" then radars = radars + 1 end
+                if type_name == "S-300PS 40B6MD sr" then radars = radars + 1 end
+                if type_name == "S-300PS 40B6M tr" then radars = radars + 1 end
+                if type_name == "S-300PS 5P85C ln" then launchers = launchers + 1 end
+                if type_name == "S-300PS 5P85D ln" then launchers = launchers + 1 end
+            end
+
+            if radars == 0 or launchers == 0 then
+                game_state['Theaters']['Russian Theater']['StrategicSAM'][event.initiator:getGroup():GetName()] = nil
+                checkedSams[event.initiator:getGroup():getName()] = nil
+                trigger.action.outText("SAM " .. callsign .. " has been destroyed!", 15)
+            end
+        end
+
+        if checkedC2s[event.initiator:getGroup():getName()] then
+            local cps = 0
+            for i, unit in pairs(event.initiator:getGroup():getUnits()) do
+                if unit:getTypeName() == "SKP-11" then cps = cps + 1 end
+            end
+
+            if cps == 0 then
+                game_state['Theaters']['Russian Theater']['C2'][event.initiator:getGroup():GetName()] = nil
+                checkedC2s[event.initiator:getGroup():getName()] = nil
+                trigger.action.outText("C2 " .. callsign .. " has been destroyed!", 15)
+            end
+        end
+
+        if checkedEWRs[event.initiator:getGroup():getName()] then
+            local ewrs = 0
+            for i, unit in pairs(event.initiator:getGroup():getUnits()) do
+                if unit:getTypeName() == "1L13 EWR" then ewrs = ewrs + 1 end
+            end
+
+            if ewrs == 0 then
+                game_state['Theaters']['Russian Theater']['EWR'][event.initiator:getGroup():GetName()] = nil
+                checkedEWRs[event.initiator:getGroup():getName()] = nil
+                trigger.action.outText("EWR " .. callsign .. " has been destroyed!", 15)
+            end
+        end
+
         if scheduledSpawns[event.initiator:getName()] then
             local spawner = scheduledSpawns[event.initiator:getName()][1]
             local stimer = scheduledSpawns[event.initiator:getName()][2]
