@@ -45,12 +45,18 @@ Spawner = function(grpName)
                 action = "clone"
             }
 
-            local name = mist.teleportToPoint(vars).name
-            if CallBack.func then
-                if not CallBack.args then CallBack.args = {} end
-                mist.scheduleFunction(CallBack.func, {Group.getByName(name), unpack(CallBack.args)}, timer.getTime() + 1)
+            local new_group = mist.teleportToPoint(vars)
+            if new_group then
+                local name = new_group.name
+                if CallBack.func then
+                    if not CallBack.args then CallBack.args = {} end
+                    mist.scheduleFunction(CallBack.func, {Group.getByName(name), unpack(CallBack.args)}, timer.getTime() + 1)
+                end
+                return Group.getByName(name)
+            else
+                trigger.action.outText("Error spawning " .. grpName, 15)
             end
-            return Group.getByName(name)
+
         end,
         SpawnInZone = function(self, zoneName)
             local added_grp = Group.getByName(mist.cloneInZone(grpName, zoneName).name)

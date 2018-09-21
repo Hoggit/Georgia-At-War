@@ -89,21 +89,21 @@ if statefile then
         if data.spawn_name == "SA10" then spawn = RussianTheaterSA10Spawn[1] end
         spawn:SpawnAtPoint({
             x = data['position'].x,
-            y = data['position'].y
+            y = data['position'].z
         })
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["C2"]) do
         RussianTheaterC2Spawn[1]:SpawnAtPoint({
             x = data['position'].x,
-            y = data['position'].y
+            y = data['position'].z
         })
     end
 
     for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["EWR"]) do
         RussianTheaterEWRSpawn[1]:SpawnAtPoint({
             x = data['position'].x,
-            y = data['position'].y
+            y = data['position'].z
         })
     end
 
@@ -116,7 +116,7 @@ if statefile then
         if data['spawn_name'] == 'PowerPlant' then spawn = PowerPlantSpawn end
         local static = spawn:Spawn({
             data['position'].x,
-            data['position'].y
+            data['position'].z
         })
     end
 
@@ -128,7 +128,7 @@ if statefile then
         if data['spawn_name'] == "MECH INF" then spawn = MechInfSpawn[1] end
         local baitarget = spawn:SpawnAtPoint({
             x = data['position'].x,
-            y = data['position'].y
+            y = data['position'].z
         })
     end
 
@@ -136,23 +136,38 @@ if statefile then
 
     for idx, data in ipairs(saved_game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"]) do
         if data.name == 'avenger' then
-            avengerspawn:SpawnAtPoint(data.pos)
+            avengerspawn:SpawnAtPoint({
+                x = data.pos.x,
+                y = data.pos.z
+            })
         end
 
         if data.name == 'ammo' then
-            ammospawn:SpawnAtPoint(data.pos)
+            ammospawn:SpawnAtPoint({
+                x = data.pos.x,
+                y = data.pos.z
+            })
         end
 
         if data.name == 'gepard' then
-            gepardspawn:SpawnAtPoint(data.pos)
+            gepardspawn:SpawnAtPoint({
+                x = data.pos.x,
+                y = data.pos.z
+            })
         end
 
         if data.name == 'mlrs' then
-            mlrsspawn:SpawnAtPoint(data.pos)
+            mlrsspawn:SpawnAtPoint({
+                x = data.pos.x,
+                y = data.pos.z
+            })
         end
 
         if data.name == 'jtac' then
-            local _spawnedGroup = jtacspawn:SpawnAtPoint(data.pos)
+            local _spawnedGroup = jtacspawn:SpawnAtPoint({
+                x = data.pos.x,
+                y = data.pos.z
+            })
             local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
             table.insert(ctld.jtacGeneratedLaserCodes, _code)
             ctld.JTACAutoLase(_spawnedGroup, _code)
