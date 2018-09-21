@@ -41,7 +41,7 @@ if statefile then
             if ab_logi_slots[name] then
                 activateLogi(ab_logi_slots[name])
             end
-        end        
+        end
 
         for i,grp in ipairs(abslots[name]) do
             trigger.action.setUserFlag(grp, flagval)
@@ -72,7 +72,7 @@ if statefile then
         end
 
         for i,grp in ipairs(abslots[name]) do
-            trigger.action.setUserFlag(grp, flagval)     
+            trigger.action.setUserFlag(grp, flagval)
         end
 
         if name == "MK Warehouse" and coalition == 2 then
@@ -109,7 +109,7 @@ if statefile then
 
     trigger.action.outText("Finished processing strategic assets", 10)
 
-    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do        
+    for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
         local spawn
         if data['spawn_name'] == 'AmmoDump' then spawn = AmmoDumpSpawn end
         if data['spawn_name'] == 'CommsArray' then spawn = CommsArraySpawn end
@@ -276,9 +276,14 @@ end
 
 -- Kick off supports
 mist.scheduleFunction(function()
+    -- Friendly
     TexacoSpawn:Spawn()
     ShellSpawn:Spawn()
     OverlordSpawn:Spawn()
+
+    -- Enemy
+    RussianTheaterAWACSSpawn:Spawn()
+    RUSTankerSpawn:Spawn()
 end, {}, timer.getTime() + 10)
 
 NorthGeorgiaTransportSpawns["Novorossiysk"][1]:Spawn()

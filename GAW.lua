@@ -110,9 +110,16 @@ GroupMenu = function( groupId, text, parent )
     return missionCommands.addSubMenuForGroup( groupId, text, parent )
 end
 
+
+HandleError = function(err)
+    log("Error in pcall: "  .. err)
+    log(debug.traceback())
+    return err
+end
+
 try = function(func, catch)
     return function()
-        local r, e = pcall(func)
+        local r, e = xpcall(func, HandleError)
         if not r then
             catch(e)
         end
@@ -429,7 +436,9 @@ local objectiveTypeMap = {
     ["EWR"] = "EWR",
     ["StrikeTargets"] = "STRIKE",
     ["InterceptTargets"] = "INTERCEPT",
-    ["BAI"] = "BAI"
+    ["BAI"] = "BAI",
+    ["AWACS"] = "AWACS",
+    ["Tanker"] = "Tanker"
 }
 
 mist.addEventHandler(baseCaptured)
