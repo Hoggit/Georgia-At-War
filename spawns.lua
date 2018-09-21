@@ -5,7 +5,7 @@ objective_names = {
     "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Pikachu", "Bulbasaur", "Grimm", "Aurora", "Grumpy", "Sleepy",
     "Pete", "Bijou", "Momo",
     --Patreon
-    "Eiger", "Snax", "Asteroid", "Sephton", "Blacklist", "Boot", "Maria", 
+    "Eiger", "Snax", "Asteroid", "Sephton", "Blacklist", "Boot", "Maria",
     "Cheeki Breeki", "Husky", "Carrack", "Vegabond", "Jar Jar", "Plowshare", "Primrose"
 }
 
@@ -65,7 +65,7 @@ local logispawn = {
 }
 
 -- Forward Logistics spawns
-NovoLogiSpawn = {logispawn, "HEMTT TFFT", 
+NovoLogiSpawn = {logispawn, "HEMTT TFFT",
     {
         ['x'] = -39857.5703125,
         ['y'] = 279000.5
@@ -73,7 +73,7 @@ NovoLogiSpawn = {logispawn, "HEMTT TFFT",
     "novologizone"
 }
 
-KryLogiSpawn = {logispawn, "HEMTT TFFT", 
+KryLogiSpawn = {logispawn, "HEMTT TFFT",
     {
         ['x'] = -5951.622558,
         ['y'] = 293862.25
@@ -81,7 +81,7 @@ KryLogiSpawn = {logispawn, "HEMTT TFFT",
     "krymsklogizone"
 }
 
-KrasCenterLogiSpawn = {logispawn, "HEMTT TFFT", 
+KrasCenterLogiSpawn = {logispawn, "HEMTT TFFT",
     {
         ['x'] = 11981.98046875,
         ['y'] = 364532.65625
@@ -89,7 +89,7 @@ KrasCenterLogiSpawn = {logispawn, "HEMTT TFFT",
     "krascenterlogizone"
 }
 
-KrasPashLogiSpawn = {logispawn, "HEMTT TFFT", 
+KrasPashLogiSpawn = {logispawn, "HEMTT TFFT",
     {
         ['x'] = 8229.2353515625,
         ['y'] = 386831.65625
@@ -97,7 +97,7 @@ KrasPashLogiSpawn = {logispawn, "HEMTT TFFT",
     "kraspashlogizone"
 }
 
-MaykopLogiSpawn = {logispawn, "HEMTT TFFT", 
+MaykopLogiSpawn = {logispawn, "HEMTT TFFT",
     {
         ['x'] = -26322.15625,
         ['y'] = 421495.96875
@@ -105,7 +105,7 @@ MaykopLogiSpawn = {logispawn, "HEMTT TFFT",
     "mklogizone"
 }
 
-SEFARPLogiSpawn = {logispawn, "HEMTT TFFT", 
+SEFARPLogiSpawn = {logispawn, "HEMTT TFFT",
     {
         ['x'] = -26322.15625,
         ['y'] = 421495.96875
@@ -116,7 +116,7 @@ SEFARPLogiSpawn = {logispawn, "HEMTT TFFT",
 -- Transport Spawns
 NorthGeorgiaTransportSpawns = {
     ['Novorossiysk'] = {Spawner("NovoroTransport"), Spawner("NovoroTransportHelo"), NovoLogiSpawn},
-    ['Gelendzhik'] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil}, 
+    ['Gelendzhik'] = {Spawner("GelenTransport"), Spawner("GelenTransportHelo"), nil},
     ['Krasnodar-Center'] = {Spawner("KDARTransport"), Spawner("KrasCenterTransportHelo"), KrasCenterLogiSpawn},
     ['Krasnodar_Pashkovsky'] = {Spawner("KDAR2Transport"), Spawner("KrasPashTransportHelo"), nil},
     ['Krymsk'] = {Spawner("KrymskTransport"), Spawner("KrymskTransportHelo"), KryLogiSpawn}
@@ -253,7 +253,7 @@ SpawnStaticDefense = function(group_name, position)
     end
 
     groupData.clone = true
-    mist.dynAdd(groupData)         
+    mist.dynAdd(groupData)
 end
 
 -- Naval Strike target Spawns
@@ -314,7 +314,7 @@ RussianTheaterSA6Spawn[1]:OnSpawnGroup(function(SpawnedGroup)
     --MENU_MISSION_COMMAND:New("DESTROY " .. callsign, sammenu, function()
     --    SpawnedGroup:Destroy()
     --end)
-    
+
     AddObjective("StrategicSAM", getMarkerId())(SpawnedGroup, RussianTheaterSA6Spawn[2], callsign)
     buildCheckSAMEvent(SpawnedGroup, callsign)
 end)

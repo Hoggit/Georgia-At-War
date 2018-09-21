@@ -9,21 +9,21 @@ logFile = io.open(lfs.writedir()..[[Logs\Hoggit-GAW.log]], "w")
 function log(str)
     if str == nil then str = 'nil' end
     if logFile then
-       logFile:write("HOGGIT GAW LOG - " .. str .."\r\n")
-       logFile:flush()
+        logFile:write("HOGGIT GAW LOG - " .. str .."\r\n")
+        logFile:flush()
     end
 end
 
 SecondsToClock = function(seconds)
-  local seconds = tonumber(seconds)
+    local seconds = tonumber(seconds)
 
-  if seconds <= 0 then
-    return "00m 00s";
-  else
-    mins = string.format("%02.f", math.floor(seconds/60));
-    secs = string.format("%02.f", math.floor(seconds - mins *60));
-    return mins.."m "..secs.."s"
-  end
+    if seconds <= 0 then
+        return "00m 00s";
+    else
+        mins = string.format("%02.f", math.floor(seconds/60));
+        secs = string.format("%02.f", math.floor(seconds - mins *60));
+        return mins.."m "..secs.."s"
+    end
 end
 
 -- Replace the spawn stuff
@@ -154,7 +154,7 @@ log("Logging System INIT")
 
 function isAlive(group)
     local grp = nil
-    if type(group) == "string" then 
+    if type(group) == "string" then
         grp = Group.getByName(group)
     else
         grp = group
@@ -162,17 +162,17 @@ function isAlive(group)
     if grp and grp:isExist() and grp:getSize() > 0 then return true else return false end
 end
 
-function groupIsDead(groupName) 
-	if (Group.getByName(groupName) and Group.getByName(groupName):isExist() == false) or (Group.getByName(groupName) and #Group.getByName(groupName):getUnits() < 1) or not Group.getByName(groupName) then
-		return true
-	end
-	return false
+function groupIsDead(groupName)
+    if (Group.getByName(groupName) and Group.getByName(groupName):isExist() == false) or (Group.getByName(groupName) and #Group.getByName(groupName):getUnits() < 1) or not Group.getByName(groupName) then
+        return true
+    end
+    return false
 end
 
 function allOnGround(group)
     local grp = nil
     local allOnGround = true
-    if type(group) == "string" then 
+    if type(group) == "string" then
         grp = Group.getByName(group)
     else
         grp = group
@@ -354,7 +354,7 @@ function securityForcesLanding(event)
                 else
                     trigger.action.outSoundForCoalition(2, abcapsound)
                 end
-    
+
                 if xport[4][3] then
                     activateLogi(xport[4][3])
                     log("Logi activated")
@@ -401,7 +401,7 @@ function baseCaptured(event)
 
         if abslots[abname] then
             for i,grp in ipairs(abslots[abname]) do
-                trigger.action.setUserFlag(grp, flagval)     
+                trigger.action.setUserFlag(grp, flagval)
             end
         end
 
@@ -413,10 +413,10 @@ function baseCaptured(event)
             game_state["Theaters"]["Russian Theater"]['FARPS'][abname] = coalition
         else
             game_state["Theaters"]["Russian Theater"]['Airfields'][abname] = coalition
-        end 
+        end
 
         --if capString then
-            --MESSAGE:New(event.place:getName() .. " has been captured by " .. capString, 20):ToAll()
+        --MESSAGE:New(event.place:getName() .. " has been captured by " .. capString, 20):ToAll()
         --end
     end
 end
@@ -442,8 +442,8 @@ AddObjective = function(type, id)
         local unit = group:getUnit(1)
         if unit then
             game_state["Theaters"]["Russian Theater"][type][group:getName()] = {
-                ["callsign"] = callsign, 
-                ["spawn_name"] = spawn_name, 
+                ["callsign"] = callsign,
+                ["spawn_name"] = spawn_name,
                 ["position"] = unit:getPosition().p,
                 ["markerID"] = id
             }
@@ -533,11 +533,11 @@ ConvoyUpdate = function(group)
                     table.insert(names, unit:getName())
                 end
                 output = output .. convoy_info[2] .." MGRS: " .. mist.getMGRSString({
-                    units=names, 
+                    units=names,
                     acc=2
                 }) .. "\nLat/Long: " .. mist.getLLString({
-                    units=names, 
-                    acc=1, 
+                    units=names,
+                    acc=1,
                     DMS=true
                 })  .. "\n\n"
             end

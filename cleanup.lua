@@ -2,7 +2,7 @@ function cleanup()
     log("Starting Cleanup BAI Targets")
     -- Get Alive BAI Targets and cleanup state
     local baitargets = game_state["Theaters"]["Russian Theater"]["BAI"]
-    for group_name, baitarget_table in pairs(baitargets) do        
+    for group_name, baitarget_table in pairs(baitargets) do
         local baitarget = Group.getByName(group_name)
         if baitarget and isAlive(baitarget) then
             local alive_units = 0
@@ -67,7 +67,7 @@ function cleanup()
             local staticunit = StaticObject.getByName(staticname)
             if staticunit and staticunit:getLife() > 0 and staticunit:isExist() then
                 alive_units = alive_units + 1
-            end 
+            end
         end
 
         if alive_units == 0 then
