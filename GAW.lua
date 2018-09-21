@@ -215,8 +215,6 @@ buildCheckC2Event = function(group, callsign)
     checkedC2s[group] = callsign
 end
 
-mist.addEventHandler(handleDeaths)
-
 -- Setup an initial state object and provide functions for manipulating that state.
 game_state = {
     ["last_launched_time"] = 0,
