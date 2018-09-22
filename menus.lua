@@ -213,7 +213,7 @@ function groupBirthHandler( Event )
     local grp = Event.initiator:getGroup()
     if grp then
         for i,u in ipairs(grp:getUnits()) do
-            if u:getPlayerName() ~= "" then
+            if u:getPlayerName() and u:getPlayerName() ~= "" then
                 buildMenu(grp)
             end
         end
