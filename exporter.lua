@@ -44,7 +44,7 @@ ctld.addCallback(function(_args)
 
         table.insert(game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"], {
             name=name,
-            pos=Group.getByName(groupName):getPosition().p
+            pos=Group.getByName(groupname):getPosition().p
         })
 
         enumerateCTLD()
