@@ -2,11 +2,13 @@
 XportMenu = CoalitionMenu(coalition.side.BLUE, "Deploy Airfield Security Forces")
 FARPXportMenu = CoalitionMenu(coalition.side.BLUE, "Deploy FARP/Warehouse Security Forces")
 
-
-GetBRString = function(grp, p, metric)
+GetBRString = function(src_pt, tgt_pt, metric)
     local unit = metric and 'km' or 'nm'
-
-    return mist.getBRString({units = {grp:getUnit(1):getName()}, ref=p, alt=false, metric=metric}) .. unit
+    local source_pt = mist.utils.makeVec3(src_pt, 0)
+    local target_pt = mist.utils.makeVec3(tgt_pt, 0)
+    local dir = mist.utils.getDir(source_pt, target_pt)
+    local dist = mist.utils.get2DDist(source_pt, target_pt)
+    return mist.tostringBR(dir, dist, nil, metric) .. unit
 end
 
 GetCoordinateString = function(grp, pos)
@@ -33,13 +35,11 @@ GetCoordinateString = function(grp, pos)
         function() return mist.tostringLL(lat, long, 3, true) end,
         function() return "" end,
     }
-    return coords[type]() .. " -- " .. GetBRString(grp, pos, metric)
+    return coords[type]() .. " -- " .. GetBRString(GetCoordinate(grp), pos, metric)
 end
 
 -- Per group menu, called on groupspawn
 buildMenu = function(Group)
-    log("Building radio menus")
-
     GroupCommand(Group:getID(), "FARP/WAREHOUSE Locations", nil, function()
         local output = [[NW FARP: 45 12'10"N 38 4'45" E
 SW FARP: 44 55'45"N 38 5'17" E
@@ -115,19 +115,21 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
 
     GroupCommand(Group:getID(), "Interception", MissionMenu, function()
         local intercepts ="INTERCEPTION TARGETS:\n"
-        for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
+        for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
+            log("Found AWACS group named " .. group_name .. ". Being queried by " .. Group:getName())
             local g = Group.getByName(group_name)
+            local GroupPos = GetCoordinate(Group)
             local group_point = GetCoordinate(g)
             local lat,long = coord.LOtoLL(group_point)
             if lat and long then
-                intercepts = intercepts .. "AWACS: \t" .. GetBRString(Group, group_point, true) .. "\n"
+                intercepts = intercepts .. "AWACS: " .. group_table["callsign"] .. "\t--\t" .. GetBRString(GroupPos, group_point, true) .. "\n"
             end
         end
 
         for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
             local g = Group.getByName(group_name)
             local group_point = GetCoordinate(g)
-            intercepts = intercepts .. "TANKER: \t" ..  GetBRString(Group, group_point, true) .. "\n"
+            intercepts = intercepts .. "Tanker" .. group_table["callsign"] .. "\t--\t" .. GetBRString(GetCoordinate(Group), group_point, true) .. "\n"
         end
         MessageToGroup(Group:getID(), intercepts, 60)
     end)
@@ -172,7 +174,6 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             end
         end
     end)
-    log("Done building radio menus")
 end
 
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do

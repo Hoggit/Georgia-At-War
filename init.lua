@@ -298,7 +298,6 @@ mist.scheduleFunction(function()
 
     -- Enemy
     RussianTheaterAWACSSpawn:Spawn()
-    RUSTankerSpawn:Spawn()
 end, {}, timer.getTime() + 10)
 
 NorthGeorgiaTransportSpawns["Novorossiysk"][1]:Spawn()

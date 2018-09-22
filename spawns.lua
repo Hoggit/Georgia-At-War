@@ -157,7 +157,6 @@ RussianTheaterEWRSpawn = { Spawner("EWR"), "EWR" }
 RussianTheaterC2Spawn = { Spawner("C2"), "C2" }
 RussianTheaterAirfieldDefSpawn = Spawner("Russia-Airfield-Def")
 RussianTheaterAWACSSpawn = Spawner("A50")
-RUSTankerSpawn = Spawner("IL78-RUSTanker")
 RussianTheaterAWACSPatrol = Spawner("SU27-RUSAWACS Patrol")
 
 RussianTheaterAWACSSpawn:OnSpawnGroup(function(grp)

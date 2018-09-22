@@ -101,7 +101,7 @@ StaticSpawner = function(groupName, numberInGroup, groupOffsets)
 end
 
 GetCoordinate = function(grp)
-    local firstUnit = grp:GetUnit(1)
+    local firstUnit = grp:getUnit(1)
     if firstUnit then
         return firstUnit:getPosition().p
     end
