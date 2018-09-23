@@ -284,10 +284,12 @@ logiSlots = {
 function handleDeaths(event)
     -- The scheduledSpawn stuff only works for groups with a single unit atm.
     if event.id == world.event.S_EVENT_DEAD or event.id == world.event.S_EVENT_ENGINE_SHUTDOWN then
-        if checkedSams[event.initiator:getGroup():getName()] then
+        if not event.initiator.getGroup then return end
+        local grp = event.initiator:getGroup()
+        if checkedSams[grp:getName()] then
             local radars = 0
             local launchers = 0
-            for i, unit in pairs(event.initiator:getGroup():getUnits()) do
+            for i, unit in pairs(grp:getUnits()) do
                 local type_name = unit:getTypeName()
                 if type_name == "Kub 2P25 ln" then launchers = launchers + 1 end
                 if type_name == "Kub 1S91 str" then radars = radars + 1 end
@@ -299,34 +301,34 @@ function handleDeaths(event)
             end
 
             if radars == 0 or launchers == 0 then
-                game_state['Theaters']['Russian Theater']['StrategicSAM'][event.initiator:getGroup():GetName()] = nil
-                checkedSams[event.initiator:getGroup():getName()] = nil
+                game_state['Theaters']['Russian Theater']['StrategicSAM'][grp:GetName()] = nil
+                checkedSams[grp:getName()] = nil
                 trigger.action.outText("SAM " .. callsign .. " has been destroyed!", 15)
             end
         end
 
-        if checkedC2s[event.initiator:getGroup():getName()] then
+        if checkedC2s[grp:getName()] then
             local cps = 0
-            for i, unit in pairs(event.initiator:getGroup():getUnits()) do
+            for i, unit in pairs(grp:getUnits()) do
                 if unit:getTypeName() == "SKP-11" then cps = cps + 1 end
             end
 
             if cps == 0 then
-                game_state['Theaters']['Russian Theater']['C2'][event.initiator:getGroup():GetName()] = nil
-                checkedC2s[event.initiator:getGroup():getName()] = nil
+                game_state['Theaters']['Russian Theater']['C2'][grp:GetName()] = nil
+                checkedC2s[grp:getName()] = nil
                 trigger.action.outText("C2 " .. callsign .. " has been destroyed!", 15)
             end
         end
 
-        if checkedEWRs[event.initiator:getGroup():getName()] then
+        if checkedEWRs[grp:getName()] then
             local ewrs = 0
-            for i, unit in pairs(event.initiator:getGroup():getUnits()) do
+            for i, unit in pairs(grp:getUnits()) do
                 if unit:getTypeName() == "1L13 EWR" then ewrs = ewrs + 1 end
             end
 
             if ewrs == 0 then
-                game_state['Theaters']['Russian Theater']['EWR'][event.initiator:getGroup():GetName()] = nil
-                checkedEWRs[event.initiator:getGroup():getName()] = nil
+                game_state['Theaters']['Russian Theater']['EWR'][grp:GetName()] = nil
+                checkedEWRs[grp:getName()] = nil
                 trigger.action.outText("EWR " .. callsign .. " has been destroyed!", 15)
             end
         end
@@ -337,8 +339,8 @@ function handleDeaths(event)
             scheduledSpawns[event.initiator:getName()] = nil
             mist.scheduleFunction(function()
                 spawner:Spawn()
-                if event.initiator:getGroup() then
-                    event.initiator:getGroup():destroy()
+                if grp then
+                    grp:destroy()
                 end
             end, {}, timer.getTime() + stimer)
         end
