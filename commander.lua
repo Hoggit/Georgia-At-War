@@ -148,7 +148,7 @@ russian_commander = function()
     for i,target in ipairs(AttackableAirbases(Airbases)) do
         log("The Russian commander has decided to strike " .. target .. " airbase")
         if not AirfieldIsDefended("airfield-defense-chk" .. target) then
-            if math.random() > 0.0 then
+            if math.random() > 0.8 then
                 log(target .. " appears undefended! Muahaha!")
                 local spawn = SpawnForTargetAirbase(target)
                 spawn:Spawn()

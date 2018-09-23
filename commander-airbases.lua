@@ -92,9 +92,10 @@ function transportLand(event)
             end
             local distance = mist.utils.get2DDist(grpLoc, landPos)
             log("Transport landed " .. distance .. " meters from target")
-            if (distance <= 2500) then
+            if (distance <= 3000) then
                 log("Within range, spawning Russian Forces")
                 activeXports[event.initiator:getGroup():getName()][1]:Spawn()
+                mist.scheduleFunction(event.initiator.destroy, {event.initiator}, timer.getTime() + 120)
             end
         end
     end

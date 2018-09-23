@@ -300,8 +300,6 @@ mist.scheduleFunction(function()
     RussianTheaterAWACSSpawn:Spawn()
 end, {}, timer.getTime() + 10)
 
-NorthGeorgiaTransportSpawns["Novorossiysk"][1]:Spawn()
-
 -- Kick off the commanders
-mist.scheduleFunction(russian_commander, {}, timer.getTime() + 10, 300)
+mist.scheduleFunction(russian_commander, {}, timer.getTime() + 10, 600)
 log("init.lua complete")

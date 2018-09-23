@@ -35,7 +35,7 @@ function respawnHAWKFromState(_points)
     -- spawn a helper unit that will "build" the site
     local _SpawnObject = Spawner( "NE FARP HELO" )
     local _SpawnGroup = _SpawnObject:SpawnAtPoint({x=_points["Hawk pcp"]["x"], y=_points["Hawk pcp"]["z"]})
-    local _unit=_SpawnGroup:GetDCSUnit(1)
+    local _unit=_SpawnGroup:getUnit(1)
 
     -- enumerate nearby crates
     local _crates = ctld.getCratesAndDistance(_unit)
@@ -43,7 +43,7 @@ function respawnHAWKFromState(_points)
     local terlaaTemplate = ctld.getAATemplate(_crate.details.unit)
 
     ctld.unpackAASystem(_unit, _crate, _crates, terlaaTemplate)
-    _SpawnGroup:Destroy()
+    _SpawnGroup:destroy()
     log("Done Spawning hawk from state")
 end
 
