@@ -6,6 +6,7 @@ json = loadfile(jsonlib)()
 logFile = io.open(lfs.writedir()..[[Logs\Hoggit-GAW.log]], "w")
 --JSON = (loadfile "JSON.lua")()
 
+GAW = {}
 function log(str)
     if str == nil then str = 'nil' end
     if logFile then
@@ -137,9 +138,16 @@ CoalitionCommand = function(coalition, text, parent, handler)
     missionCommands.addCommandForCoalition( coalition, text, parent, callback)
 end
 
+-- This is a global to hold records of which groups have had
+-- group menus added to already.
+-- We might try and add menus to the same group twice, this
+-- should prevent that.
+GAW.GroupMenuAdded= {}
 GroupCommand = function(group, text, parent, handler)
+    if GAW.GroupMenuAdded[tostring(group)] == nil then return end
     callback = try(handler, function(err) log("Error in group command" .. err) end)
     missionCommands.addCommandForGroup( group, text, parent, callback)
+    GAW.GroupMenuAdded[tostring(group)] = true
 end
 
 MessageToGroup = function(groupId, text, displayTime)
