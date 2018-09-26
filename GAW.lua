@@ -112,9 +112,17 @@ end
 CoalitionMenu = function( coalition, text )
     return missionCommands.addSubMenuForCoalition( coalition, text )
 end
-
+GAW.GroupMenuAdded={}
 GroupMenu = function( groupId, text, parent )
-    return missionCommands.addSubMenuForGroup( groupId, text, parent )
+    if GAW.GroupMenuAdded[tostring(groupId)] == nil then
+      log("No commands from groupId " .. groupId .. " yet. Initializing menu state")
+      GAW.GroupMenuAdded[tostring(groupId)] = {}
+    end
+    if not GAW.GroupMenuAdded[tostring(groupId)][text] then
+      log("Adding " .. text .. " to groupId: " .. tostring(groupId))
+      GAW.GroupMenuAdded[tostring(groupId)][text] = missionCommands.addSubMenuForGroup( groupId, text, parent )
+    end
+    return GAW.GroupMenuAdded[tostring(groupId)][text]
 end
 
 
@@ -142,12 +150,18 @@ end
 -- group menus added to already.
 -- We might try and add menus to the same group twice, this
 -- should prevent that.
-GAW.GroupMenuAdded= {}
+GAW.GroupCommandAdded= {}
 GroupCommand = function(group, text, parent, handler)
-    if GAW.GroupMenuAdded[tostring(group)] == nil then return end
-    callback = try(handler, function(err) log("Error in group command" .. err) end)
-    missionCommands.addCommandForGroup( group, text, parent, callback)
-    GAW.GroupMenuAdded[tostring(group)] = true
+    if GAW.GroupCommandAdded[tostring(group)] == nil then
+      log("No commands from group " .. group .. " yet. Initializing menu state")
+      GAW.GroupCommandAdded[tostring(group)] = {}
+    end
+    if not GAW.GroupCommandAdded[tostring(group)][text] then
+      log("Adding " .. text .. " to group: " .. tostring(group))
+      callback = try(handler, function(err) log("Error in group command" .. err) end)
+      missionCommands.addCommandForGroup( group, text, parent, callback)
+      GAW.GroupCommandAdded[tostring(group)][text] = true
+    end
 end
 
 MessageToGroup = function(groupId, text, displayTime)
