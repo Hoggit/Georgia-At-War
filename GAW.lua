@@ -308,6 +308,7 @@ function handleDeaths(event)
     if event.id == world.event.S_EVENT_DEAD or event.id == world.event.S_EVENT_ENGINE_SHUTDOWN then
         if not event.initiator.getGroup then return end
         local grp = event.initiator:getGroup()
+        if not grp then return end
         if checkedSams[grp:getName()] then
             local radars = 0
             local launchers = 0
