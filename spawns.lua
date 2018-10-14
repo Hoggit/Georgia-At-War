@@ -6,7 +6,7 @@ objective_names = {
     "Pete", "Bijou", "Momo",
     --Patreon
     "Eiger", "Snax", "Asteroid", "Sephton", "Blacklist", "Boot", "Maria",
-    "Cheeki Breeki", "Husky", "Carrack", "Vegabond", "Jar Jar", "Plowshare", "Primrose"
+    "Cheeki Breeki", "Husky", "Carrack", "Vegabond", "Jar Jar", "Plowshare", "Primrose", "Cracow"
 }
 
 objective_idx = 1

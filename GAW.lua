@@ -43,7 +43,9 @@ Spawner = function(grpName)
             local vars = {
                 groupName = grpName,
                 point = point,
-                action = "clone"
+                action = "clone",
+                disperse = true,
+                maxDisp = 1000
             }
 
             local new_group = mist.teleportToPoint(vars)
@@ -55,7 +57,7 @@ Spawner = function(grpName)
                 end
                 return Group.getByName(name)
             else
-                trigger.action.outText("Error spawning " .. grpName, 15)
+                log("Error spawning " .. grpName)
             end
 
         end,
