@@ -167,15 +167,15 @@ if statefile then
             })
         end
 
-        if data.name == 'jtac' then
-            local _spawnedGroup = jtacspawn:SpawnAtPoint({
-                x = data.pos.x,
-                y = data.pos.z
-            })
-            local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
-            table.insert(ctld.jtacGeneratedLaserCodes, _code)
-            ctld.JTACAutoLase(_spawnedGroup, _code)
-        end
+        --if data.name == 'jtac' then
+        --    local _spawnedGroup = jtacspawn:SpawnAtPoint({
+        --        x = data.pos.x,
+        --        y = data.pos.z
+        --    })
+        --    local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
+        --    table.insert(ctld.jtacGeneratedLaserCodes, _code)
+        --    ctld.JTACAutoLase(_spawnedGroup, _code)
+        --end
     end
 
     local CTLDstate = saved_game_state["Theaters"]["Russian Theater"]["Hawks"]
