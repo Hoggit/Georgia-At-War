@@ -172,10 +172,14 @@ if statefile then
                 x = data.pos.x,
                 y = data.pos.z
             })
-            local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
-            log("Spawned JTAC Group from state: " .. _spawnedGroup:getName())
-            table.insert(ctld.jtacGeneratedLaserCodes, _code)
-            ctld.JTACAutoLase(_spawnedGroup:getName(), _code)
+            if not _spawnedGroup then
+              log("Could not spawn jtac unit")
+            else
+              local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
+              log("Spawned JTAC Group from state: " .. _spawnedGroup:getName())
+              table.insert(ctld.jtacGeneratedLaserCodes, _code)
+              ctld.JTACAutoLase(_spawnedGroup:getName(), _code)
+            end
         end
     end
 
