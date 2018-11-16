@@ -1,12 +1,8 @@
 -- Objective Names
 objective_names = {
-    "Archangel", "Yersanlaz", "Blackjack", "Wildcard", "Crackpipe", "Bullhorn", "Outlaw", "Eclipse","Joker", "Anthill",
-    "Firefly", "Rambo", "Rocky", "Dredd", "Smokey", "Vulture", "Parrot","Ender", "Sanchez", "Freeman", "Charlotte", "Orlando",
-    "Tiger", "Moocow", "Turkey", "Scarecrow", "Lancer", "Subaru", "Tucker", "Blazer", "Pikachu", "Bulbasaur", "Grimm", "Aurora", "Grumpy", "Sleepy",
-    "Pete", "Bijou", "Momo",
-    --Patreon
     "Eiger", "Snax", "Asteroid", "Sephton", "Blacklist", "Boot", "Maria",
-    "Cheeki Breeki", "Husky", "Carrack", "Vegabond", "Jar Jar", "Plowshare", "Primrose", "Cracow"
+    "Cheeki Breeki", "Husky", "Carrack", "Vegabond", "Jar Jar", "Plowshare", "Primrose", "Cracow",
+    "Chaser", "Rockstar", "Rintaro", "Schwifty", "Tombstone", "Zip", "Foxhound"
 }
 
 objective_idx = 1
