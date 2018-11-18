@@ -12,12 +12,24 @@ russian_commander = function()
     local caps = game_state["Theaters"]["Russian Theater"]["CAP"]
     local castargets = game_state["Theaters"]["Russian Theater"]["CASTargets"]
     local baitargets = game_state["Theaters"]["Russian Theater"]["BAI"]
+	local ewrs = game_state["Theaters"]["Russian Theater"]["EWR"]
+	local striketargets = game_state["Theaters"]["Russian Theater"]["StrikeTargets"]
     local last_cap_spawn = game_state["Theaters"]["Russian Theater"]["last_cap_spawn"]
     local random_cap = 0
     local adcap_chance = 0.4
+	local aliveAWACs = 0
+	local aliveEWRs = 0
+	local aliveAmmoDumps = 0
     local alivec2s = 0
     local alive_caps = 0
     local max_caps = 3
+	local nominal_c2s = 4
+	local nominal_awacs = 1 --deemed the nominal quantity for 'baseline' operations
+	local nominal_ammodumps = 3 --deemed the nominal quantity for 'baseline' operations
+	local nominal_ewrs = 2 --deemed the nominal quantity for 'baseline' operations
+	local p_spawn_mig31s = 0.95 --Old baseline constant from prior commander
+	local p_attack_airbase = 0.2 --Old baseline constant from prior commander
+	local p_spawn_airbase_cap = 0.7 --Old baseline constant from prior commander
 
     if bluePlaneCount < 13 then
         max_caps = 1
@@ -46,9 +58,24 @@ russian_commander = function()
     for group_name, group_table in pairs(c2s) do
         alivec2s = alivec2s + 1
     end
+	
+	log("Russian commander has " .. alivec2s .. " command posts available...")
 
-    log("Russian commander has " .. alivec2s .. " command posts available...")
+	
+	-- Get the number of EWRs in existence, as we use this for determination of spawn rates
+	for group_name, group_table in pairs(ewrs) do
+		aliveEWRs = aliveEWRs + 1
+	end
+	
+	log("Russian commander has " .. aliveEWRs .. " EWRs available...")
+	
+	-- Get the number of ammo dumps in existence, as we use this for determination of spawn rates
+	for group_name, group_table in pairs(striketargets) do
+		if group_table['spawn_name'] == 'AmmoDump' then aliveAmmoDumps = aliveAmmoDumps + 1 end
+	end
 
+	log("Russian commander has " .. aliveAmmoDumps .. " Ammo Dumps available...")
+    
     -- Get alive caps and cleanup state
     for i=#caps, 1, -1 do
         local cap = Group.getByName(caps[i])
@@ -76,7 +103,12 @@ russian_commander = function()
 
     --if alivec2s == 0 then log('Russian commander whispers "BLYAT!" and runs for the hills before he ends up in a gulag.'); return nil end
 
+	
     -- Setup some decision parameters based on how many c2's are alive
+	p_attack_airbase = 0.1 + 0.1*(aliveAmmoDumps/nominal_ammodumps) + 0.1*(alivec2s/nominal_c2s)
+	p_spawn_mig31s = 0.65 + 0.1*(aliveEWRs/nominal_ewrs) + 0.1*(alivec2s/nominal_c2s)
+	p_spawn_airbase_cap = 0.5 + 0.2*(aliveAmmoDumps/nominal_ammodumps)
+	
     if alivec2s == 3 then random_cap = 30 end
     if alivec2s == 2 then random_cap = 60; adcap_chance = 0.4 end
     if alivec2s == 1 then random_cap = 120 adcap_chance = 0.8 end
@@ -90,7 +122,7 @@ russian_commander = function()
                 if math.random() < adcap_chance then
                     -- Spawn fancy planes, 70% chance they come from airbase, otherwise they come from "off theater"
                     local capspawn = goodcaps[math.random(#goodcaps)]
-                    if math.random() > 0.3 then
+                    if math.random() < p_spawn_airbase_cap then
                         capspawn = goodcapsground[math.random(#goodcaps)]
                         capspawn:Spawn()
                         log("The Russian commander is getting a fancy plane from his local airbase")
@@ -101,7 +133,7 @@ russian_commander = function()
                 else
                     -- Spawn same ol crap
                     local capspawn = poopcaps[math.random(#poopcaps)]
-                    if math.random() > 0.3 then
+                    if math.random() < p_spawn_airbase_cap then
                         capspawn = poopcapsground[math.random(#poopcaps)]
                         capspawn:Spawn()
                         log("The Russian commander is getting a poopy plane from his local airbase")
@@ -127,7 +159,7 @@ russian_commander = function()
     end
 
     log("Checking interceptors...")
-    if math.random() > 0.05 then
+    if math.random() < p_spawn_mig31s then
         for i,g in ipairs(enemy_interceptors) do
             if allOnGround(g) then
                 Group.getByName(g):destroy()
@@ -148,7 +180,7 @@ russian_commander = function()
     for i,target in ipairs(AttackableAirbases(Airbases)) do
         log("The Russian commander has decided to strike " .. target .. " airbase")
         if not AirfieldIsDefended("airfield-defense-chk" .. target) then
-            if math.random() > 0.8 then
+            if math.random() < p_attack_airbase then
                 log(target .. " appears undefended! Muahaha!")
                 local spawn = SpawnForTargetAirbase(target)
                 spawn:Spawn()
