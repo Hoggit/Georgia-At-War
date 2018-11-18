@@ -20,12 +20,14 @@ russian_commander = function()
 	local aliveAWACs = 0
 	local aliveEWRs = 0
 	local aliveAmmoDumps = 0
+	local aliveCommsArrays = 0
     local alivec2s = 0
     local alive_caps = 0
     local max_caps = 3
 	local nominal_c2s = 4
 	local nominal_awacs = 1 --deemed the nominal quantity for 'baseline' operations
 	local nominal_ammodumps = 3 --deemed the nominal quantity for 'baseline' operations
+	local nominal_commsarrays = 3 --deemed the nominal quantity for 'baseline operations
 	local nominal_ewrs = 2 --deemed the nominal quantity for 'baseline' operations
 	local p_spawn_mig31s = 0.95 --Old baseline constant from prior commander
 	local p_attack_airbase = 0.2 --Old baseline constant from prior commander
@@ -72,9 +74,11 @@ russian_commander = function()
 	-- Get the number of ammo dumps in existence, as we use this for determination of spawn rates
 	for group_name, group_table in pairs(striketargets) do
 		if group_table['spawn_name'] == 'AmmoDump' then aliveAmmoDumps = aliveAmmoDumps + 1 end
+		if group_table['spawn_name'] == 'CommsArray' then aliveCommsArrays = aliveCommsArrays + 1 end
 	end
 
 	log("Russian commander has " .. aliveAmmoDumps .. " Ammo Dumps available...")
+	log("Russian commander has " .. aliveCommsArrays .. " Comms Arrays available...")
     
     -- Get alive caps and cleanup state
     for i=#caps, 1, -1 do
@@ -104,10 +108,11 @@ russian_commander = function()
     --if alivec2s == 0 then log('Russian commander whispers "BLYAT!" and runs for the hills before he ends up in a gulag.'); return nil end
 
 	
-    -- Setup some decision parameters based on how many c2's are alive
+    -- Setup some decision parameters based on how many tactical resources are alive
 	p_attack_airbase = 0.1 + 0.1*(aliveAmmoDumps/nominal_ammodumps) + 0.1*(alivec2s/nominal_c2s)
 	p_spawn_mig31s = 0.65 + 0.1*(aliveEWRs/nominal_ewrs) + 0.1*(alivec2s/nominal_c2s)
-	p_spawn_airbase_cap = 0.5 + 0.2*(aliveAmmoDumps/nominal_ammodumps)
+	p_spawn_airbase_cap = 0.5 + 0.2*(aliveAmmoDumps/nominal_ammodumps) + 0.1*(1-(aliveCommsArrays/nominal_commsarrays))
+	
 	
     if alivec2s == 3 then random_cap = 30 end
     if alivec2s == 2 then random_cap = 60; adcap_chance = 0.4 end
