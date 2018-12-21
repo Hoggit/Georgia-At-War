@@ -25,8 +25,10 @@ if statefile then
         game_state["Theaters"]["Russian Theater"]["Airfields"][name] = coalition
 
         if coalition == 1 then
+            if AirbaseSpawns[name] then
             AirbaseSpawns[name][3]:Spawn()
             flagval = 100
+            end
         elseif coalition == 2 then
             AirfieldDefense:SpawnAtPoint({
                 x = posx,
@@ -67,10 +69,14 @@ if statefile then
             flagval = 100
         elseif coalition == 2 then
             AirfieldDefense:SpawnAtPoint(apV3)
-            apV3.x = apV3.x - 100
-            apV3.z = apV3.z - 100
-            FSW:SpawnAtPoint({x=apV3.x, y=apV3.z})
+            apV3.x = apV3.x + 50
+            apV3.z = apV3.z - 50
+            FSW:SpawnAtPoint({x=apV3.x, y=apV3.z}, true)
             flagval = 0
+
+            if ab_logi_slots[name] then
+                activateLogi(ab_logi_slots[name])
+            end
         end
 
         if abslots[name] then
@@ -138,6 +144,19 @@ if statefile then
 
     trigger.action.outText("Finished processing BAI", 10)
 
+    local theaterobjs = saved_game_state["Theaters"]["Russian Theater"]["TheaterObjectives"]
+    if theaterobjs ~= nil then
+      for name, data in pairs(saved_game_state["Theaters"]["Russian Theater"]["TheaterObjectives"]) do
+        local spawner = TheaterObjectives[name]
+        if not spawner then
+          log("Found TheaterObjective " .. name .. " but no spawner for it!")
+        else
+          log(" Spawning TheaterObjective " .. name)
+          spawner:Spawn()
+        end
+      end
+    end
+
     for idx, data in ipairs(saved_game_state["Theaters"]["Russian Theater"]["CTLD_ASSETS"]) do
         if data.name == 'avenger' then
             avengerspawn:SpawnAtPoint({
@@ -172,15 +191,21 @@ if statefile then
                 x = data.pos.x,
                 y = data.pos.z
             })
-            if not _spawnedGroup then
-              log("Could not spawn jtac unit")
-            else
               local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
-              log("Spawned JTAC Group from state: " .. _spawnedGroup:getName())
               table.insert(ctld.jtacGeneratedLaserCodes, _code)
               ctld.JTACAutoLase(_spawnedGroup:getName(), _code)
             end
         end
+
+    local destroyedStatics = saved_game_state["Theaters"]["Russian Theater"]["DestroyedStatics"]
+    if destroyedStatics ~= nil then
+        for k, v in pairs(destroyedStatics) do
+            local obj = StaticObject.getByName(k)
+            if obj ~= nil then
+                StaticObject.destroy(obj)
+            end
+        end
+        game_state["Theaters"]["Russian Theater"]["DestroyedStatics"] = saved_game_state["Theaters"]["Russian Theater"]["DestroyedStatics"]
     end
 
     local CTLDstate = saved_game_state["Theaters"]["Russian Theater"]["Hawks"]
@@ -226,16 +251,6 @@ else
         local id = StaticSpawns[spawn_index]:Spawn({vec2.x, vec2.y})
     end
 
-    -- Spawn the Sea of Azov navy
-    -- for i=1, 4 do
-        -- local zone_index = math.random(2)
-        -- local zone = ZONE:New("Naval" .. zone_index)
-
-        -- Spawn a oil platform as well
-        -- local static = PlatformGroupSpawn[1]:SpawnFromPointVec2(zone:GetRandomPointVec2(), 0)
-        -- local callsign = getCallsign()
-        -- AddNavalStrike("Russian Theater")(STATIC:FindByName(static:getName()), "Oil Platform", callsign)
-    -- end
 
     AirbaseSpawns["Krasnodar-Pashkovsky"][1]:Spawn()
     NWFARPDEF:Spawn()
