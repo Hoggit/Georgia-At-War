@@ -82,6 +82,7 @@ AirbaseSpawns = {
 
 function transportLand(event)
     if event.id == world.event.S_EVENT_LAND then
+    log("TransportLand")
         if activeXports[event.initiator:getGroup():getName()] then
             local grpLoc = event.initiator:getPosition().p
             local landPos
