@@ -134,7 +134,26 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
         MessageToGroup(Group:getID(), intercepts, 60)
     end)
 
-    GroupCommand(Group:getID(), "Check In On-Call CAS", MissionMenu, function()
+
+    local VIPMenu = GroupMenu(Group:getID(), "VIPs", MissionMenu)
+    GroupCommand(Group:getID(), "List VIPs.", VIPMenu, function()
+      local activeVIPs = GAW.VIP.activeVIPs
+      local message = #activeVIPs .. " VIPs currently in the field:\n"
+      for i, point in pairs(activeVIPs) do
+        local lat,long = coord.LOtoLL(point)
+        message = message .. i .. ": " ..  mist.tostringLL(lat,long,6) .. "\n"
+      end
+      message = message .. "\n\n"
+      local activeVIPTransports = GAW.VIP.activeVIPTransports
+      message = message .. #activeVIPTransports .." VIP transports currently in the air\n"
+      MessageToGroup(Group:getID(), message)
+    end)
+    GroupCommand(Group:getID(), "Drop off VIP.", VIPMenu, function()
+      DropVIP(Group)
+    end)
+
+
+    --[[GroupCommand(Group:getID(), "Check In On-Call CAS", MissionMenu, function()
         if #oncall_cas > 2 then
             MessageToGroup(Group:getID(), "No more on call CAS taskings are available, please try again when players currently running CAS are finished.", 30)
             return
