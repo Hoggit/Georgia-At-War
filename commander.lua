@@ -1,3 +1,18 @@
+max_caps_for_player_count = function(players)
+    local caps = 0
+
+    if players < 13 then
+        caps = 1
+    elseif players >= 13 and players < 18 then
+        caps = 2
+    elseif players >= 18 and players < 28 then
+        caps = 3
+    else
+        caps = 4
+    end
+    return caps
+end
+
 -- Main game loop, decision making about spawns happen here.
 russian_commander = function()
   -- Russian Theater Decision Making
@@ -25,30 +40,15 @@ russian_commander = function()
   local alive_caps = 0
   local max_caps = 3
   local nominal_c2s = 4
-  local nominal_awacs = 1 --deemed the nominal quantity for 'baseline' operations
-  local nominal_ammodumps = 3 --deemed the nominal quantity for 'baseline' operations
-  local nominal_commsarrays = 3 --deemed the nominal quantity for 'baseline operations
-  local nominal_ewrs = 2 --deemed the nominal quantity for 'baseline' operations
-  local p_spawn_mig31s = 0.95 --Old baseline constant from prior commander
-  local p_attack_airbase = 0.2 --Old baseline constant from prior commander
-  local p_spawn_airbase_cap = 0.7 --Old baseline constant from prior commander
+    local nominal_awacs = 1
+    local nominal_ammodumps = 3
+    local nominal_commsarrays = 3
+    local nominal_ewrs = 2
+    local p_spawn_mig31s = 0.95
+    local p_attack_airbase = 0.2
+    local p_spawn_airbase_cap = 0.7
 
-  if bluePlaneCount < 13 then
-    max_caps = 1
-  end
-
-  if bluePlaneCount > 13 then
-    max_caps = 2
-  end
-
-  if bluePlaneCount > 18 then
-    max_caps = 3
-  end
-
-  if bluePlaneCount > 28 then
-    max_caps = 4
-  end
-
+    max_caps = max_caps_for_player_count(bluePlaneCount)
   log("There are " .. bluePlaneCount .. " blue planes in the mission, so we'll spawn a max of " .. max_caps .. " groups of enemy CAP")
 
   local alive_bai_targets = 0
@@ -57,21 +57,14 @@ russian_commander = function()
 
   -- Get the number of C2s in existance, and cleanup the state for dead ones.
   -- We'll make some further determiniation of what happens based on this
-  for group_name, group_table in pairs(c2s) do
-    alivec2s = alivec2s + 1
-  end
-
+    alivec2s = array_size(c2s)
   log("Russian commander has " .. alivec2s .. " command posts available...")
 
 
   -- Get the number of EWRs in existence, as we use this for determination of spawn rates
-  for group_name, group_table in pairs(ewrs) do
-    aliveEWRs = aliveEWRs + 1
-  end
+    aliveEWRs = array_size(ewrs)
+    log("Russian commanbder has " .. aliveEWRs .. " EWRs available...")
 
-  log("Russian commander has " .. aliveEWRs .. " EWRs available...")
-
-  -- Get the number of ammo dumps in existence, as we use this for determination of spawn rates
   for group_name, group_table in pairs(striketargets) do
     if group_table['spawn_name'] == 'AmmoDump' then aliveAmmoDumps = aliveAmmoDumps + 1 end
     if group_table['spawn_name'] == 'CommsArray' then aliveCommsArrays = aliveCommsArrays + 1 end
@@ -99,20 +92,15 @@ russian_commander = function()
 
   log("The Russian commander has " .. alive_caps .. " flights alive")
   -- Get Alive BAI Targets
-  for group_name, baitarget_table in pairs(baitargets) do
-    alive_bai_targets = alive_bai_targets + 1
-  end
-
+    alive_bai_targets = array_size(baitargets)
   log("The Russian commander has " .. alive_bai_targets .. " ground squads alive.")
 
   --if alivec2s == 0 then log('Russian commander whispers "BLYAT!" and runs for the hills before he ends up in a gulag.'); return nil end
-
 
   -- Setup some decision parameters based on how many tactical resources are alive
   p_attack_airbase = 0.1 + 0.1*(aliveAmmoDumps/nominal_ammodumps) + 0.1*(alivec2s/nominal_c2s)
   p_spawn_mig31s = 0.65 + 0.1*(aliveEWRs/nominal_ewrs) + 0.1*(alivec2s/nominal_c2s)
   p_spawn_airbase_cap = 0.5 + 0.2*(aliveAmmoDumps/nominal_ammodumps) + 0.1*(1-(aliveCommsArrays/nominal_commsarrays))
-
 
   if alivec2s == 3 then random_cap = 30 end
   if alivec2s == 2 then random_cap = 60; adcap_chance = 0.4 end
@@ -126,23 +114,23 @@ russian_commander = function()
       mist.scheduleFunction(function()
         if math.random() < adcap_chance then
           -- Spawn fancy planes, 70% chance they come from airbase, otherwise they come from "off theater"
-          local capspawn = goodcaps[math.random(#goodcaps)]
           if math.random() < p_spawn_airbase_cap then
-            capspawn = goodcapsground[math.random(#goodcaps)]
+                        local capspawn = goodcapsground[math.random(#goodcapsground)]
             capspawn:Spawn()
             log("The Russian commander is getting a fancy plane from his local airbase")
           else
+                        local capspawn = goodcaps[math.random(#goodcaps)]
             capspawn:Spawn()
             log("The Russian commander is getting a fancy plane from a southern theater.")
           end
         else
           -- Spawn same ol crap
-          local capspawn = poopcaps[math.random(#poopcaps)]
           if math.random() < p_spawn_airbase_cap then
-            capspawn = poopcapsground[math.random(#poopcaps)]
+                        local capspawn = poopcapsground[math.random(#poopcapsground)]
             capspawn:Spawn()
             log("The Russian commander is getting a poopy plane from his local airbase")
           else
+                        local capspawn = poopcaps[math.random(#poopcaps)]
             capspawn:Spawn()
             log("The Russian commander is getting a poopy plane from a southern theater, thanks Ivan you piece of...")
           end
@@ -184,7 +172,7 @@ russian_commander = function()
 
   for i,target in ipairs(AttackableAirbases(Airbases)) do
     log("The Russian commander has decided to strike " .. target .. " airbase")
-    if not AirfieldIsDefended("airfield-defense-chk" .. target) then
+        if not AirfieldIsDefended("DefenseZone" .. target) then
       if math.random() < p_attack_airbase then
         log(target .. " appears undefended! Muahaha!")
         local spawn = SpawnForTargetAirbase(target)
@@ -192,6 +180,14 @@ russian_commander = function()
       end
     end
   end
+
+    --VIP Spawn Chance
+    local VIPChance = 0.1
+    if math.random() >= (1 - VIPChance) then
+      log("Spawning russian VIP transport")
+      SpawnVIPTransport()
+    end
+
 end
 
 log("commander.lua complete")
