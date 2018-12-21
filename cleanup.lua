@@ -28,25 +28,6 @@ function cleanup()
         end
     end
 
-    --log("Starting Cleanup Naval Units")
-    -- Get alive naval targets and cleanup
-    --local targets = game_state["Theaters"]["Russian Theater"]["NavalStrike"]
-    --for group_name, target_table in pairs(targets) do
-    --    local target
-    --    if target_table['spawn_name'] == 'Oil Platform' then
-    --        target = STATIC:FindByName(group_name)
-    --    else
-    --        target = GROUP:FindByName(group_name)
-    --    end
-    --    if not target or not target:IsAlive() then
-            --for i,rearm_spawn in ipairs(rearm_spawns) do
-            --    rearm_spawn[1]:Spawn()
-            --end
-    --        MESSAGE:New("Naval target " .. target_table['callsign'] .. " destroyed!", 15):ToAll()
-    --        targets[group_name] = nil
-    --    end
-    --end
-
     log("Starting Cleanup C2")
     -- Get the number of C2s in existance, and cleanup the state for dead ones.
     local c2s = game_state["Theaters"]["Russian Theater"]["C2"]
@@ -76,6 +57,19 @@ function cleanup()
         else
             log(group_name .. " has " .. alive_units .. " buildings alive.")
         end
+    end
+
+    log("Starting Theater Objectives Cleanup")
+    local theaterObjectives = game_state["Theaters"]["Russian Theater"]["TheaterObjectives"]
+    for obj_name, obj in pairs(theaterObjectives) do
+      log("Checking " .. obj_name .. " for removal")
+      if not isAlive(obj.groupName) then
+        game_state["Theaters"]["Russian Theater"]["TheaterObjectives"][obj_name] = nil
+        MessageToAll(obj_name .. " has been destroyed!")
+        log("Theater objective " .. obj_name .. " has been removed from the state")
+      else
+        log("Objective " .. obj_name .. " is still alive with " .. Group.getByName(obj.groupName):getSize() .. " units")
+      end
     end
     log("Done Clean script")
 end
