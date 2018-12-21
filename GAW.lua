@@ -308,12 +308,13 @@ function handleDeaths(event)
         game_state['Theaters']['Russian Theater']['StrategicSAM'][grp:getName()] = nil
         trigger.action.outText("SAM " .. checkedSams[grp:getName()] .. " has been destroyed!", 15)
         checkedSams[grp:getName()] = nil
-        trigger.action.outText("SAM " .. callsign .. " has been destroyed!", 15)
       end
     end
 
     if checkedC2s[grp:getName()] then
+      log("Group death is a c2 group")
       local cps = 0
+      log("Iterating c2 units")
       for i, unit in pairs(grp:getUnits()) do
         if unit:getTypeName() == "SKP-11" then cps = cps + 1 end
       end
@@ -323,11 +324,11 @@ function handleDeaths(event)
         game_state['Theaters']['Russian Theater']['C2'][grp:getName()] = nil
         trigger.action.outText("C2 " .. checkedC2s[grp:getName()] .. " has been destroyed!", 15)
         checkedC2s[grp:getName()] = nil
-        trigger.action.outText("C2 " .. callsign .. " has been destroyed!", 15)
       end
     end
 
     if checkedEWRs[grp:getName()] then
+      log("Group death is EWR. Iterating units.")
       local ewrs = 0
       for i, unit in pairs(grp:getUnits()) do
         if unit:getTypeName() == "1L13 EWR" then ewrs = ewrs + 1 end
@@ -338,11 +339,11 @@ function handleDeaths(event)
         game_state['Theaters']['Russian Theater']['EWR'][grp:getName()] = nil
         trigger.action.outText("EWR " .. checkedEWRs[grp:getName()] .. " has been destroyed!", 15)
         checkedEWRs[grp:getName()] = nil
-        trigger.action.outText("EWR " .. callsign .. " has been destroyed!", 15)
       end
     end
 
     if scheduledSpawns[event.initiator:getName()] then
+      log("Dead group was a scheduledSpawn.")
       local spawner = scheduledSpawns[event.initiator:getName()][1]
       local stimer = scheduledSpawns[event.initiator:getName()][2]
       scheduledSpawns[event.initiator:getName()] = nil
@@ -364,6 +365,7 @@ function securityForcesLanding(event)
     local xport = activeBlueXports[event.initiator:getGroup():getName()]
     if xport then
       local abname = xport[2]
+      if xport[3] then abname = abname .. " Warehouse" end
       log('Xport just landed at ' .. abname)
       local grpLoc = event.initiator:getPosition().p
       local landPos = Airbase.getByName(abname):getPosition().p
@@ -652,10 +654,7 @@ TheaterUpdate = function(theater)
   output = output .. "\n\nTHEATER OBJECTIVE:  Destroy all strike targets, all Command and Control (C2) units, and capture all primary airfields."
 
   log("Done theater update")
-  trigger.action.outText(output, 30)
   return output
 end
 
-mist.scheduleFunction(TheaterUpdate, {"Russian Theater"}, timer.getTime() + 60, 1800)
-
-
+log("GAW.lua complete")
