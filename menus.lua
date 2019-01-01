@@ -151,7 +151,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     GroupCommand(Group:getID(), "Drop off VIP.", VIPMenu, function()
       DropVIP(Group)
     end)
-
+end
 
     --[[GroupCommand(Group:getID(), "Check In On-Call CAS", MissionMenu, function()
         if #oncall_cas > 2 then
@@ -241,3 +241,4 @@ end
 mist.addEventHandler(groupBirthHandler)
 log("Event Handler complete")
 log("menus.lua complete")
+]]

@@ -409,6 +409,7 @@ function securityForcesLanding(event)
 end
 mist.addEventHandler(securityForcesLanding)
 
+baseCappedCallbacks = {}
 function baseCaptured(event)
   if event.id == world.event.S_EVENT_BASE_CAPTURED then
     log("baseCaptured")
@@ -427,14 +428,14 @@ function baseCaptured(event)
       end
     end
 
-    if abname == 'FARP ALPHA' or abname == 'FARP BRAVO' or abname == 'FARP CHARLIE' or abname == 'FARP DELTA' then
+    if listContains(primaryFARPS, abname) then
       game_state["Theaters"]["Russian Theater"]['FARPS'][abname] = coalition
     else
       game_state["Theaters"]["Russian Theater"]['Airfields'][abname] = coalition
     end
 
     -- update primary goal state
-    if abname == 'Sukhumi-Babushara' or abname == 'Beslan' then
+    if listContains(primaryAirfields, abname) then
       if coalition == 2 then
         game_state["Theaters"]["Russian Theater"]['Primary'][abname] = true
       else
@@ -442,17 +443,9 @@ function baseCaptured(event)
       end
     end
 
-    -- disable Sukhumi airport red CAP spawn if it is captured by blufor
-    if abname == 'Sukhumi-Babushara' then
-      if coalition == 2 then
-        poopcapsground = {RussianTheaterF5SpawnGROUND}
-        goodcapsground = {RussianTheaterJ11SpawnGROUND}
-      else
-        poopcapsground = {RussianTheaterMig212ShipSpawnGROUND, RussianTheaterF5SpawnGROUND}
-        goodcapsground = {RussianTheaterMig292ShipSpawnGROUND, RussianTheaterSu272sShipSpawnGROUND, RussianTheaterJ11SpawnGROUND}
-      end
+    for _, callback in ipairs(baseCappedCallbacks) do
+      callback(abname, coalition)
     end
-
   end
 end
 

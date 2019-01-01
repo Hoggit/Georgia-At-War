@@ -2,7 +2,7 @@
 objective_names = {
     "Eiger", "Snax", "Asteroid", "Sephton", "Blacklist", "Boot", "Maria",
     "Cheeki Breeki", "Husky", "Carrack", "Vegabond", "Jar Jar", "Plowshare", "Primrose", "Cracow",
-    "Chaser", "Rockstar", "Rintaro", "Schwifty", "Tombstone", "Zip", "Foxhound"
+    "Chaser", "Rockstar", "Rintaro", "Schwifty", "Tombstone", "Zip", "Foxhound","Ysterplaat", "Hamburg", "BlackPearl"
 }
 
 objective_idx = 1
@@ -29,7 +29,7 @@ function respawnHAWKFromState(_points)
     ctld.spawnCrateAtPoint("blue",550, _points["Hawk tr"])
 
     -- spawn a helper unit that will "build" the site
-    local _SpawnObject = Spawner( "NE FARP HELO" )
+    local _SpawnObject = Spawner( "HawkHelo" )
     local _SpawnGroup = _SpawnObject:SpawnAtPoint({x=_points["Hawk pcp"]["x"], y=_points["Hawk pcp"]["z"]})
     local _unit=_SpawnGroup:getUnit(1)
 
