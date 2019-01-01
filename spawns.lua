@@ -126,7 +126,8 @@ NorthGeorgiaFARPTransportSpawns = {
     ["MK"] = {Spawner("MK FARP HELO"), nil, MaykopLogiSpawn}
 }
 scheduledSpawns = {}
-
+DestructibleStatics = {}
+DestroyedStatics = {}
 -- Support Spawn
 TexacoSpawn = Spawner("Texaco")
 TexacoSpawn:OnSpawnGroup(function(grp)
