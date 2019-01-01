@@ -50,7 +50,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     end)
 
     local MissionMenu = GroupCommand(Group:getID(), "Get Mission Status", nil, function()
-        MessageToGroup(Group:getID(), TheaterUpdate("Russian Theater"), 60)
+        MessageToGroup(Group:getID(), TheaterUpdate(game_state['CurrentTheater']), 60)
     end)
 
 
@@ -62,7 +62,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
     GroupCommand(Group:getID(), "SEAD", MissionMenu, function()
         log("Sending SAM report")
         local sams ="ACTIVE SAM REPORT:\n"
-        for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrategicSAM"]) do
+        for group_name, group_table in pairs(game_state["Theaters"][game_state['CurrentTheater']]["StrategicSAM"]) do
             log("Iterating sam group " .. group_name)
             local type_name = group_table["spawn_name"]
             local callsign = group_table['callsign']
@@ -74,7 +74,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
 
     GroupCommand(Group:getID(), "Air Interdiction", MissionMenu, function()
         local bais ="BAI TASK LIST:\n"
-        for id,group_table in pairs(game_state["Theaters"]["Russian Theater"]["BAI"]) do
+        for id,group_table in pairs(game_state["Theaters"][game_state['CurrentTheater']]["BAI"]) do
             local type_name = group_table["spawn_name"]
             local lat,long = coord.LOtoLL(group_table["position"])
             bais = bais .. "OBJ: " .. group_table["callsign"] .. " -- " .. type_name .. ": \t" .. GetCoordinateString(Group, group_table["position"]) .. "\n"
@@ -84,13 +84,13 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
 
     GroupCommand(Group:getID(), "Strike", MissionMenu, function()
         local strikes ="STRIKE TARGET LIST:\n"
-        for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["C2"]) do
+        for group_name,group_table in pairs(game_state["Theaters"][game_state['CurrentTheater']]["C2"]) do
             local lat,long = coord.LOtoLL(group_table["position"])
             local callsign = group_table['callsign']
             strikes = strikes .. "OBJ: " .. callsign .. " -- MOBILE CP: \t" .. GetCoordinateString(Group, group_table["position"]) .. "\n"
         end
 
-        for group_name,group_table in pairs(game_state["Theaters"]["Russian Theater"]["StrikeTargets"]) do
+        for group_name,group_table in pairs(game_state["Theaters"][game_state['CurrentTheater']]["StrikeTargets"]) do
             local lat,long = coord.LOtoLL(group_table["position"])
             local callsign = group_table['callsign']
             local spawn_name = group_table['spawn_name']
@@ -102,7 +102,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
 
     GroupCommand(Group:getID(), "Naval Strike", MissionMenu, function()
         local output ="MARITIME REPORT:\n"
-        for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["NavalStrike"]) do
+        for group_name, group_table in pairs(game_state["Theaters"][game_state['CurrentTheater']]["NavalStrike"]) do
             local type_name = group_table["spawn_name"]
             local lat,long = coord.LOtoLL(group_table["position"])
             if lat and long then
@@ -115,7 +115,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
 
     GroupCommand(Group:getID(), "Interception", MissionMenu, function()
         local intercepts ="INTERCEPTION TARGETS:\n"
-        for group_name, group_table in pairs(game_state["Theaters"]["Russian Theater"]["AWACS"]) do
+        for group_name, group_table in pairs(game_state["Theaters"][game_state['CurrentTheater']]["AWACS"]) do
             log("Found AWACS group named " .. group_name .. ". Being queried by " .. Group:getName())
             local g = Group.getByName(group_name)
             local GroupPos = GetCoordinate(Group)
@@ -126,7 +126,7 @@ MAYKOP AREA FARP: 44 42'47" N 39 34' 55"E]]
             end
         end
 
-        for i,group_name in ipairs(game_state["Theaters"]["Russian Theater"]["Tanker"]) do
+        for i,group_name in ipairs(game_state["Theaters"][game_state['CurrentTheater']]["Tanker"]) do
             local g = Group.getByName(group_name)
             local group_point = GetCoordinate(g)
             intercepts = intercepts .. "Tanker" .. group_table["callsign"] .. "\t--\t" .. GetBRString(GetCoordinate(Group), group_point, true) .. "\n"
@@ -193,7 +193,7 @@ end
             end
         end
     end)
-end
+end]]
 
 for name,spawn in pairs(NorthGeorgiaTransportSpawns) do
     log("Preparing menus for NorthGeorgiaTransportSpawns")
@@ -241,4 +241,3 @@ end
 mist.addEventHandler(groupBirthHandler)
 log("Event Handler complete")
 log("menus.lua complete")
-]]
