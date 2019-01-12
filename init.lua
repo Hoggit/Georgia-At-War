@@ -324,6 +324,10 @@ mist.scheduleFunction(function()
     RussianTheaterAWACSSpawn:Spawn()
 end, {}, timer.getTime() + 10)
 
+mist.scheduleFunction(function()
+  RussianTheaterCASSpawn:Spawn()
+  log("Spawned CAS Groups...")
+end, {}, timer.getTime() + 10, 1800)
 -- Kick off the commanders
 mist.scheduleFunction(russian_commander, {}, timer.getTime() + 10, 600)
 log("init.lua complete")
