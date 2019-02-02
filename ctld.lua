@@ -5591,7 +5591,7 @@ function ctld.isVehicle(_unit)
     return true
 end
 
--- The entered value can range from 1111 - 1788,
+-- The entered value can range from 1511 - 1788,
 -- -- but the first digit of the series must be a 1 or 2
 -- -- and the last three digits must be between 1 and 8.
 --  The range used to be bugged so its not 1 - 8 but 0 - 7.
@@ -5601,7 +5601,7 @@ function ctld.generateLaserCode()
     ctld.jtacGeneratedLaserCodes = {}
 
     -- generate list of laser codes
-    local _code = 1111
+    local _code = 1511
 
     local _count = 1
 
