@@ -41,9 +41,9 @@ ctld.slingLoad = false -- if false, crates can be used WITHOUT slingloading, by 
 ctld.enableSmokeDrop = true -- if false, helis and c-130 will not be able to drop smoke
 
 ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
-ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
+ctld.maximumDistanceLogistic = 300 -- max distance from vehicle to logistics to allow a loading or spawning operation
 ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
-ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
+ctld.maximumMoveDistance = 200 -- max distance for troops to move from drop point if no enemy is nearby
 
 ctld.minimumDeployDistance = 1000 -- minimum distance from a friendly pickup zone where you can deploy a crate
 
@@ -61,7 +61,7 @@ ctld.hawkLaunchers = 5 -- controls how many launchers to add to the hawk when it
 ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
 ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
 
-ctld.enabledFOBBuilding = true -- if true, you can load a crate INTO a C-130 than when unpacked creates a Forward Operating Base (FOB) which is a new place to spawn (crates) and carry crates from
+ctld.enabledFOBBuilding = false -- if true, you can load a crate INTO a C-130 than when unpacked creates a Forward Operating Base (FOB) which is a new place to spawn (crates) and carry crates from
 -- In future i'd like it to be a FARP but so far that seems impossible...
 -- You can also enable troop Pickup at FOBS
 
@@ -74,7 +74,7 @@ ctld.troopPickupAtFOB = true -- if true, troops can also be picked up at a creat
 
 ctld.buildTimeFOB = 120 --time in seconds for the FOB to be built
 
-ctld.crateWaitTime = 120 -- time in seconds to wait before you can spawn another crate
+ctld.crateWaitTime = 60 -- time in seconds to wait before you can spawn another crate
 
 ctld.forceCrateToBeMoved = true -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
 
@@ -90,9 +90,9 @@ ctld.allowRandomAiTeamPickups = false -- Allows the AI to randomize the loading 
 -- Simulated Sling load configuration
 
 ctld.minimumHoverHeight = 7.5 -- Lowest allowable height for crate hover
-ctld.maximumHoverHeight = 12.0 -- Highest allowable height for crate hover
-ctld.maxDistanceFromCrate = 5.5 -- Maximum distance from from crate for hover
-ctld.hoverTime = 10 -- Time to hold hover above a crate for loading in seconds
+ctld.maximumHoverHeight = 20.0 -- Highest allowable height for crate hover
+ctld.maxDistanceFromCrate = 15 -- Maximum distance from from crate for hover
+ctld.hoverTime = 5 -- Time to hold hover above a crate for loading in seconds
 
 -- end of Simulated Sling load configuration
 
@@ -103,16 +103,16 @@ ctld.hoverTime = 10 -- Time to hold hover above a crate for loading in seconds
 -- When this limit is hit, a player will still be able to get crates for an AA system, just unable
 -- to unpack them
 
-ctld.AASystemLimitRED = 20 -- Red side limit
+ctld.AASystemLimitRED = 10 -- Red side limit
 
-ctld.AASystemLimitBLUE = 20 -- Blue side limit
+ctld.AASystemLimitBLUE = 10 -- Blue side limit
 
 --END AA SYSTEM CONFIG --
 
 -- ***************** JTAC CONFIGURATION *****************
 
-ctld.JTAC_LIMIT_RED = 10 -- max number of JTAC Crates for the RED Side
-ctld.JTAC_LIMIT_BLUE = 10 -- max number of JTAC Crates for the BLUE Side
+ctld.JTAC_LIMIT_RED = 5 -- max number of JTAC Crates for the RED Side
+ctld.JTAC_LIMIT_BLUE = 5 -- max number of JTAC Crates for the BLUE Side
 
 ctld.JTAC_dropEnabled = true -- allow JTAC Crate spawn from F10 menu
 
@@ -150,14 +150,27 @@ ctld.JTAC_lock = "all" -- "vehicle" OR "troop" OR "all" forces JTAC to only lock
 
 --pickupZones = { "Zone name or Ship Unit Name", "smoke color", "limit (-1 unlimited)", "ACTIVE (yes/no)", "side (0 = Both sides / 1 = Red / 2 = Blue )", flag number (optional) }
 ctld.pickupZones = {
-    { "pickzone1", "blue", -1, "yes", 0 },
-    { "pickzone2", "red", -1, "yes", 0 },
-    { "pickzone3", "none", -1, "yes", 0 },
-    { "pickzone4", "none", -1, "yes", 0 },
-    { "pickzone5", "none", -1, "yes", 0 },
-    { "pickzone6", "none", -1, "yes", 0 },
-    { "pickzone7", "none", -1, "yes", 0 },
-    { "pickzone8", "none", -1, "yes", 0 },
+    { "mklogizone", "green", -1, "no", 0 },
+    { "kraspashlogizone", "green", -1, "no", 0 },
+    { "krascenterlogizone", "green", -1, "no", 0 },
+    { "krymsklogizone", "green", -1, "no", 0 },
+    { "novologizone", "green", -1, "no", 0 },
+    { "LogiFARPCharlie", "green", -1, "yes", 0 },
+    { "LogiSochi", "green", -1, "yes", 0 },
+    { "LogiGudauta", "green", -1, "yes", 0 },
+    { "LogiMaykopSouth", "green", -1, "yes", 0 },
+    { "LogiMaykopNorth", "green", -1, "yes", 0 },
+    { "LogiFARPBravo", "green", -1, "yes", 0 },
+    { "LogiVody", "green", -1, "yes", 0 },
+    { "LogiFARPDelta", "green", -1, "yes", 0 },
+    { "pickzone1", "green", -1, "yes", 0 },
+    { "pickzone2", "green", -1, "yes", 0 },
+    { "pickzone3", "green", -1, "yes", 0 },
+    { "pickzone4", "green", -1, "yes", 0 },
+    { "pickzone5", "green", -1, "yes", 0 },
+    { "pickzone6", "green", -1, "yes", 0 },
+    { "pickzone7", "green", -1, "yes", 0 },
+    { "pickzone8", "green", -1, "yes", 0 },
     { "pickzone9", "none", 5, "yes", 1 }, -- limits pickup zone 9 to 5 groups of soldiers or vehicles, only red can pick up
     { "pickzone10", "none", 10, "yes", 2 },  -- limits pickup zone 10 to 10 groups of soldiers or vehicles, only blue can pick up
 
@@ -193,14 +206,14 @@ ctld.dropOffZones = {
 
 --wpZones = { "Zone name", "smoke color",  "ACTIVE (yes/no)", "side (0 = Both sides / 1 = Red / 2 = Blue )", }
 ctld.wpZones = {
-    { "wpzone1", "green","yes", 2 },
-    { "wpzone2", "blue","yes", 2 },
-    { "wpzone3", "orange","yes", 2 },
+    { "wpzone1", "none","yes", 2 },
+    { "wpzone2", "none","yes", 2 },
+    { "wpzone3", "none","yes", 2 },
     { "wpzone4", "none","yes", 2 },
     { "wpzone5", "none","yes", 2 },
-    { "wpzone6", "none","yes", 1 },
-    { "wpzone7", "none","yes", 1 },
-    { "wpzone8", "none","yes", 1 },
+    { "wpzone6", "none","yes", 2 },
+    { "wpzone7", "none","yes", 2 },
+    { "wpzone8", "none","yes", 2 },
     { "wpzone9", "none","yes", 1 },
     { "wpzone10", "none","no", 0 }, -- Both sides as its set to 0
 }
@@ -237,6 +250,42 @@ ctld.transportPilotNames = {
     "helicargo23",
     "helicargo24",
     "helicargo25",
+
+    "helicargo26",
+    "helicargo27",
+    "helicargo28",
+    "helicargo29",
+    "helicargo30",
+    "helicargo31",
+    "helicargo32",
+    "helicargo33",
+    "helicargo34",
+    "helicargo35",
+    "helicargo36",
+    "helicargo37",
+    "helicargo38",
+    "helicargo39",
+    "helicargo40",
+    "helicargo41",
+    "helicargo42",
+    "helicargo43",
+    "helicargo44",
+    "helicargo45",
+    "helicargo46",
+    "helicargo47",
+    "helicargo48",
+    "helicargo49",
+    "helicargo50",
+    "helicargo51",
+    "helicargo52",
+    "helicargo53",
+    "helicargo54",
+    "helicargo55",
+    "helicargo56",
+    "helicargo57",
+    "helicargo58",
+    "helicargo59",
+    "helicargo60",
 
     "MEDEVAC #1",
     "MEDEVAC #2",
@@ -382,6 +431,11 @@ ctld.logisticUnits = {
     "logistic8",
     "logistic9",
     "logistic10",
+    "logistic11",
+    "logistic12",
+    "logistic13",
+    "logistic14",
+    "logistic15",
 }
 
 -- ************** UNITS ABLE TO TRANSPORT VEHICLES ******************
@@ -460,6 +514,15 @@ ctld.loadableGroups = {
 --
 ctld.spawnableCrates = {
     -- name of the sub menu on F10 for spawning crates
+    ["Artillery"] = {
+        { weight = 2400, desc = "M270 MLRS", unit = "MLRS", side = 2, cratesRequired = 2 },
+        { weight = 100, desc = "2B11 Mortar", unit = "2B11 mortar" },
+        { weight = 250, desc = "SPH 2S19 Msta", unit = "SAU Msta", side = 1, cratesRequired = 3 },
+        { weight = 255, desc = "M-109 Howitzer", unit = "M-109", side = 2, cratesRequired = 3 },
+    },
+    ["Base Building"] = {
+        { weight = 800, desc = "FOB Crate - Small", unit = "FOB-SMALL" }, -- Builds a FOB! - requires 3 * ctld.cratesRequiredForFOB
+    },
     ["Ground Forces"] = {
         --crates you can spawn
         -- weight in KG
@@ -477,19 +540,11 @@ ctld.spawnableCrates = {
         { weight = 520, desc = "HMMWV - JTAC", unit = "Hummer", side = 2, }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
         { weight = 525, desc = "SKP-11 - JTAC", unit = "SKP-11", side = 1, }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
 
-        { weight = 100, desc = "2B11 Mortar", unit = "2B11 mortar" },
-
-        { weight = 250, desc = "SPH 2S19 Msta", unit = "SAU Msta", side = 1, cratesRequired = 3 },
-        { weight = 255, desc = "M-109", unit = "M-109", side = 2, cratesRequired = 3 },
-
         { weight = 252, desc = "Ural-375 Ammo Truck", unit = "Ural-375", side = 1, cratesRequired = 2 },
         { weight = 253, desc = "M-818 Ammo Truck", unit = "M 818", side = 2, cratesRequired = 2 },
-
-        { weight = 800, desc = "FOB Crate - Small", unit = "FOB-SMALL" }, -- Builds a FOB! - requires 3 * ctld.cratesRequiredForFOB
     },
     ["AA Crates"] = {
-        { weight = 50, desc = "Stinger", unit = "Stinger manpad", side = 2 },
-        { weight = 55, desc = "Igla", unit = "SA-18 Igla manpad", side = 1 },
+        { weight = 1000, desc = "Gepard AAA", unit = "Gepard", side = 2, cratesRequired = 2 },
 
         -- HAWK System
         { weight = 540, desc = "HAWK Launcher", unit = "Hawk ln", side = 2},
