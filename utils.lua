@@ -42,11 +42,10 @@ tableIndex = function(tbl, val)
   end
 end
 
-array_size = function(o)
-    local num = 0
-    for i, j in pairs(o) do
-        num = num + 1
-    end
-    return num
+function clamp(x, min, max)
+    return math.min(math.max(x, min), max)
 end
 
+function addstddev(val, sigma)
+    return val + math.random(-sigma, sigma)
+end

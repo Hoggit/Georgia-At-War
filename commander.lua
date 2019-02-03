@@ -1,4 +1,24 @@
+--[[
+--  TODO: convert to using spawn queues combined with scheduled function
+--        it is more efficient and resource management is easier.
+--
+--  Example:
+--      given a CAP spawn priority queue
+--
+--      allows to easily determine if CAPs have already been requested
+--      by checking the depth of the queue, since no newly requested
+--      CAP can possibly arrive before the already requested ones there
+--      is no point in requesting more if alive + queued == 1.2 * max.
+--
+--      since spawn objects can be treated polymorphicly a global spawn
+--      queue can be used to control resource creation and prevent spawn
+--      flooding
+--]]
+
 max_caps_for_player_count = function(players)
+    if players == nil then
+      players = get_player_count()
+    end
     local caps = 0
 
     if players < 13 then
@@ -13,173 +33,230 @@ max_caps_for_player_count = function(players)
     return caps
 end
 
+get_player_count = function()
+    local bluePlanes = mist.makeUnitTable({'[blue][plane]'})
+    local bluePlaneCount = 0
+    for i,v in pairs(bluePlanes) do
+        if Unit.getByName(v) then bluePlaneCount = bluePlaneCount + 1 end
+    end
+    return bluePlaneCount
+end
+
+--[[
+--  Utility here is rooted in the concepts of utility theory.
+--
+--  c2_utility - represents the command efficiency over a theater
+--      Simply put as command installations are taken out it becomes
+--      increasingly harder for the AI commander it issue orders and receive
+--      timely intel to make decisions. The reason a rotate quadratic curve was
+--      used is used to depict the non-linear fall-off nature of what happened
+--      in the real world when commands are taken out but there is enough
+--      redundancy in the system that the fall-off is not quite linear.
+--
+--  radar_utility - represents the raw radar coverage of the ewr in theater
+--      AWACS are effectively worth two EWR sites and the sum of the two are
+--      multiplied by 3/4ths to represent ground masking due to placement
+--      (blind spots) in the radar coverage.
+--
+--  logistics_utility - represents how well the enemy can supply itself with
+--      its remaining ammo dumps
+--      A logistics function is used to simply not have a linear fall-off, it
+--      is also a nice representation that of how travel times are non-linear.
+--
+--  comms_utility - a simple linear representation of the ability for the emeny
+--      to communicate.
+--
+--  detection_efficiency - the combination of command and control capability and
+--      radar coverage. If either type of asset still exists some amount of
+--      detection is still possible, however, the moment one is completely
+--      wiped out detection should no longer be possible. This is suppose to
+--      represent a central command and control type organization. Which was a
+--      Russian doctrinal mainstay during the cold war.
+--
+--  airbase_attack - the ability to conduct airstrikes
+--      As ammo dumps are hit fewer and fewer resources will be allocated to
+--      airstrikes until all command assets are taken out.
+--
+--  command_delay - is simply the inverse of command_efficiency (c2_utility)
+--      As command efficiency reduces the delay for command to issue new orders
+--      increases.
+--]]
+
+c2_utility = function(stats)
+    return (math.pow(stats.c2.alive/stats.c2.nominal, 1/2))
+end
+
+radar_utility = function(stats)
+    return (.75 * ((stats.ewr.alive/stats.ewr.nominal) +
+                    (2*stats.awacs.alive)/stats.ewr.nominal))
+end
+
+logistics_utility = function(stats)
+    return (1/(1+math.exp(-2*(stats.ammo.alive - stats.ammo.nominal/2))))
+end
+
+comms_utility = function(stats)
+    return (stats.comms.alive/stats.comms.nominal)
+end
+
+detection_efficiency = function(c2s, radar)
+    return clamp(c2s * radar, 0, 1)
+end
+
+airbase_attack = function(c2s, logistics)
+    if c2s < 0.10 then
+        return 0
+    end
+    return logistics
+end
+
+command_delay = function(util, min, max)
+    return clamp((1-util) * max, min, max)
+end
+
+calculate_utilities = function(stats)
+    local utils = {
+        command_efficiency   = c2_utility(stats),
+        radar_coverage       = radar_utility(stats),
+        logistics            = logistics_utility(stats),
+        comms                = comms_utility(stats),
+        detection_efficiency = 0,
+        airbase_strike       = 0,
+    }
+
+    utils.detection_efficiency =
+        detection_efficiency(utils.command_efficiency,
+                             utils.radar_coverage)
+    utils.airbase_strike =
+        airbase_attack(utils.command_efficiency,
+                       utils.logistics)
+    return utils
+end
+
+spawn_cap = function(spawn)
+    local stats = GameStats:get()
+    if stats.caps.alive >= stats.caps.nominal then
+        return
+    end
+    spawn:Spawn()
+end
+
+request_cap = function(caps, time, utils)
+    if caps.alive >= caps.nominal then
+        return
+    end
+
+    local delay = {
+        airbase = {
+            max   =  360,
+            min   =  180,
+            sigma =   60,
+        },
+        offmap = {
+            max   = 1800,
+            min   =  600,
+            sigma =  180,
+        },
+    }
+    local spawn = 0
+    local d = 0
+
+    log("Russian Commander is going to request " ..
+        (caps.nominal - caps.alive) .. " additional CAP units.")
+
+    for i = caps.alive + 1, caps.nominal do
+        if utils.command_efficiency < .6 and utils.comms > 0 then
+            d = time + command_delay(utils.detection_efficiency,
+                                     delay.offmap.min,
+                                     delay.offmap.max)
+            d = addstddev(d, delay.offmap.sigma)
+            if math.random() < utils.comms * .75 then
+                spawn = goodcaps[math.random(#goodcaps)]
+            else
+                spawn = poopcaps[math.random(#poopcaps)]
+            end
+        else
+            d = time + command_delay(utils.detection_efficiency,
+                                     delay.airbase.min,
+                                     delay.airbase.max)
+            d = addstddev(d, delay.airbase.sigma)
+            if math.random() < utils.logistics then
+                spawn = goodcapsground[math.random(#goodcapsground)]
+            else
+                spawn = poopcapsground[math.random(#poopcapsground)]
+            end
+        end
+        mist.scheduleFunction(spawn_cap, {spawn}, d)
+    end
+end
+
+spawn_bai = function()
+    local stats = GameStats:get()
+    if stats.bai.alive >= stats.bai.nominal then
+        return
+    end
+
+    local baispawn = baispawns[math.random(#baispawns)][1]
+    local zone_index = math.random(13)
+    local zone = "NorthCAS" .. zone_index
+    baispawn:SpawnInZone(zone)
+end
+
+request_bai = function(bai, time, utils)
+    local delay_max = 1200
+    local delay_min = 180
+    local sigma = 60
+    local delay = time + command_delay(utils.command_efficiency, delay_min, delay_max)
+
+    if bai.alive < bai.nominal then
+        log("Russian Commander is going to request " ..
+            (bai.nominal - bai.alive) ..
+            " additional strategic ground units")
+        for i = bai.alive + 1, bai.nominal do
+            mist.scheduleFunction(spawn_bai, {}, addstddev(delay, sigma))
+        end
+    end
+end
+
+log_cmdr_stats = function(stats)
+    log("Russian commander has " .. stats.bai.alive   .. " ground squads alive.")
+    log("Russian commander has " .. stats.ewr.alive   .. " EWRs available.")
+    log("Russian commander has " .. stats.c2.alive    .. " command posts available.")
+    log("Russian commander has " .. stats.ammo.alive  .. " Ammo Dumps available.")
+    log("Russian commander has " .. stats.comms.alive .. " Comms Arrays available.")
+    log("Russian commander has " .. stats.caps.alive  .. " flights alive.")
+end
+
 -- Main game loop, decision making about spawns happen here.
 russian_commander = function()
-  -- Russian Theater Decision Making
-  log("Russian commander is thinking...")
-  local bluePlanes = mist.makeUnitTable({'[blue][plane]'})
-  local bluePlaneCount = 0
-  for i,v in pairs(bluePlanes) do
-    if Unit.getByName(v) then bluePlaneCount = bluePlaneCount + 1 end
-  end
-  local time = timer.getAbsTime() + env.mission.start_time
-  local c2s = game_state["Theaters"]["Russian Theater"]["C2"]
-  local caps = game_state["Theaters"]["Russian Theater"]["CAP"]
-  local castargets = game_state["Theaters"]["Russian Theater"]["CASTargets"]
-  local baitargets = game_state["Theaters"]["Russian Theater"]["BAI"]
-  local ewrs = game_state["Theaters"]["Russian Theater"]["EWR"]
-  local striketargets = game_state["Theaters"]["Russian Theater"]["StrikeTargets"]
-  local last_cap_spawn = game_state["Theaters"]["Russian Theater"]["last_cap_spawn"]
-  local random_cap = 0
-  local adcap_chance = 0.4
-  local aliveAWACs = 0
-  local aliveEWRs = 0
-  local aliveAmmoDumps = 0
-  local aliveCommsArrays = 0
-  local alivec2s = 0
-  local alive_caps = 0
-  local max_caps = 3
-  local nominal_c2s = 4
-    local nominal_awacs = 1
-    local nominal_ammodumps = 3
-    local nominal_commsarrays = 3
-    local nominal_ewrs = 2
-    local p_spawn_mig31s = 0.95
-    local p_attack_airbase = 0.2
-    local p_spawn_airbase_cap = 0.7
+    log("Russian commander is thinking...")
 
-    max_caps = max_caps_for_player_count(bluePlaneCount)
-  log("There are " .. bluePlaneCount .. " blue planes in the mission, so we'll spawn a max of " .. max_caps .. " groups of enemy CAP")
+    local time = timer.getTime()
+    local stats = GameStats:get()
+    local utils = calculate_utilities(stats)
 
-  local alive_bai_targets = 0
+    log_cmdr_stats(stats)
 
-  local max_bai = 5
+    request_bai(stats.bai,  time, utils)
+    request_cap(stats.caps, time, utils)
 
-  -- Get the number of C2s in existance, and cleanup the state for dead ones.
-  -- We'll make some further determiniation of what happens based on this
-    alivec2s = array_size(c2s)
-  log("Russian commander has " .. alivec2s .. " command posts available...")
-
-
-  -- Get the number of EWRs in existence, as we use this for determination of spawn rates
-    aliveEWRs = array_size(ewrs)
-    log("Russian commanbder has " .. aliveEWRs .. " EWRs available...")
-
-  for group_name, group_table in pairs(striketargets) do
-    if group_table['spawn_name'] == 'AmmoDump' then aliveAmmoDumps = aliveAmmoDumps + 1 end
-    if group_table['spawn_name'] == 'CommsArray' then aliveCommsArrays = aliveCommsArrays + 1 end
-  end
-
-  log("Russian commander has " .. aliveAmmoDumps .. " Ammo Dumps available...")
-  log("Russian commander has " .. aliveCommsArrays .. " Comms Arrays available...")
-
-  -- Get alive caps and cleanup state
-  for i=#caps, 1, -1 do
-    local cap = Group.getByName(caps[i])
-    if cap and isAlive(cap) then
-      if allOnGround(cap) then
-        cap:destroy()
-        log("Found inactive cap, removing")
-        table.remove(caps, i)
-      else
-        alive_caps = alive_caps + 1
-      end
-    else
-      table.remove(caps, i)
+    if #enemy_interceptors == 0 and
+       math.random() < utils.detection_efficiency then
+        RussianTheaterMig312ShipSpawn:Spawn()
     end
-  end
+    log("The commander has " .. #enemy_interceptors .. " alive")
 
-
-  log("The Russian commander has " .. alive_caps .. " flights alive")
-  -- Get Alive BAI Targets
-    alive_bai_targets = array_size(baitargets)
-  log("The Russian commander has " .. alive_bai_targets .. " ground squads alive.")
-
-  --if alivec2s == 0 then log('Russian commander whispers "BLYAT!" and runs for the hills before he ends up in a gulag.'); return nil end
-
-  -- Setup some decision parameters based on how many tactical resources are alive
-  p_attack_airbase = 0.1 + 0.1*(aliveAmmoDumps/nominal_ammodumps) + 0.1*(alivec2s/nominal_c2s)
-  p_spawn_mig31s = 0.65 + 0.1*(aliveEWRs/nominal_ewrs) + 0.1*(alivec2s/nominal_c2s)
-  p_spawn_airbase_cap = 0.5 + 0.2*(aliveAmmoDumps/nominal_ammodumps) + 0.1*(1-(aliveCommsArrays/nominal_commsarrays))
-
-  if alivec2s == 3 then random_cap = 30 end
-  if alivec2s == 2 then random_cap = 60; adcap_chance = 0.4 end
-  if alivec2s == 1 then random_cap = 120 adcap_chance = 0.8 end
-  local command_delay = math.random(10, random_cap)
-  log("The Russian commander has a command delay of " .. command_delay .. " and a " .. (adcap_chance * 100) .. "% chance of getting decent planes...")
-
-  if alive_caps < max_caps then
-    log("The Russian commander is going to request " .. (max_caps - alive_caps) .. " additional CAP units.")
-    for i = alive_caps + 1, max_caps do
-      mist.scheduleFunction(function()
-        if math.random() < adcap_chance then
-          -- Spawn fancy planes, 70% chance they come from airbase, otherwise they come from "off theater"
-          if math.random() < p_spawn_airbase_cap then
-                        local capspawn = goodcapsground[math.random(#goodcapsground)]
-            capspawn:Spawn()
-            log("The Russian commander is getting a fancy plane from his local airbase")
-          else
-                        local capspawn = goodcaps[math.random(#goodcaps)]
-            capspawn:Spawn()
-            log("The Russian commander is getting a fancy plane from a southern theater.")
-          end
-        else
-          -- Spawn same ol crap
-          if math.random() < p_spawn_airbase_cap then
-                        local capspawn = poopcapsground[math.random(#poopcapsground)]
-            capspawn:Spawn()
-            log("The Russian commander is getting a poopy plane from his local airbase")
-          else
-                        local capspawn = poopcaps[math.random(#poopcaps)]
-            capspawn:Spawn()
-            log("The Russian commander is getting a poopy plane from a southern theater, thanks Ivan you piece of...")
-          end
-        end
-      end, {}, timer.getTime() + command_delay)
-    end
-  end
-
-  if alive_bai_targets < max_bai then
-    log("The Russian Commander is going to request " .. (max_bai - alive_bai_targets) .. " additional strategic ground units")
-    for i = alive_bai_targets + 1, max_bai do
-      mist.scheduleFunction(function()
-        local baispawn = baispawns[math.random(#baispawns)][1]
-        local zone_index = math.random(13)
-        local zone = "NorthCAS" .. zone_index
-        baispawn:SpawnInZone(zone)
-      end, {}, timer.getTime() + command_delay)
-    end
-  end
-
-  log("Checking interceptors...")
-  if math.random() < p_spawn_mig31s then
-    for i,g in ipairs(enemy_interceptors) do
-      if allOnGround(g) then
-        Group.getByName(g):destroy()
-      end
-
-      if not isAlive(g) then
-        enemy_interceptors = {}
-      end
-    end
-
-    if #enemy_interceptors == 0 then
-      RussianTheaterMig312ShipSpawn:Spawn()
-    end
-  end
-  log("The commander has " .. #enemy_interceptors .. " alive")
-
-
-  for i,target in ipairs(AttackableAirbases(Airbases)) do
-    log("The Russian commander has decided to strike " .. target .. " airbase")
+    for i,target in ipairs(AttackableAirbases(Airbases)) do
         if not AirfieldIsDefended("DefenseZone" .. target) then
-      if math.random() < p_attack_airbase then
-        log(target .. " appears undefended! Muahaha!")
-        local spawn = SpawnForTargetAirbase(target)
-        spawn:Spawn()
-      end
+            if utils.airbase_strike and
+               math.random() < utils.airbase_strike then
+                log("Russian commander has decided to strike " ..
+                    target .. " airbase")
+                local spawn = SpawnForTargetAirbase(target)
+                spawn:Spawn()
+            end
+        end
     end
-  end
 
     --VIP Spawn Chance
     local VIPChance = 0.1
@@ -187,7 +264,6 @@ russian_commander = function()
       log("Spawning russian VIP transport")
       SpawnVIPTransport()
     end
-
 end
 
 log("commander.lua complete")
