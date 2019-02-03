@@ -6,6 +6,24 @@ json = loadfile(jsonlib)()
 logFile = io.open(lfs.writedir()..[[Logs\Hoggit-GAW.log]], "w")
 --JSON = (loadfile "JSON.lua")()
 
+_stats_add = function(statobj, objtype, val)
+    statobj[objtype].alive = statobj[objtype].alive + val
+    return statobj[objtype].alive
+end
+
+GameStats = {
+    increment = function(self, objtype)
+        return _stats_add(game_stats, objtype, 1)
+    end,
+    decrement = function(self, objtype)
+        return _stats_add(game_stats, objtype, -1)
+    end,
+    get = function(self)
+        game_stats.caps.nominal = max_caps_for_player_count(get_player_count())
+        return game_stats
+    end,
+}
+
 GAW = {}
 function log(str)
   if str == nil then str = 'nil' end
@@ -359,13 +377,20 @@ end
 
 mist.addEventHandler(handleDeaths)
 
+function respawnGroundGroup(existingGrp, spawnerObject, pos)
+  if existingGrp ~= nil then
+    log('destroying existing ground group ' .. existingGrp:getName())
+    existingGrp:destroy()
+  end
+  return spawnerObject:SpawnAtPoint(pos)
+end
+
 function securityForcesLanding(event)
-  if event.id == world.event.S_EVENT_LAND then
-    log("Land Event!")
+  if event.id == world.event.S_EVENT_LAND or event.id == world.event.S_EVENT_ENGINE_SHUTDOWN then
+    log("Land or Engine Shutdown Event!")
     local xport = activeBlueXports[event.initiator:getGroup():getName()]
     if xport then
       local abname = xport[2]
-      if xport[3] then abname = abname .. " Warehouse" end
       log('Xport just landed at ' .. abname)
       local grpLoc = event.initiator:getPosition().p
       local landPos = Airbase.getByName(abname):getPosition().p
@@ -382,6 +407,9 @@ function securityForcesLanding(event)
         if xport[4][3] then
           activateLogi(xport[4][3])
           log("Logi activated")
+        if xport[5] then
+          activateLogi(xport[5])
+          log("Logi activated")
         else
           log("No logi point here")
         end
@@ -396,11 +424,11 @@ function securityForcesLanding(event)
           y = landPos.z + 80
         }
 
-        AirfieldDefense:SpawnAtPoint(pos)
-        FSW:SpawnAtPoint({
-          x = pos.x - 10,
-          y = pos.y - 10
-        })
+        -- check if FSW/Defense group is already spawned at target
+        -- destroy it if it exists before creating a new one
+        BlueSecurityForcesGroups[abname] = respawnGroundGroup(BlueSecurityForcesGroups[abname], AirfieldDefense, pos)
+        BlueFarpSupportGroups[abname] = respawnGroundGroup(BlueFarpSupportGroups[abname], FSW, { x = pos.x - 10, y = pos.y - 10 })
+
         log("Security forces have spawned")
       end
       mist.scheduleFunction(event.initiator.destroy, {event.initiator}, timer.getTime() + 120)
@@ -409,7 +437,6 @@ function securityForcesLanding(event)
 end
 mist.addEventHandler(securityForcesLanding)
 
-baseCappedCallbacks = {}
 function baseCaptured(event)
   if event.id == world.event.S_EVENT_BASE_CAPTURED then
     log("baseCaptured")
@@ -428,14 +455,14 @@ function baseCaptured(event)
       end
     end
 
-    if listContains(primaryFARPS, abname) then
+    if abname == 'FARP ALPHA' or abname == 'FARP BRAVO' or abname == 'FARP CHARLIE' or abname == 'FARP DELTA' then
       game_state["Theaters"]["Russian Theater"]['FARPS'][abname] = coalition
     else
       game_state["Theaters"]["Russian Theater"]['Airfields'][abname] = coalition
     end
 
     -- update primary goal state
-    if listContains(primaryAirfields, abname) then
+    if abname == 'Sukhumi-Babushara' or abname == 'Beslan' then
       if coalition == 2 then
         game_state["Theaters"]["Russian Theater"]['Primary'][abname] = true
       else
@@ -445,6 +472,17 @@ function baseCaptured(event)
 
     for _, callback in ipairs(baseCappedCallbacks) do
       callback(abname, coalition)
+    end
+
+    -- disable Sukhumi airport red CAP spawn if it is captured by blufor
+    if abname == 'Sukhumi-Babushara' then
+      if coalition == 2 then
+        poopcapsground = {RussianTheaterF5SpawnGROUND}
+        goodcapsground = {RussianTheaterJ11SpawnGROUND}
+      else
+        poopcapsground = {RussianTheaterMig212ShipSpawnGROUND, RussianTheaterF5SpawnGROUND}
+        goodcapsground = {RussianTheaterMig292ShipSpawnGROUND, RussianTheaterSu272sShipSpawnGROUND, RussianTheaterJ11SpawnGROUND}
+      end
     end
   end
 end
@@ -485,13 +523,16 @@ end
 
 AddStaticObjective = function(id, callsign, spawn_name, staticNames)
   local point = StaticObject.getByName(staticNames[1]):getPosition().p
-  game_state["Theaters"]["Russian Theater"]["StrikeTargets"]["strike" .. id] = {
+  local type = "StrikeTargets"
+  game_state["Theaters"]["Russian Theater"][type]["strike" .. id] = {
     ['callsign'] = callsign,
     ['spawn_name'] = spawn_name,
     ['position'] = point,
     ['markerID'] = id,
     ['statics'] = staticNames
   }
+
+  trigger.action.markToCoalition(id, objectiveTypeMap[type] .. " - " .. callsign, point, 2, true)
 end
 
 AddConvoy = function(group, spawn_name, callsign)
