@@ -446,7 +446,7 @@ end
 
 for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
     spawn[1]:OnSpawnGroup(function(SpawnedGroup)
-        addToActiveBlueXports(SpawnedGroup, AirfieldDefense, name, true, spawn, spawn[3])
+        addToActiveBlueXports(SpawnedGroup, AirfieldDefense, name, true, spawn[1], spawn[3])
     end)
 end
 
