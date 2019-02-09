@@ -420,8 +420,8 @@ function securityForcesLanding(event)
         end
 
         local pos = {
-          x = landPos.x + 80,
-          y = landPos.z + 80
+          x = landPos.x - 300,
+          y = landPos.z + 300
         }
 
         -- check if FSW/Defense group is already spawned at target
