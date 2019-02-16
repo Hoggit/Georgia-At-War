@@ -29,7 +29,8 @@ function respawnHAWKFromState(_points)
     ctld.spawnCrateAtPoint("blue",550, _points["Hawk tr"])
 
     -- spawn a helper unit that will "build" the site
-    local _SpawnObject = Spawner( "SukXportHelo" )
+    local _SpawnObject = Spawner( "HawkHelo" )
+    --local _SpawnObject = Spawner( "SukXportHelo" )
     local _SpawnGroup = _SpawnObject:SpawnAtPoint({x=_points["Hawk pcp"]["x"], y=_points["Hawk pcp"]["z"]})
     local _unit=_SpawnGroup:getUnit(1)
 
@@ -60,81 +61,9 @@ local logispawn = {
     category = "Ground vehicles"
 }
 
--- Forward Logistics spawns
-LogiFARPALPHASpawn = {logispawn, "HEMTT TFFT",
-    {
-        ['x'] = -90692,
-        ['y'] = 551377
-    },
-    "LogiFARPAlpha"
-}
-
-LogiFARPBRAVOSpawn = {logispawn, "HEMTT TFFT",
-    {
-        ['x'] = -83517,
-        ['y'] = 617694
-    },
-    "LogiFARPBravo"
-}
-
-LogiFARPCHARLIESpawn = {logispawn, "HEMTT TFFT",
-    {
-        ['x'] = -126126,
-        ['y'] = 420423
-    },
-    "LogiFARPCharlie"
-}
-
-LogiFARPDELTASpawn = {logispawn, "HEMTT TFFT",
-    {
-        ['x'] = -98874,
-        ['y'] = 808161
-    },
-    "LogiFARPDelta"
-}
-
-LogiVodySpawn = {logispawn, "HEMTT TFFT",
-    {
-        ['x'] = -77884,
-        ['y'] = 761336
-    },
-    "LogiVody"
-}
-
-LogiAdlerSpawn = {logispawn, "HEMTT TFFT",
-    {
-        ['x'] = -166113,
-        ['y'] = 462824
-    },
-    "LogiSochi"
-}
-
-LogiGudautaSpawn = {logispawn, "HEMTT TFFT",
-    {
-        ['x'] = -195671,
-        ['y'] = 517492
-    },
-    "LogiGudauta"
-}
-
--- Transport Spawns
-NorthGeorgiaTransportSpawns = {
-    ['Sochi-Adler'] = {Spawner("SochiXport"), Spawner("SochiXportHelo"), LogiAdlerSpawn},
-    ['Gudauta'] = {Spawner("GudautaXport"), Spawner("GudautaXportHelo"), LogiGudautaSpawn},
-    ['Sukhumi-Babushara'] = {Spawner("SukXport"), Spawner("SukXportHelo"), nil},
-    ['Mineralnye Vody'] = {Spawner("VodyXport"), Spawner("VodyXportHelo"), LogiVodySpawn},
-    ['Nalchik'] = {Spawner("NalchikXport"), Spawner("NalchikXportHelo"), nil},
-    ['Mozdok'] = {Spawner("MozdokXport"), Spawner("MozdokXportHelo"), nil},
-    ['Beslan'] = {Spawner("BeslanXport"), Spawner("BeslanXportHelo"), nil}
-}
-
-NorthGeorgiaFARPTransportSpawns = {
-    ["FARP ALPHA"] = {Spawner("FARPAlphaXportHelo"), nil, LogiFARPALPHASpawn},
-    ["FARP BRAVO"] = {Spawner("FARPBravoXportHelo"), nil, LogiFARPBRAVOSpawn},
-    ["FARP CHARLIE"] = {Spawner("FARPCharlieXportHelo"),nil, LogiFARPCHARLIESpawn},
-    ["FARP DELTA"] = {Spawner("FARPDeltaXportHelo"),nil, LogiFARPDELTASpawn},
-}
 scheduledSpawns = {}
+DestructibleStatics = {}
+DestroyedStatics = {}
 BlueSecurityForcesGroups = {}
 BlueFarpSupportGroups = {}
 -- Support Spawn
@@ -166,7 +95,6 @@ RussianTheaterSA10Spawn = { Spawner("SA10"), "SA10" }
 RussianTheaterSA6Spawn = { Spawner("SA6"), "SA6" }
 RussianTheaterEWRSpawn = { Spawner("EWR"), "EWR" }
 RussianTheaterC2Spawn = { Spawner("C2"), "C2" }
---RussianTheaterAirfieldDefSpawn = Spawner("Russia-Airfield-Def")
 RussianTheaterAWACSSpawn = Spawner("A50")
 RussianTheaterAWACSPatrol = Spawner("SU27-RUSAWACS Patrol")
 
@@ -192,39 +120,6 @@ RussianTheaterMig312ShipSpawn = Spawner("Mig31-2ship")
 RussianTheaterMig312ShipSpawn:OnSpawnGroup(function(spawned_group)
     table.insert(enemy_interceptors, spawned_group:getName())
 end)
-
-VIPSpawns = { "VIPTransport" }
-
-VIPSpawnZones = {
-  {"VIPSpawn-Tuapse", "Tuapse"},
-  {"VIPSpawn-Sochi", "Sochi"},
-  {"VIPSpawn-Gudauta", "Gudauta"},
-  {"VIPSpawn-Vody", "Vody"}
-}
-VIPDropoffZones = {
-  "VIPDropOff-Maykop",
-  "VIPDropOff-MaykopSouth",
-  "VIPDropOff-MaykopNorth",
-  "VIPDropOff-FARPAlpha",
-  "VIPDropOff-FARPBravo",
-  "VIPDropOff-FARPCharlie",
-  "VIPDropOff-FARPDelta",
-  "VIPDropOff-Gudauta",
-  "VIPDropOff-Sochi",
-  "VIPDropOff-Vody"
-}
-
---Theater Objectives. Must be spawned once, and only where in the ME has them.
-TuapseRefinery = TheaterObjectiveSpawner("Tuapse Refinery", "TuapseRefineryDef")
-ChemSite = TheaterObjectiveSpawner("Chemical Factory", "CHEM SITE VEHICLES")
-AmmoDump = TheaterObjectiveSpawner("Chemical Factory", "AMMO DUMP GROUND FORCES")
-
-
-TheaterObjectives = {}
-TheaterObjectives["Tuapse Refinery"] = TuapseRefinery
-TheaterObjectives["Chemical Factory"] = ChemSite
-TheaterObjectives["Ammunitions Depot"] = AmmoDump
-
 
 -- Strike Target Spawns
 RussianHeavyArtySpawn = { Spawner("ARTILLERY"), "ARTILLERY" }
@@ -295,46 +190,6 @@ SpawnStaticDefense = function(group_name, position)
     mist.dynAdd(groupData)
 end
 
-StrikeTargetSpawns = {
-  AmmoDumpSpawn,
-  CommsArraySpawn,
-  PowerPlantSpawn
-}
-
-SpawnStrikeTarget = function()
-  local zone_index = math.random(10)
-  local zone = "NorthStatic" .. zone_index
-  local spawn = randomFromList(StrikeTargetSpawns)
-  local vec2 = mist.getRandomPointInZone(zone)
-  return spawn:Spawn({vec2.x, vec2.y})
-end
--- Naval Strike target Spawns
---PlatformGroupSpawn = {SPAWNSTATIC:NewFromStatic("Oil Platform", country.id.RUSSIA), "Oil Platform"}
-
--- Airfield CAS Spawns
-RussianTheaterCASSpawn = Spawner("Su25T-CASGroup")
-RussianTheaterSOUTHCASSpawn = Spawner("Su25T-CASGroupSOUTH")
-
--- FARP defenses
-FARPALPHADEF = Spawner("FARP ALPHA DEF_1")
-FARPBRAVODEF = Spawner("FARP BRAVO DEF_1")
-FARPCHARLIEDEF = Spawner("FARP CHARLIE DEF_1")
-FARPDELTADEF = Spawner("Russia-Airfield-Def")
-
--- FARP Support Groups
-FSW = Spawner("FARP Support West")
-
--- Group spanws for easy randomization
-local allcaps = {
-    RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn, RussianTheaterJ11Spawn, RussianTheaterF5Spawn,
-    RussianTheaterMig212ShipSpawnGROUND, RussianTheaterSu272sShipSpawnGROUND, RussianTheaterMig292ShipSpawnGROUND, RussianTheaterJ11SpawnGROUND, RussianTheaterF5SpawnGROUND
-}
-poopcaps = {RussianTheaterMig212ShipSpawn, RussianTheaterF5Spawn}
-goodcaps = {RussianTheaterMig292ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterJ11Spawn}
-poopcapsground = {RussianTheaterMig212ShipSpawnGROUND, RussianTheaterF5SpawnGROUND}
-goodcapsground = {RussianTheaterMig292ShipSpawnGROUND, RussianTheaterSu272sShipSpawnGROUND, RussianTheaterJ11SpawnGROUND}
-baispawns = {RussianHeavyArtySpawn, ArmorColumnSpawn, MechInfSpawn}
-
 function activateLogi(spawn)
     if spawn then
         local statictable = mist.utils.deepCopy(logispawn)
@@ -361,7 +216,6 @@ DestructibleStatics = {
     'AMMO DUMP'
 }
 DestroyedStatics = {}
-
 
 RussianTheaterAWACSSpawn:OnSpawnGroup(function(SpawnedGroup)
     local callsign = "Overseer"
@@ -446,7 +300,7 @@ end
 
 for name,spawn in pairs(NorthGeorgiaFARPTransportSpawns) do
     spawn[1]:OnSpawnGroup(function(SpawnedGroup)
-        addToActiveBlueXports(SpawnedGroup, AirfieldDefense, name, true, spawn[1], spawn[3])
+        addToActiveBlueXports(SpawnedGroup, AirfieldDefense, name, true, spawn, spawn[3])
     end)
 end
 
