@@ -1,44 +1,3 @@
-local NEUTRAL=0
-local RED=1
-local BLUE=2
-
---Airbases in play.
-Airbases = {
-    "Sochi-Adler",
-    "Gudauta",
-    "Mineralnye Vody",
-    "Nalchik",
-    "Mozdok",
-    "Sukhumi-Babushara"
-}
-
--- Russian IL-76MD spawns to capture airfields
-MozdokTransportSpawn = Spawner("MozdokTransport")
-MozdokHeloSpawn = Spawner("MozdokHeloTransport")
-MozdokDefSpawn = Spawner("MozdokDefense")
-
-NalchikTransportSpawn = Spawner("NalchikTransport")
-NalchikHeloSpawn = Spawner("NalchikHeloTransport")
-NalchikDefSpawn = Spawner("NalchikDefense")
-
-VodyTransportSpawn = Spawner("VodyTransport")
-VodyHeloSpawn = Spawner("VodyHeloTransport")
-VodyDefSpawn = Spawner("VodyDefense")
-
-SochiTransportSpawn = Spawner("SochiTransport")
-SochiHeloSpawn = Spawner("SochiHeloTransport")
-SochiDefSpawn = Spawner("SochiDefense")
-
-GudautaTransportSpawn = Spawner("GudautaTransport")
-GudautaHeloSpawn = Spawner("GudautaHeloTransport")
-GudautaDefSpawn = Spawner("GudautaDefense")
-
-SukhumiTransportSpawn = Spawner("SukhumiTransport")
-SukhumiHeloSpawn = Spawner("SukhumiHeloTransport")
-SukhumiDefSpawn = Spawner("SukhumiDefense")
-
-RussianTheaterAirfieldDefSpawn = Spawner("Russia-Airfield-Def")
-
 AttackableAirbases = function(airbaseList)
     local filtered = {}
     log("Iterating airbases")
@@ -81,16 +40,6 @@ removeFromActiveXports = function(group, defense_group_spawner, target)
     activeXports[group:getName()] = nil
 end
 
---Airbase -> Spawn Map.
-AirbaseSpawns = {
-    ["Mozdok"]={MozdokTransportSpawn, MozdokHeloSpawn, MozdokDefSpawn},
-    ["Nalchik"]={NalchikTransportSpawn, NalchikHeloSpawn, NalchikDefSpawn},
-    ["Mineralnye Vody"]={VodyTransportSpawn, VodyHeloSpawn, VodyDefSpawn},
-    ["Gudauta"]={GudautaTransportSpawn, GudautaHeloSpawn, GudautaDefSpawn},
-    ["Sochi-Adler"]={SochiTransportSpawn, SochiHeloSpawn, SochiDefSpawn},
-    ["Sukhumi-Babushara"]={SukhumiTransportSpawn, SukhumiHeloSpawn, SukhumiDefSpawn}
-}
-
 function transportLand(event)
   if event.id == world.event.S_EVENT_LAND then
     log("TransportLand")
@@ -107,7 +56,6 @@ function transportLand(event)
     end
   end
 end
-
 mist.addEventHandler(transportLand)
 
 for airbase,spawn_info in pairs(AirbaseSpawns) do
