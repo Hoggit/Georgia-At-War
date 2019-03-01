@@ -4255,7 +4255,7 @@ function ctld.orderGroupToMoveToPoint(_leader, _destination)
       _controller:setTask(_arg[2])
     end
   end
-  , {_group:getName(), _mission}, timer.getTime() + 2)
+  , {_group:getName(), _mission}, timer.getTime() + 10)
 
 end
 
