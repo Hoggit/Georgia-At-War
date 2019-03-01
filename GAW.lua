@@ -270,6 +270,10 @@ function handleDeaths(event)
   -- The scheduledSpawn stuff only works for groups with a single unit atm.
   if event.id == world.event.S_EVENT_DEAD or event.id == world.event.S_EVENT_ENGINE_SHUTDOWN then
     log("Death event handler")
+    if event.initator == nil then
+      log("event.initiator was nil. Skipping handleDeaths")
+      return
+    end
     if not event.initiator.getGroup then
       if event.initiator.getName then
         local sobname = event.initiator.getName(event.initiator)
