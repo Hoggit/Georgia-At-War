@@ -21,11 +21,11 @@ SpawnForTargetAirbase = function(baseName)
     if base:getCoalition() == BLUE then
         --Return the helo group since the transport planes can't land if it's blue.
         log(baseName .. " is a capitalist pig airport. Send in the choppas")
-        return AirbaseSpawns[baseName][2]
+        return bases[baseName][coalition.side.RED].helo
     else
         --It's landable _right now_. Just send the plane.
         log(baseName .. " is not owned by those dogs. Send in a plane!")
-        return AirbaseSpawns[baseName][1]
+        return bases[baseName][coalition.side.RED].cargo
     end
 end
 
@@ -58,7 +58,8 @@ function transportLand(event)
 end
 mist.addEventHandler(transportLand)
 
-for airbase,spawn_info in pairs(AirbaseSpawns) do
+-- Todo: Look at this and figure out what it means
+for airbase,spawn_info in pairs(bases) do
     local plane_spawn = spawn_info[1]
     local helo_spawn = spawn_info[2]
     local defense_group = spawn_info[3]

@@ -246,6 +246,7 @@ russian_commander = function()
     end
     log("The commander has " .. #enemy_interceptors .. " alive")
 
+    --Where does 'Airbases' exist? 
     for i,target in ipairs(AttackableAirbases(Airbases)) do
         if not AirfieldIsDefended("DefenseZone" .. target) then
             if utils.airbase_strike and

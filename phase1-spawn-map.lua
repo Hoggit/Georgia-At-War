@@ -47,6 +47,7 @@ game_state = {
 
 --Airbases in play.
 -- use to be called "AirbaseSpawns"
+-- Will need to add defense groups in the ME and add them to this list per latest changes
 bases = {
     ["Gelendzhik"]           = {
         [coalition.side.RED]  = {
@@ -161,7 +162,7 @@ bases = {
             },
         },
     },
-    ['SW Warehouse']         = {
+    ["SW Warehouse"]         = {
         [coalition.side.RED]  = {
             def     = Spawner("FARP DEFENSE #001"),
             cargo   = nil,
@@ -182,7 +183,7 @@ bases = {
             },
         },
     },
-    ['NW Warehouse']         = {
+    ["NW Warehouse"]         = {
         [coalition.side.RED]  = {
             def     = Spawner("FARP DEFENSE"),
             cargo   = nil,
@@ -204,7 +205,7 @@ bases = {
             },
         },
     },
-    ['SE Warehouse']         = {
+    ["SE Warehouse"]         = {
         [coalition.side.RED]  = {
             def     = Spawner("FARP DEFENSE #002"),
             cargo   = nil,
@@ -229,7 +230,7 @@ bases = {
             },
         },
     },
-    ['NE Warehouse']         = {
+    ["NE Warehouse"]         = {
         [coalition.side.RED]  = {
             def     = Spawner("FARP DEFENSE #003"),
             cargo   = nil,
@@ -251,7 +252,7 @@ bases = {
             },
         },
     },
-    ['MK Warehouse']         = {
+    ["MK Warehouse"]         = {
         [coalition.side.RED]  = {
             def     = Spawner("FARP DEFENSE #004"),
             cargo   = nil,
@@ -339,7 +340,7 @@ SEFARPLogiSpawn = {logispawn, "HEMTT TFFT",
 -- Airfield CAS Spawns
 RussianTheaterCASSpawn = Spawner("Su25T-CASGroup")
 
--- Group spanws for easy randomization
+-- Group spawns for easy randomization
 local allcaps = {
     RussianTheaterMig212ShipSpawn, RussianTheaterSu272sShipSpawn, RussianTheaterMig292ShipSpawn, RussianTheaterJ11Spawn, RussianTheaterF5Spawn,
     RussianTheaterMig212ShipSpawnGROUND, RussianTheaterSu272sShipSpawnGROUND, RussianTheaterMig292ShipSpawnGROUND, RussianTheaterJ11SpawnGROUND, RussianTheaterF5SpawnGROUND

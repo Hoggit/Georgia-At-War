@@ -24,25 +24,26 @@ if statefile then
         local posy = apV3.z - math.random(100, 200)
         game_state["Theaters"]["Russian Theater"]["Airfields"][name] = coalition
 
-        if coalition == 1 then
-            if AirbaseSpawns[name] then
-            AirbaseSpawns[name][3]:Spawn()
+        
+        --spawns defense groups depending on airbase coalition
+        if bases[name] then
+          bases[name][coalition].def:Spawn()
+          
+          if bases[name][coalition].logi != nil then
+            bases[name][coalition].logi:Spawn()
+          end
+          
+          --Set the flag for the slot blocking functionality, do we really still need this logic?
+          if coalition == coalition.side.Red then
             flagval = 100
-            end
-        elseif coalition == 2 then
-            AirfieldDefense:SpawnAtPoint({
-                x = posx,
-                y = posy
-            })
-
-            posx = posx + math.random(100, 200)
-            posy = posy + math.random(100, 200)
-            FSW:SpawnAtPoint({x=posx, y=posy})
+          else
             flagval = 0
-
-            if ab_logi_slots[name] then
-                activateLogi(ab_logi_slots[name])
-            end
+          end
+          
+          -- what this do?
+          if ab_logi_slots[name] then
+              activateLogi(ab_logi_slots[name])
+          end
         end
 
         if abslots[name] then
@@ -56,36 +57,36 @@ if statefile then
 
     for name, coalition in pairs(saved_game_state["Theaters"]["Russian Theater"]["FARPS"]) do
         local flagval = 100
-        local ab = Airbase.getByName(name)
-        local apV3 = ab:getPosition().p
-
-        apV3.x = apV3.x + math.random(-25, 25)
-        apV3.z = apV3.z + math.random(-25, 25)
-        local spawns = {NWFARPDEF, SWFARPDEF, NEFARPDEF, SEFARPDEF}
         game_state["Theaters"]["Russian Theater"]["FARPS"][name] = coalition
 
-        if coalition == 1 then
-            spawns[math.random(4)]:SpawnAtPoint({x = apV3.x, y= apV3.z})
+        --spawns FARP defenses based on coalition
+        if bases[name] then
+          bases[name][coalition].def:Spawn()
+          
+          if bases[name][coalition].logi != nil then
+            bases[name][coalition].logi:Spawn()
+          end
+          
+          --Set the flag for the slot blocking functionality, do we really still need this logic?
+          if coalition == coalition.side.Red then
             flagval = 100
-        elseif coalition == 2 then
-            AirfieldDefense:SpawnAtPoint(apV3)
-            apV3.x = apV3.x + 50
-            apV3.z = apV3.z - 50
-            FSW:SpawnAtPoint({x=apV3.x, y=apV3.z}, true)
+          else
             flagval = 0
-
-            if ab_logi_slots[name] then
-                activateLogi(ab_logi_slots[name])
-            end
+          end
+          
+          -- what this do?
+          if ab_logi_slots[name] then
+              activateLogi(ab_logi_slots[name])
+          end
         end
-
+             
         if abslots[name] then
           for i,grp in ipairs(abslots[name]) do
               trigger.action.setUserFlag(grp, flagval)
           end
         end
 
-        if name == "MK Warehouse" and coalition == 2 then
+        if name == "MK Warehouse" and coalition == coalition.side.Blue then
             activateLogi(MaykopLogiSpawn)
         end
 
@@ -252,12 +253,13 @@ else
     end
 
 
-    AirbaseSpawns["Krasnodar-Pashkovsky"][1]:Spawn()
-    NWFARPDEF:Spawn()
-    SWFARPDEF:Spawn()
-    NEFARPDEF:Spawn()
-    SEFARPDEF:Spawn()
-    MKFARPDEF:Spawn()
+    bases["Krasnodar-Pashkovsky"][coalition.side.Red].def:Spawn()
+    bases["NW Warehouse"][coalition.side.Red].def:Spawn()
+    bases["SW Warehouse"][coalition.side.Red].def:Spawn()
+    bases["NE Warehouse"][coalition.side.Red].def:Spawn()
+    bases["SE Warehouse"][coalition.side.Red].def:Spawn()
+    bases["MK Warehouse"][coalition.side.Red].def:Spawn()
+    
 
     -- Disable slots
     trigger.action.setUserFlag("Novoro Huey 1",100)
