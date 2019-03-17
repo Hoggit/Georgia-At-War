@@ -366,6 +366,10 @@ mist.addEventHandler(handleDeaths)
 function securityForcesLanding(event)
   if event.id == world.event.S_EVENT_LAND then
     log("Land Event!")
+    if event.initiator == nil then
+      log("event.initiator was nil. Skipping securityForcesLanding")
+      return
+    end
     local xport = activeBlueXports[event.initiator:getGroup():getName()]
     if xport then
       local abname = xport[2]
