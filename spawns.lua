@@ -177,7 +177,7 @@ function WeatherPositioning.avoidCloudLayer(planeGroup, vSpeed_ms)
 		end
 	end
 	
-	local route = mist.goRoute(planeGroup, curRoute)
+	return mist.goRoute(planeGroup, curRoute)
 end
 
 
