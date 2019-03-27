@@ -31,6 +31,7 @@ end
 Spawner = function(grpName)
   local CallBack = {}
   return {
+    MEName = grpName,
     Spawn = function(self)
       local added_grp = Group.getByName(mist.cloneGroup(grpName, true).name)
       if CallBack.func then

@@ -143,31 +143,30 @@ function WeatherPositioning.deconflictAltitude(altitudeIn, deconflictBase, decon
 	return hAltitude
 end
 
-function WeatherPositioning.avoidCloudLayer(planeGroup, vSpeed_ms)
-	local planeGroupName	= planeGroup:getName()
+function WeatherPositioning.avoidCloudLayer(planeGroup, MEGroupName, vSpeed_ms)
 	vSpeed_ms = vSpeed_ms or WeatherPositioning.vSpeed
-	
+
 	-- Calculate orbit height. Ignore for partial cloud conditions
 	local clouds = env.mission.weather.clouds
 	local cloudBase = clouds.base
 	local cloudTop = clouds.base + clouds.thickness
 	local hOrbit = WeatherPositioning.hMaxFlightAlt
-	
-	if clouds.density >= 7 then 
+
+	if clouds.density >= 7 then
 		hOrbit = WeatherPositioning.deconflictAltitude(hOrbit, cloudBase, cloudTop)
 	end
-	
-	local curRoute = mist.getGroupRoute(planeGroupName, true)
-	
+
+	local curRoute = mist.getGroupRoute(MEGroupName, true)
+
 	for i = 1, #curRoute do
 		curRoute[i].alt = hOrbit
-		
+
 		-- Modify any orbit taskings
 		if #curRoute[i] ~= nil
 			 and #curRoute[i].task ~= nil
 			 and #curRoute[i].task.params ~= nil
 			 and #curRoute[i].task.params.tasks ~= nil then
-			
+
 			for _, curTask in pairs(curRoute[i].task.params.tasks) do
 				if curTask.id == "Orbit" then
 					curTask.params.altitude = hOrbit
@@ -176,7 +175,8 @@ function WeatherPositioning.avoidCloudLayer(planeGroup, vSpeed_ms)
 			end
 		end
 	end
-	
+
+	log("Setting Orbit Height of ['"..planeGroup:getName().."' based on '"..MEGroupName.."'] to " .. hOrbit .."m")
 	return mist.goRoute(planeGroup, curRoute)
 end
 
@@ -188,13 +188,13 @@ DestroyedStatics = {}
 TexacoSpawn = Spawner("Texaco")
 TexacoSpawn:OnSpawnGroup(function(grp)
     scheduledSpawns[grp:getUnit(1):getName()] = {TexacoSpawn, 600}
-	WeatherPositioning.avoidCloudLayer(grp, 175) -- Init against cloud base at 175m/s (280 knots)
+	WeatherPositioning.avoidCloudLayer(grp, TexacoSpawn.MEName, 175) -- Init against cloud base at 175m/s (280 knots)
 end)
 
 ShellSpawn = Spawner("Shell")
 ShellSpawn:OnSpawnGroup(function(grp)
     scheduledSpawns[grp:getUnit(1):getName()] = {ShellSpawn, 600}
-	WeatherPositioning.avoidCloudLayer(grp, 195) -- Init against cloud base at 195m/s (380 knots)
+	WeatherPositioning.avoidCloudLayer(grp, ShellSpawn.MEName, 195) -- Init against cloud base at 195m/s (380 knots)
 end)
 
 OverlordSpawn = Spawner("AWACS Overlord")
